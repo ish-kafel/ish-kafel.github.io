@@ -1,0 +1,72 @@
+<html>
+<style>
+input{width:50px}
+</style>
+<body>
+<input type="text" id="depth" value="12" onclick="oc(this)" onblur="bl(this)" style="color:#808080"><input type="text" id="len" value="4" onclick="oc(this)" onblur="bl(this)" style="color:#808080"><input type="text" id="direct" value="r" maxlength="1" onclick="oc(this)" onblur="bl(this)" style="color:#808080"><input type="text" id="dx" value="" onclick="oc(this)" onblur="bl(this)" style="color:#808080"><input type="text" id="dy" value="" onclick="oc(this)" onblur="bl(this)" style="color:#808080"><input type="button" value="确定" onclick="draw()"><br><p>深度&nbsp&nbsp&nbsp&nbsp长度&nbsp&nbsp&nbsp&nbsp初始方向 初始x 初始y</p>
+<canvas id="mc" width="538" height="345"></canvas>
+<script src="https://unpkg.com/color-js@1.0.3/color.js"></script>
+<script type="text/javascript">
+var a=document.getElementById("mc")
+var wid=document.body.clientWidth
+var hei=document.body.clientHeight
+document.getElementById("dx").value=wid*0.75
+document.getElementById("dy").value=hei*0.5
+a.width = wid
+a.height = hei*0.8
+
+function oc(x){
+ if(x.value==x.id){x.value=""}
+}
+function bl(x){
+ if(x.value==""){x.value=x.id}
+}
+function draw(){
+  var depth=document.getElementById("depth").value
+  var len=Number(document.getElementById("len").value)
+  var direct=document.getElementById("direct").value
+  var m=Number(document.getElementById("dx").value)
+  var n=Number(document.getElementById("dy").value)
+  if(depth=="depth"){alert("请输入深度")}
+  else if(len=="len"){alert("请输入长度")}
+  else if(direct=="direct"){alert("请输入初始方向")}
+  else if(direct.match(/[^dlru]/g)){alert("初始方向请输入u,d,l或r")}
+  else if(dx=="dx"){alert("请输入初始x")}
+  else if(dy=="dy"){alert("请输入初始y")}
+  else{
+    var a=[],x=[],y=[],m,n
+    a.push(direct)
+    var Color = net.brehaut.Color;
+    for(var j=0;j<depth;j++){
+      b=a.slice().reverse()
+      b.forEach(function(e,i,ar){
+      ar[i]=e=="r"?"u":(e=="u"?"l":(e=="l"?"d":"r"))
+      })
+      a=a.concat(b)
+    }
+
+    var c=document.getElementById("mc")
+    var cx=c.getContext("2d")
+    cx.clearRect(0,0,c.width,c.height);  
+    cx.lineWidth=2
+
+    for(var ll=0;ll<a.length;ll++){
+      x[ll]=a[ll]=="r"?len:(a[ll]=="l"?-len:0)
+      y[ll]=a[ll]=="d"?len:(a[ll]=="u"?-len:0)
+    }
+
+    for(var k=0;k<a.length;k++){
+      cx.beginPath();
+      cx.moveTo(m,n)
+      cx.strokeStyle=Color("hsl("+360*k/a.length+", 100%, 50%)")
+      m+=x[k]
+      n+=y[k]
+      cx.lineTo(m,n)
+      cx.stroke()
+    }
+  }
+}
+</script>
+
+</body>
+</html>
