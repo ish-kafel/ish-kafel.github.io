@@ -4,7 +4,7 @@
 input{width:50px}
 </style>
 <body>
-<input type="text" id="depth" value="12" onclick="oc(this)" onblur="bl(this)" style="color:#808080"><input type="text" id="len" value="4" onclick="oc(this)" onblur="bl(this)" style="color:#808080"><input type="text" id="direct" value="r" maxlength="1" onclick="oc(this)" onblur="bl(this)" style="color:#808080"><input type="text" id="dx" value="" onclick="oc(this)" onblur="bl(this)" style="color:#808080"><input type="text" id="dy" value="" onclick="oc(this)" onblur="bl(this)" style="color:#808080"><input type="button" value="È·¶¨" onclick="draw()"><br><p>Éî¶È&nbsp&nbsp&nbsp&nbsp³¤¶È&nbsp&nbsp&nbsp&nbsp³õÊ¼·½Ïò ³õÊ¼x ³õÊ¼y</p>
+<input type="text" id="depth" value="14" onclick="oc(this)" onblur="bl(this)" style="color:#808080"><input type="text" id="len" value="4" onclick="oc(this)" onblur="bl(this)" style="color:#808080"><input type="text" id="direct" value="d" maxlength="1" onclick="oc(this)" onblur="bl(this)" style="color:#808080"><input type="text" id="dx" value="" onclick="oc(this)" onblur="bl(this)" style="color:#808080"><input type="text" id="dy" value="" onclick="oc(this)" onblur="bl(this)" style="color:#808080"><input type="button" value="ç¡®å®š" onclick="draw()"><br><p>æ·±åº¦&nbsp&nbsp&nbsp&nbspé•¿åº¦&nbsp&nbsp&nbsp&nbspåˆå§‹æ–¹å‘ åˆå§‹x åˆå§‹y</p>
 <canvas id="mc" width="538" height="345"></canvas>
 <script src="https://unpkg.com/color-js@1.0.3/color.js"></script>
 <script type="text/javascript">
@@ -28,12 +28,12 @@ function draw(){
   var direct=document.getElementById("direct").value
   var m=Number(document.getElementById("dx").value)
   var n=Number(document.getElementById("dy").value)
-  if(depth=="depth"){alert("ÇëÊäÈëÉî¶È")}
-  else if(len=="len"){alert("ÇëÊäÈë³¤¶È")}
-  else if(direct=="direct"){alert("ÇëÊäÈë³õÊ¼·½Ïò")}
-  else if(direct.match(/[^dlru]/g)){alert("³õÊ¼·½ÏòÇëÊäÈëu,d,l»òr")}
-  else if(dx=="dx"){alert("ÇëÊäÈë³õÊ¼x")}
-  else if(dy=="dy"){alert("ÇëÊäÈë³õÊ¼y")}
+  if(depth=="depth"){alert("è¯·è¾“å…¥æ·±åº¦")}
+  else if(len=="len"){alert("è¯·è¾“å…¥é•¿åº¦")}
+  else if(direct=="direct"){alert("è¯·è¾“å…¥åˆå§‹æ–¹å‘")}
+  else if(direct.match(/[^dlru]/g)){alert("åˆå§‹æ–¹å‘è¯·è¾“å…¥u,d,læˆ–r")}
+  else if(dx=="dx"){alert("è¯·è¾“å…¥åˆå§‹x")}
+  else if(dy=="dy"){alert("è¯·è¾“å…¥åˆå§‹y")}
   else{
     var a=[],x=[],y=[],m,n
     a.push(direct)
