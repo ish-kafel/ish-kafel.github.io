@@ -17,15 +17,23 @@
  <p>  深度    长度  初始方向 初始x  初始y</p>
 <canvas id="mc" width="538" height="345"></canvas>
 <script>
-var $=selector=>document.querySelector(selector)
+var $=function(selector){return document.querySelector(selector)}
 var ca=$("#mc")
 var wid=document.body.clientWidth
 var hei=document.body.clientHeight
+function oc(tar){
+  if(tar.value==tar.id){tar.value=""}
+}
+
+function bl(tar){
+  if(tar.value==""){tar.value=tar.id}
+}
 
 $("#dx").value=wid*0.5+64
 $("#dy").value=hei*0.5
 ca.width = wid
 ca.height = hei*0.8
+
 </script>
 </body>
 </html>
