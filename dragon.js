@@ -24,7 +24,7 @@ function dDraw(canvas,arr,startX,startY,leng){
     x[ll]=arr[ll]=="r"?leng:(arr[ll]=="l"?-leng:0)
     y[ll]=arr[ll]=="d"?leng:(arr[ll]=="u"?-leng:0)
   }
-
+  
   for(var k=0;k<arr.length;k++){
     cx.beginPath();
     cx.moveTo(startX,startY)
