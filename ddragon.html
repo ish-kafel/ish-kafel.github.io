@@ -1,0 +1,83 @@
+﻿<html>
+<head>
+<meta charset="UTF-8">
+<style>
+#start,#stop{float:left}
+#stop{display:none}
+</style>
+<script src="https://unpkg.com/color-js@1.0.3/color.js"></script>
+</head>
+<body>
+<button id='start'>开始</button>
+<button id="stop">停止</button>
+<canvas id='canvas'>
+您的浏览器不支持canvas画布
+</canvas>
+</body>
+<script>
+var Color = net.brehaut.Color;
+var ca=document.getElementById('canvas');
+var cx=ca.getContext('2d');
+ca.width=500;
+ca.height=500;
+
+  var depth = 12
+  var len = 4
+  var direct = "r"
+  var m = 376
+  var n = 317
+var temp=0,k
+function dIteration(direct, depth) {
+  var arr = []
+  arr.push(direct)
+  for (var j = 0; j < depth; j++) {
+    var b = arr.slice().reverse()
+    b.forEach(function (e, i, ar) {
+      ar[i] = e == "r" ? "u" : (e == "u" ? "l" : (e == "l" ? "d" : "r"))
+    })
+    arr = arr.concat(b)
+  }
+  return arr
+}
+var a = dIteration(direct, depth)
+    cx.clearRect(0,0,ca.width,ca.height);
+    cx.lineWidth = 2
+var x=[],y=[]
+    for (var ll = 0; ll < a.length; ll++) {
+      x[ll] = a[ll] == "r" ? len : (a[ll] == "l" ? -len : 0)
+      y[ll] = a[ll] == "d" ? len : (a[ll] == "u" ? -len : 0)
+    }
+function animateCanvas(){
+
+
+
+
+      cx.beginPath()
+      cx.moveTo(m, n)
+      cx.strokeStyle = Color("hsl(" + 360 * k / a.length + ", 100%, 50%)")
+      m += x[k]
+      n += y[k]
+      cx.lineTo(m, n)
+      cx.stroke()
+    
+if(k!=a.length-1){
+setTimeout(animateCanvas,33);
+k++
+};
+}
+var start=document.getElementById('start');
+var stop=document.getElementById('stop');
+start.onclick=function(){
+start.style.display="none";
+stop.style.display="block";
+k=temp
+animateCanvas();
+};
+stop.onclick=function(){
+start.style.display='block';
+stop.style.display='none'
+temp=k
+k=a.length-1;
+}
+</script>
+</html>
