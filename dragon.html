@@ -1,39 +1,78 @@
 <html>
+
 <head>
-<link type="text/css" rel="styleSheet" href="dragon.css" />
-<script src="https://unpkg.com/color-js@1.0.3/color.js"></script>
-<script src="dragon.js"></script>
+  <link type="text/css" rel="styleSheet" href="dragon.css" />
+  <script src="https://unpkg.com/color-js@1.0.3/color.js"></script>
+
 </head>
 
 <body>
-<div>
-  <input type="text" id="depth" value="12" onclick="oc(this)" onblur="bl(this)">
-  <input type="text" id="len" value="4" onclick="oc(this)" onblur="bl(this)">
-  <input type="text" id="direct" value="r" maxlength="1" onclick="oc(this)" onblur="bl(this)">
-  <input type="text" id="dx" value="" onclick="oc(this)" onblur="bl(this)">
-  <input type="text" id="dy" value="" onclick="oc(this)" onblur="bl(this)">
-  <input type="button" value="确定" onclick="draw()">
-</div>
- <p>  深度    长度  初始方向 初始x  初始y</p>
-<canvas id="mc" width="538" height="345"></canvas>
-<script>
-var $=function(selector){return document.querySelector(selector)}
-var ca=$("#mc")
-var wid=document.body.clientWidth
-var hei=document.body.clientHeight
-function oc(tar){
-  if(tar.value==tar.id){tar.value=""}
-}
+  <div>
+    <input type="text" id="depth" value="12" onclick="oc(this)" onblur="bl(this)">
+    <input type="text" id="len" value="4" onclick="oc(this)" onblur="bl(this)">
+    <input type="text" id="direct" value="r" maxlength="1" onclick="oc(this)" onblur="bl(this)">
+    <input type="text" id="dx" value="" onclick="oc(this)" onblur="bl(this)">
+    <input type="text" id="dy" value="" onclick="oc(this)" onblur="bl(this)">
+    <input type="button" id="start" value="开始" onclick="draw()">
+    <input type="button" id="stop" value="停止">
+    <input type="button" id="pause" value="暂停">
+    <input type="button" id="moveon" value="继续">
+  </div>
+  <br>
+  <p>  深度    长度  初始方向 初始x  初始y</p>
+  <canvas id="mc" width="538" height="345"></canvas>
+  <script src="dragon.js"></script>
+  <script>
+    var $ = function (selector) {
+      return document.querySelector(selector)
+    }
+    function oc(tar) {
+      if (tar.value == tar.id) { tar.value = "" }
+    }
+    function bl(tar) {
+      if (tar.value == "") { tar.value = tar.id }
+    }
+    var Color = net.brehaut.Color
+    var wid = document.body.clientWidth
+    var hei = document.body.clientHeight
 
-function bl(tar){
-  if(tar.value==""){tar.value=tar.id}
-}
+    var ca = $("#mc")
+    var pause = $("#pause")
+    var moveon = $("#moveon")
+    var start = $("#start")
+    var stop = $("#stop")
+    var cx = ca.getContext("2d")
 
-$("#dx").value=wid*0.5+64
-$("#dy").value=hei*0.5
-ca.width = wid
-ca.height = hei*0.8
+    $("#dx").value = wid * 0.5 + 64
+    $("#dy").value = hei * 0.5
+    ca.width = wid
+    ca.height = hei * 0.8
 
-</script>
+    var depth, len, direct, dx, dy
+    var k, temp, x = [], y = [], drawOn
+
+    pause.onclick = function () {
+      drawOn = false
+      pause.style.display = 'none'
+      moveon.style.display = 'block'
+    }
+
+    moveon.onclick = function () {
+      k--
+      drawOn = true
+      dDraw()
+      moveon.style.display = 'none'
+      pause.style.display = 'block'
+    }
+
+    stop.onclick = function () {
+      drawOn = false
+      stop.style.display = 'none'
+      start.style.display = 'block'
+      pause.style.display = 'none'
+      moveon.style.display = 'none'
+    }
+  </script>
 </body>
+
 </html>

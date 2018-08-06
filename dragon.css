@@ -8,6 +8,12 @@ input{
 input[type=text]{
   color:#808080
 }
+input{
+  float: left;
+}
 p{
-  white-space: pre
+  white-space: pre;
+}
+#pause,#moveon,#stop{
+  display: none
 }
