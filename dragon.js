@@ -5,7 +5,7 @@ function dIteration(direct,depth){
   for(var j=0;j<depth;j++){
     var b=arr.slice().reverse()
     b.forEach(function(e,i,ar){
-    ar[i]=e=="r"?"u":(e=="u"?"l":(e=="l"?"d":"r"))
+      ar[i]=e=="r"?"u":(e=="u"?"l":(e=="l"?"d":"r"))
     })
     arr=arr.concat(b)
   }
@@ -14,10 +14,10 @@ function dIteration(direct,depth){
 
 function dDraw(canvas,arr,startX,startY,leng){
   var x=[],y=[]
-  var Color = net.brehaut.Color;
+  var Color = net.brehaut.Color
 
   var cx=canvas.getContext("2d")
-  cx.clearRect(0,0,canvas.width,canvas.height);  
+  cx.clearRect(0,0,canvas.width,canvas.height) 
   cx.lineWidth=2
 
   for(var ll=0;ll<arr.length;ll++){
@@ -45,10 +45,10 @@ function draw(){
 
   var name = ["depth","len","direct","dx","dy"]
   for(var i=0;i<name.length;i++){
-     if($("#"+name[i]).value==name[i]){
-       alert("请输入"+name[i])
-       break;
-     }
+    if($("#"+name[i]).value==name[i]){
+      alert("请输入"+name[i])
+      break
+    }
   }
   if(direct.match(/[^dlru]/)&&direct!="direct"){alert("初始方向请输入u,d,l或r")}
   else if(direct!="direct"){
