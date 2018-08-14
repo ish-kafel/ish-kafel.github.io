@@ -19,70 +19,42 @@
   <button id='stop'>停止</button>
   <canvas id='canvas'></canvas>
 </body>
+<script src='L-system.js'></script>
 <script>
   var Color = net.brehaut.Color;
   var ca = document.getElementById('canvas');
   var cx = ca.getContext('2d');
   ca.width = 500;
-  ca.height = 500;
+  ca.height = 800;
 
-  var depth = 8
-  var len = 0.5
+  var depth = 6
+  var len = 6
   var direct = "r"
   var m = 50
   var n = 200
-  var temp = 0, k
-  var b = {
-    sel: '',
-    arr: ['r', 'd', 'l', 'u'],
-    add: function () {
-      var t = this.arr.indexOf(this.sel)
-      this.sel = this.arr[(t + 1) % 4]
-    },
-    minus: function () {
-      var t = this.arr.indexOf(this.sel)
-      this.sel = this.arr[(t + 3) % 4]
-    },
-  }
-  var axiom = 'A'
-  var sp = axiom, a = [], c = ''
-  b.sel = direct
-  a.push(direct)
-  for (var i = 0; i < depth; i++) {
-    sp = sp.replace(/A/g, 'Z')
-    sp = sp.replace(/B/g, '+AF-BFB-FA+')
-    sp = sp.replace(/Z/g, '-BF+AFA+FB-')
-  }
-  sp = sp.replace(/\+-/g, '').replace(/-\+/g, '')
-  sp = sp.replace(/[AB]/g, '')
-  c = sp.replace(/[+-]/g, '')
-  for (var j = 0; j < sp.length - 1; j++) {
-    if (sp[j] == '+') b.add()
-    else if (sp[j] == '-') b.minus()
-    else if (sp[j] == 'F') a.push(b.sel)
-  }
-  a.push(b.sel)
-  a.shift()
+  var temp = 0, kk
+  var axiom = 'F-G-G', angle = 120
+  var drawV = ['F', 'G']
+  var rules = ['F-G+F+G-F', 'GG']
+  var gnrstr = lSystem(axiom, rules, drawV, depth)
+  var drawstr = drawGnr(direct, angle, gnrstr, drawV)
+  var sumlen=sumLen(gnrstr,drawV)
   cx.clearRect(0, 0, ca.width, ca.height);
   cx.lineWidth = 1
-  var x = [], y = []
-  for (var ll = 0; ll < a.length; ll++) {
-    x[ll] = a[ll] == "r" ? len : (a[ll] == "l" ? -len : 0)
-    y[ll] = a[ll] == "d" ? len : (a[ll] == "u" ? -len : 0)
-  }
+  kk=0
   function animateCanvas() {
 
     cx.beginPath()
     cx.moveTo(m, n)
-    cx.strokeStyle = Color("hsl(" + 360 * k / a.length + ", 100%, 50%)")
-    m += x[k]
-    n += y[k]
+    cx.strokeStyle = Color("hsl(" + 360 * kk / sumlen + ", 100%, 50%)")
+    m += len*Math.sin(0.017453292519943295*drawstr[kk])
+    n += len*Math.cos(0.017453292519943295*drawstr[kk])
     cx.lineTo(m, n)
     cx.stroke()
 
-    if (k != a.length - 1) {
+    if (kk != sumlen - 1) {
       setTimeout(animateCanvas, 1);
-      k++
+      kk++
     };
   }
   var start = document.getElementById('start');
@@ -90,14 +62,14 @@
   start.onclick = function () {
     start.style.display = "none";
     stop.style.display = "block";
-    k = temp
+    kk = temp
     animateCanvas();
   };
   stop.onclick = function () {
     start.style.display = 'block';
     stop.style.display = 'none'
-    temp = k
-    k = a.length - 1;
+    temp = kk
+    kk = sumlen - 1;
   }
 </script>
 
