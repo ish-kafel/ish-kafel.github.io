@@ -32,34 +32,34 @@
   var m = 50
   var n = 200
   var temp = 0, k
-  var b={
-    sel:'',
-    arr:['r','d','l','u'],
-    add:function(){
-      var t=this.arr.indexOf(this.sel)
-      this.sel=this.arr[(t+1)%4]
+  var b = {
+    sel: '',
+    arr: ['r', 'd', 'l', 'u'],
+    add: function () {
+      var t = this.arr.indexOf(this.sel)
+      this.sel = this.arr[(t + 1) % 4]
     },
-    minus:function(){
-      var t=this.arr.indexOf(this.sel)
-      this.sel=this.arr[(t+3)%4]
+    minus: function () {
+      var t = this.arr.indexOf(this.sel)
+      this.sel = this.arr[(t + 3) % 4]
     },
   }
-  var axiom='A'
-  var sp=axiom,a=[],c=''
-  b.sel=direct
+  var axiom = 'A'
+  var sp = axiom, a = [], c = ''
+  b.sel = direct
   a.push(direct)
-  for(var i=0;i<depth;i++){
-    sp=sp.replace(/A/g,'Z')
-    sp=sp.replace(/B/g,'+AF-BFB-FA+')
-    sp=sp.replace(/Z/g,'-BF+AFA+FB-')
+  for (var i = 0; i < depth; i++) {
+    sp = sp.replace(/A/g, 'Z')
+    sp = sp.replace(/B/g, '+AF-BFB-FA+')
+    sp = sp.replace(/Z/g, '-BF+AFA+FB-')
   }
-  sp=sp.replace(/\+-/g,'').replace(/-\+/g,'')
-  sp=sp.replace(/[AB]/g,'')
-  c=sp.replace(/[+-]/g,'')
-  for(var j=0;j<sp.length-1;j++){
-    if(sp[j]=='+')b.add()
-    else if(sp[j]=='-')b.minus()
-    else if(sp[j]=='F')a.push(b.sel)
+  sp = sp.replace(/\+-/g, '').replace(/-\+/g, '')
+  sp = sp.replace(/[AB]/g, '')
+  c = sp.replace(/[+-]/g, '')
+  for (var j = 0; j < sp.length - 1; j++) {
+    if (sp[j] == '+') b.add()
+    else if (sp[j] == '-') b.minus()
+    else if (sp[j] == 'F') a.push(b.sel)
   }
   a.push(b.sel)
   a.shift()
