@@ -32,7 +32,7 @@
   var direct = 'l'
   var m = 100
   var n = 200
-  var temp = 0, kk
+  var temp = 0, drawOn
   var axiom = 'A', angle = 60
   var drawV = ['A','B']
   var rules = ['A-B--B+A++AA+B-','+A-BB--B-A++A+B']
@@ -52,7 +52,7 @@
     cx.lineTo(m, n)
     cx.stroke()
 
-    if (kk != sumlen - 1) {
+    if (kk != sumlen - 1&&drawOn) {
       setTimeout(animateCanvas, 1);
       kk++
     }
@@ -64,16 +64,15 @@
   var start = document.getElementById('start');
   var stop = document.getElementById('stop');
   start.onclick = function () {
+    drawOn=true
     start.style.display = "none";
     stop.style.display = "block";
-    kk = temp
     animateCanvas();
   };
   stop.onclick = function () {
+    drawOn=false
     start.style.display = 'block';
     stop.style.display = 'none'
-    temp = kk
-    kk = sumlen - 1;
   }
 </script>
 
