@@ -27,15 +27,15 @@
   ca.width = 500;
   ca.height = 800;
 
-  var depth = 6
-  var len = 6
-  var direct = "r"
-  var m = 50
+  var depth = 5
+  var len = 3
+  var direct = 'l'
+  var m = 100
   var n = 200
   var temp = 0, kk
-  var axiom = 'F-G-G', angle = 120
-  var drawV = ['F', 'G']
-  var rules = ['F-G+F+G-F', 'GG']
+  var axiom = 'A', angle = 60
+  var drawV = ['A','B']
+  var rules = ['A-B--B+A++AA+B-','+A-BB--B-A++A+B']
   var gnrstr = lSystem(axiom, rules, drawV, depth)
   var drawstr = drawGnr(direct, angle, gnrstr, drawV)
   var sumlen=sumLen(gnrstr,drawV)
@@ -48,14 +48,18 @@
     cx.moveTo(m, n)
     cx.strokeStyle = Color("hsl(" + 360 * kk / sumlen + ", 100%, 50%)")
     m += len*Math.sin(0.017453292519943295*drawstr[kk])
-    n += len*Math.cos(0.017453292519943295*drawstr[kk])
+    n -= len*Math.cos(0.017453292519943295*drawstr[kk])
     cx.lineTo(m, n)
     cx.stroke()
 
     if (kk != sumlen - 1) {
       setTimeout(animateCanvas, 1);
       kk++
-    };
+    }
+    else{
+      start.style.display = 'block';
+      stop.style.display = 'none'
+    }
   }
   var start = document.getElementById('start');
   var stop = document.getElementById('stop');
