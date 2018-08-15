@@ -1,17 +1,18 @@
-function lSystem(axiom, rules, drawV, depth) {
-  var l = drawV.length
+function lSystem(axiom, rules, drawV, constV, depth) {
+  var l = constV.length
   var tempDraw = ['@', '#', '$', '%', '&']
   for (var k = 0; k < depth; k++) {
     for (var i = 0; i < l - 1; i++) {
-      axiom = axiom.replace(new RegExp(drawV[i], 'g'), tempDraw[i])
+      axiom = axiom.replace(new RegExp(constV[i], 'g'), tempDraw[i])
     }
-    axiom = axiom.replace(new RegExp(drawV[l - 1], 'g'), rules[l - 1])
+    axiom = axiom.replace(new RegExp(constV[l - 1], 'g'), rules[l - 1])
     for (var j = 0; j < l - 1; j++) {
       axiom = axiom.replace(new RegExp(tempDraw[j], 'g'), rules[j])
     }
   }
-  return axiom
+  return axiom.replace(new RegExp('[^+-' + drawV.join('') + ']', 'g'), '')
 }
+
 function drawGnr(init, angle, gnrStr, drawV) {
   var s = []
   if (['u', 'r', 'd', 'l'].indexOf(init) + 1) {
@@ -25,6 +26,7 @@ function drawGnr(init, angle, gnrStr, drawV) {
   }
   return s
 }
+
 function sumLen(gnrStr, drawV) {
   return gnrStr.replace(new RegExp('[^' + drawV.join('') + ']', 'g'), '').length
 }
