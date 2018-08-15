@@ -34,9 +34,9 @@
   var n = 200
   var temp = 0, drawOn
   var axiom = 'A', angle = 60
-  var drawV = ['A','B']
+  var constV = ['A','B'],drawV=['A','B']
   var rules = ['A-B--B+A++AA+B-','+A-BB--B-A++A+B']
-  var gnrstr = lSystem(axiom, rules, drawV, depth)
+  var gnrstr = lSystem(axiom, rules, drawV, constV, depth)
   var drawstr = drawGnr(direct, angle, gnrstr, drawV)
   var sumlen=sumLen(gnrstr,drawV)
   cx.clearRect(0, 0, ca.width, ca.height);
