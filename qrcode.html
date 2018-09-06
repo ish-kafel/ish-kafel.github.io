@@ -1,0 +1,65 @@
+﻿<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<script type="text/javascript" src="qrcode.js"></script>
+<style>
+@font-face{
+	font-family: 'Cuniform';
+	src:url(NotoSansCuneiform-Regular.ttf);
+	unicode-range:U+12000-123FF;
+}
+textarea{
+	font-family: 'Cuniform','monospace'
+}
+</style>
+</head>
+<body>
+<textarea id="text" oninput="makeCode()">我爱杨纪萌</textarea
+><select id='se' onchange="cha()">
+	<option value='L'>低</option>
+	<option value='M'>中</option>
+	<option value='Q'>优</option>
+	<option selected="selected" value="H">高</option>
+</select>
+<div id="qrcode" style="margin-top:15px;"></div>
+
+<script type="text/javascript">
+var qr={
+	width : 600,
+	height :600,
+  colorDark : "#000000", 
+  colorLight : "#ffffff", 
+  correctLevel : QRCode.CorrectLevel.H
+}
+
+var $=selector=>document.querySelector(selector)
+var qrcode = new QRCode($("#qrcode"),qr);	
+
+function cha(){
+	var tn=$("#qrcode")
+	tn.removeChild(tn.childNodes[0])
+	tn.removeChild(tn.childNodes[0])
+
+	var x = $("#se").value;
+	qr.correctLevel=QRCode.CorrectLevel[x]
+
+	qrcode = new QRCode($("#qrcode"),qr);
+	qrcode.makeCode($("#text").value)
+}
+
+function makeCode () {
+	var elText = $("#text").value;
+
+	if (!elText) {
+		alert("Input a text");
+		elText.focus();
+		return;
+	}
+
+	qrcode.makeCode(elText);
+}
+
+makeCode();
+
+</script>
+</body>
