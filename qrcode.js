@@ -1457,7 +1457,7 @@ var QRCode;
     this._oQRCode = new QRCodeModel(_getTypeNumber(sText, this._htOption.correctLevel), this._htOption.correctLevel)
     this._oQRCode.addData(sText)
     this._oQRCode.make()
-    this._el.title = sText
+    //this._el.title = sText
     this._oDrawing.draw(this._oQRCode)
     this.makeImage()
   }
