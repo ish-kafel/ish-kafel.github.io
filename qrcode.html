@@ -50,13 +50,6 @@ function cha(){
 
 function makeCode () {
 	var elText = $("#text").value;
-
-	if (!elText) {
-		alert("Input a text");
-		elText.focus();
-		return;
-	}
-
 	qrcode.makeCode(elText);
 }
 
