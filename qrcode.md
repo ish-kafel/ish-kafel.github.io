@@ -1005,7 +1005,7 @@ var QRCode;
   ]
 ```
 # 9.Drawer
-```
+```javascript
   function _isSupportCanvas() {
     return typeof CanvasRenderingContext2D != 'undefined'
   }
@@ -1382,7 +1382,7 @@ var QRCode;
   }
 ```
 # 10.QRCode
-```
+```javascript
   /**
    * @class QRCode
    * @constructor
