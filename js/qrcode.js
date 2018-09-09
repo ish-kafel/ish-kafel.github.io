@@ -1182,23 +1182,23 @@ var QRCode;
      * @param {Function} fSuccess Occurs if it supports Data URI
      * @param {Function} fFail Occurs if it doesn't support Data URI
      */
-    function _safeSetDataURI(fSuccess, fFail) {
+    function _safeSetDataURL(fSuccess, fFail) {
       var self = this
       self._fFail = fFail
       self._fSuccess = fSuccess
 
       // Check it just once
-      if (self._bSupportDataURI === null) {
+      if (self._bSupportDataURL === null) {
         var el = document.createElement('img')
         var fOnError = function () {
-          self._bSupportDataURI = false
+          self._bSupportDataURL = false
 
           if (self._fFail) {
             self._fFail.call(self)
           }
         }
         var fOnSuccess = function () {
-          self._bSupportDataURI = true
+          self._bSupportDataURL = true
 
           if (self._fSuccess) {
             self._fSuccess.call(self)
@@ -1208,11 +1208,11 @@ var QRCode;
         el.onabort = fOnError
         el.onerror = fOnError
         el.onload = fOnSuccess
-        el.src = 'data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==' // the Image contains 1px data.
+        el.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==' // the Image contains 1px data.
         return
-      } else if (self._bSupportDataURI === true && self._fSuccess) {
+      } else if (self._bSupportDataURL === true && self._fSuccess) {
         self._fSuccess.call(self)
-      } else if (self._bSupportDataURI === false && self._fFail) {
+      } else if (self._bSupportDataURL === false && self._fFail) {
         self._fFail.call(self)
       }
     }
@@ -1233,6 +1233,7 @@ var QRCode;
       this._elCanvas.width = htOption.width
       this._elCanvas.height = htOption.height
       el.appendChild(this._elCanvas)
+
       this._el = el
       this._oContext = this._elCanvas.getContext('2d')
       this._bIsPainted = false
@@ -1240,7 +1241,8 @@ var QRCode;
       this._elImage.alt = 'Scan me!'
       this._elImage.style.display = 'none'
       this._el.appendChild(this._elImage)
-      this._bSupportDataURI = null
+
+      this._bSupportDataURL = null
     }
 
     /**
@@ -1297,7 +1299,7 @@ var QRCode;
      */
     Drawing.prototype.makeImage = function () {
       if (this._bIsPainted) {
-        _safeSetDataURI.call(this, _onMakeImage)
+        _safeSetDataURL.call(this, _onMakeImage)
       }
     }
 
