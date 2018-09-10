@@ -83,7 +83,8 @@ var QRCode;
       this.dataCache = null
     },
     isDark: function (row, col) {    //返回某个位置数据
-      if (row < 0 || this.moduleCount <= row || col < 0 || this.moduleCount <= col) {
+      if (row < 0 || this.moduleCount <= row 
+       || col < 0 || this.moduleCount <= col) {
         throw new Error(row + ',' + col)
       }
       return this.modules[row][col]
@@ -128,7 +129,9 @@ var QRCode;
           if (col + c <= -1 || this.moduleCount <= col + c) {
             continue
           }
-          if ((0 <= r && r <= 6 && (c == 0 || c == 6)) || (0 <= c && c <= 6 && (r == 0 || r == 6)) || (2 <= r && r <= 4 && 2 <= c && c <= 4)) {
+          if ((0 <= r && r <= 6 && (c == 0 || c == 6))
+           || (0 <= c && c <= 6 && (r == 0 || r == 6))
+           || (2 <= r && r <= 4 && 2 <= c && c <= 4)) {
             this.modules[row + r][col + c] = true
           } else {
             this.modules[row + r][col + c] = false
@@ -190,7 +193,9 @@ var QRCode;
           }
           for (var r = -2; r <= 2; r++) {
             for (var c = -2; c <= 2; c++) {
-              if (r == -2 || r == 2 || c == -2 || c == 2 || (r == 0 && c == 0)) {
+              if (r == -2 || r == 2 
+               || c == -2 || c == 2
+               || (r == 0 && c == 0)) {
                 this.modules[row + r][col + c] = true
               } else {
                 this.modules[row + r][col + c] = false
@@ -434,22 +439,22 @@ var QRCode;
       [6, 26, 54, 82, 110, 138, 166],
       [6, 30, 58, 86, 114, 142, 170]
     ],
-    G15: (1 << 10) | (1 << 8) | (1 << 5) | (1 << 4) | (1 << 2) | (1 << 1) | (1 << 0),
-    G18: (1 << 12) | (1 << 11) | (1 << 10) | (1 << 9) | (1 << 8) | (1 << 5) | (1 << 2) | (1 << 0),
-    G15_MASK: (1 << 14) | (1 << 12) | (1 << 10) | (1 << 4) | (1 << 1),
+    G15: 1335, //10100110111
+    G18: 7973, //1111100100101
+    G15_MASK: 21522, //101010000010010
     getBCHTypeInfo: function (data) {
       var d = data << 10
       while (QRUtil.getBCHDigit(d) - QRUtil.getBCHDigit(QRUtil.G15) >= 0) {
         d ^= (QRUtil.G15 << (QRUtil.getBCHDigit(d) - QRUtil.getBCHDigit(QRUtil.G15)))
       }
-      return ((data << 10) | d) ^ QRUtil.G15_MASK
+      return (data << 10 | d) ^ QRUtil.G15_MASK // <<,^,|
     },
     getBCHTypeNumber: function (data) {
       var d = data << 12
       while (QRUtil.getBCHDigit(d) - QRUtil.getBCHDigit(QRUtil.G18) >= 0) {
         d ^= (QRUtil.G18 << (QRUtil.getBCHDigit(d) - QRUtil.getBCHDigit(QRUtil.G18)))
       }
-      return (data << 12) | d
+      return data << 12 | d // <<,|
     },
     getBCHDigit: function (data) {
       var digit = 0
@@ -570,21 +575,33 @@ var QRCode;
           if (qrCode.isDark(row + 1, col)) count++
           if (qrCode.isDark(row, col + 1)) count++
           if (qrCode.isDark(row + 1, col + 1)) count++
-          if (count == 0 || count == 4) {
+          if (count % 4 == 0) {
             lostPoint += 3
           }
         }
       }
       for (row = 0; row < moduleCount; row++) {
         for (col = 0; col < moduleCount - 6; col++) {
-          if (qrCode.isDark(row, col) && !qrCode.isDark(row, col + 1) && qrCode.isDark(row, col + 2) && qrCode.isDark(row, col + 3) && qrCode.isDark(row, col + 4) && !qrCode.isDark(row, col + 5) && qrCode.isDark(row, col + 6)) {
+          if (qrCode.isDark(row, col)
+          && !qrCode.isDark(row, col + 1)
+          &&  qrCode.isDark(row, col + 2)
+          &&  qrCode.isDark(row, col + 3)
+          &&  qrCode.isDark(row, col + 4)
+          && !qrCode.isDark(row, col + 5)
+          &&  qrCode.isDark(row, col + 6)) {
             lostPoint += 40
           }
         }
       }
       for (col = 0; col < moduleCount; col++) {
         for (row = 0; row < moduleCount - 6; row++) {
-          if (qrCode.isDark(row, col) && !qrCode.isDark(row + 1, col) && qrCode.isDark(row + 2, col) && qrCode.isDark(row + 3, col) && qrCode.isDark(row + 4, col) && !qrCode.isDark(row + 5, col) && qrCode.isDark(row + 6, col)) {
+          if (qrCode.isDark(row, col)
+          && !qrCode.isDark(row + 1, col)
+          &&  qrCode.isDark(row + 2, col)
+          &&  qrCode.isDark(row + 3, col)
+          &&  qrCode.isDark(row + 4, col)
+          && !qrCode.isDark(row + 5, col)
+          &&  qrCode.isDark(row + 6, col)) {
             lostPoint += 40
           }
         }
@@ -604,7 +621,7 @@ var QRCode;
   }
 ```
 # 5.QRMath
-```
+```javascript
   var QRMath = {
     glog: function (n) {
       if (n < 1) {
@@ -955,7 +972,7 @@ var QRCode;
         this.buffer.push(0)
       }
       if (bit) {
-        this.buffer[bufIndex] |= (0x80 >>> (this.length % 8))
+        this.buffer[bufIndex] |= 0x80 >>> (this.length % 8)
       }
       this.length++
     }
