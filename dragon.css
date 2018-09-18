@@ -1,19 +1,23 @@
-div{
-  font-size:0
+div {
+  font-size: 0
 }
-input{
-  width:50px;
-  height:23px
-}
-input[type=text]{
-  color:#808080
-}
-input{
+
+input {
+  width: 50px;
+  height: 23px;
   float: left;
 }
-p{
+
+input[type=text] {
+  color: #808080
+}
+
+p {
   white-space: pre;
 }
-#pause,#moveon,#stop{
+
+#pause,
+#moveon,
+#stop {
   display: none
 }
