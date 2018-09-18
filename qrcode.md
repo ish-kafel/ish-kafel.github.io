@@ -17,7 +17,7 @@ var QRCode;
       var code = this.data.codePointAt(i)//支持辅助平面文字(SMP)(大于U+FFFF)
       var utf8 = false
 
-      if (SMP) { //SMP字符用codePointAt产生两部分，第一部分为Unicode值，第二部分
+      if (SMP) { //SMP字符用codePointAt产生两部分，第一部分为Unicode值
         SMP = !SMP
         continue
       } else if (code >= 0x10000) {
@@ -108,9 +108,13 @@ var QRCode;
       this.setupPositionProbePattern(0, 0)
       this.setupPositionProbePattern(this.moduleCount - 7, 0)
       this.setupPositionProbePattern(0, this.moduleCount - 7)
+      //设置校正图形
       this.setupPositionAdjustPattern()
+      //设置定位图形
       this.setupTimingPattern()
+      //设置格式信息
       this.setupTypeInfo(test, maskPattern)
+      //版本7及以上设置版本信息
       if (this.typeNumber >= 7) {
         this.setupTypeNumber(test)
       }
@@ -205,7 +209,7 @@ var QRCode;
         }
       }
     },
-    //设置版本号
+    //设置版本信息
     setupTypeNumber: function (test) {
       var bits = QRUtil.getBCHTypeNumber(this.typeNumber)
       for (var i = 0; i < 18; i++) {
@@ -217,7 +221,7 @@ var QRCode;
         this.modules[i % 3 + this.moduleCount - 8 - 3][Math.floor(i / 3)] = mod
       }
     },
-    //设置版本信息 BCH(15,5)
+    //设置格式信息 BCH(15,5)
     setupTypeInfo: function (test, maskPattern) {
       var data = (this.errorCorrectLevel << 3) | maskPattern
       var bits = QRUtil.getBCHTypeInfo(data)
