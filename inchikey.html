@@ -1,0 +1,37 @@
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+body{text-align:center}
+textarea{font-size:1rem}
+</style>
+<script src="./js/sha256.js"></script>
+<script src="./js/inchikey.js"></script>
+</head>
+<body>
+<button onclick="javascript:window.location.href='../'">回首页</button>
+<div id="ta">
+<textarea name="inchi">InChI=1S/C24H33NO3/c1-20(2)18-25-24(26)14-12-10-8-6-4-3-5-7-9-11-13-21-15-16-22-23(17-21)28-19-27-22/h8,10-17,20H,3-7,9,18-19H2,1-2H3,(H,25,26)/b10-8+,13-11+,14-12+</textarea><br>
+<input type="text" name="inchi"></input><button onclick="gen()">生成InChIKey</button>
+</div>
+<script>
+  var html = document.documentElement;    
+  function fontS(){   
+    var hW = html.offsetWidth/50;
+    html.style.fontSize = hW + "px";  
+  }  
+  window.onresize = function(){fontS();}
+  var a=document.getElementsByName("inchi")
+  var wid=document.body.clientWidth
+  var hei=document.body.clientHeight
+  a[0].style.width = wid*0.75
+  a[0].style.height = hei*0.3
+  a[1].style.width = wid*0.3
+  function gen(){
+    var inchi=a[0].value
+    a[1].value=inchiToInchiKey(inchi)
+  }
+</script>
+
+</body>
+</html>
