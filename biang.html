@@ -1,0 +1,2186 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+	<meta name="viewport" content="width=device-width">
+	<style>
+		body {
+			font-family: 'Open Sans', sans-serif;
+			margin: auto;
+			line-height: 1.6;
+			color: #333;
+		}
+
+		main {
+			width: 90%;
+			margin-left: auto;
+			margin-right: auto;
+		}
+
+		.sketch {
+			display: block;
+			position: relative;
+			max-width: 600px;
+			width: 90%;
+			margin-left: auto;
+			margin-right: auto;
+			margin-top: 10px;
+			margin-bottom: 10px;
+			-webkit-box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+			-moz-box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+			box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+			border-style: solid;
+			border-width: 1px;
+			border-color: rgb(0, 0, 0, 0.2);
+			border-radius: 5px;
+			background-color: white;
+		}
+	</style>
+</head>
+
+<body>
+	<main id="content">
+		<canvas id="fourier-title" class="sketch" width="600" height="600"></canvas>
+		<script>
+		/******/
+(function (modules) { // webpackBootstrap
+    /******/ // The module cache
+    /******/
+    var installedModules = {};
+    /******/
+    /******/ // The require function
+    /******/
+    function __webpack_require__(moduleId) {
+        /******/
+        /******/ // Check if module is in cache
+        /******/
+        if (installedModules[moduleId]) {
+            /******/
+            return installedModules[moduleId].exports;
+            /******/
+        }
+        /******/ // Create a new module (and put it into the cache)
+        /******/
+        var module = installedModules[moduleId] = {
+            /******/
+            i: moduleId,
+            /******/
+            l: false,
+            /******/
+            exports: {}
+            /******/
+        };
+        /******/
+        /******/ // Execute the module function
+        /******/
+        modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+        /******/
+        /******/ // Flag the module as loaded
+        /******/
+        module.l = true;
+        /******/
+        /******/ // Return the exports of the module
+        /******/
+        return module.exports;
+        /******/
+    }
+    /******/
+    /******/
+    /******/ // expose the modules object (__webpack_modules__)
+    /******/
+    __webpack_require__.m = modules;
+    /******/
+    /******/ // expose the module cache
+    /******/
+    __webpack_require__.c = installedModules;
+    /******/
+    /******/ // define getter function for harmony exports
+    /******/
+    __webpack_require__.d = function (exports, name, getter) {
+        /******/
+        if (!__webpack_require__.o(exports, name)) {
+            /******/
+            Object.defineProperty(exports, name, {
+                /******/
+                configurable: false,
+                /******/
+                enumerable: true,
+                /******/
+                get: getter
+                /******/
+            });
+            /******/
+        }
+        /******/
+    };
+    /******/
+    /******/ // getDefaultExport function for compatibility with non-harmony modules
+    /******/
+    __webpack_require__.n = function (module) {
+        /******/
+        var getter = module && module.__esModule ?
+            /******/
+            function getDefault() {
+                return module['default'];
+            } :
+            /******/
+            function getModuleExports() {
+                return module;
+            };
+        /******/
+        __webpack_require__.d(getter, 'a', getter);
+        /******/
+        return getter;
+        /******/
+    };
+    /******/
+    /******/ // Object.prototype.hasOwnProperty.call
+    /******/
+    __webpack_require__.o = function (object, property) {
+        return Object.prototype.hasOwnProperty.call(object, property);
+    };
+    /******/
+    /******/ // __webpack_public_path__
+    /******/
+    __webpack_require__.p = "";
+    /******/
+    /******/ // Load entry module and return exports
+    /******/
+    return __webpack_require__(__webpack_require__.s = 7);
+    /******/
+})
+/************************************************************************/
+/******/
+([
+    /* 0 */
+    /***/
+    (function (module, exports, __webpack_require__) {
+
+        "use strict";
+
+
+        Object.defineProperty(exports, "__esModule", {
+            value: true
+        });
+        exports.easeInOut = easeInOut;
+        exports.sinEaseInOut = sinEaseInOut;
+        exports.smallEaseInOut = smallEaseInOut;
+        exports.slurp = slurp;
+        exports.experp = experp;
+        exports.clampedSlurp = clampedSlurp;
+        exports.clamp = clamp;
+        exports.divideInterval = divideInterval;
+        exports.posMod = posMod;
+        exports.to2dIsometric = to2dIsometric;
+
+        function _interopRequireDefault(obj) {
+            return obj && obj.__esModule ? obj : {
+                default: obj
+            };
+        }
+
+        function easeInOut(t) {
+            var amt = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 2;
+
+            var tPow = Math.pow(t, amt);
+            return tPow / (tPow + Math.pow(1 - t, amt));
+        }
+
+        function sinEaseInOut(t) {
+            return 0.5 - 0.5 * Math.cos(Math.PI * t);
+        }
+
+        function smallEaseInOut(t, a, b) {
+            // maximum slope, during the constant part
+            var m = 1 / (1 - a - b);
+
+            // f0
+            if (t < a) {
+                return 0;
+            }
+
+            // f1
+            if (t < b) {
+                return m / 2 / (b - a) * (t - a) * (t - a);
+            }
+
+            // f2
+            if (t < 1 - b) {
+                return m * (t - b) + // constant line part
+                    m / 2 * (b - a); // maximum value of f1
+            }
+
+            // use symmetry powers
+            return 1 - smallEaseInOut(1 - t, a, b);
+        }
+
+        function slurp(val1, val2, amt) {
+            return (val2 - val1) * amt + val1;
+        }
+
+        function experp(val1, val2, amt) {
+            return Math.exp(slurp(Math.log(val1), Math.log(val2), amt));
+        }
+
+        function clampedSlurp(val1, val2, amt) {
+            if (amt < 0) {
+                return val1;
+            }
+            if (amt > 1) {
+                return val2;
+            }
+            return slurp(val1, val2, amt);
+        }
+
+        function clamp(amt, val1, val2) {
+            if (amt < val1) {
+                return val1;
+            }
+            if (amt > val2) {
+                return val2;
+            }
+            return amt;
+        }
+
+        /**
+         * Extracts a 0-1 interval from a section of a 0-1 interval
+         *
+         * For example, if min == 0.3 and max == 0.7, you get:
+         *
+         *           0.3  0.7
+         *     t: 0 --+----+-- 1
+         *           /      \
+         *          /        \
+         *         /          \
+         *     -> 0 ---------- 1
+         *
+         * Useful for making sub animations.
+         *
+         * Doesn't do any clamping, so you might want to clamp yourself.
+         */
+        function divideInterval(t, min, max) {
+            return (t - min) / (max - min);
+        }
+
+        /**
+         * Does a positive modulo
+         * @param {number} a The thing being modulo'd
+         * @param {number} b The divider thing
+         * @returns {number} a % b
+         */
+        function posMod(a, b) {
+            var out = a % b;
+            if (out < 0) {
+                out += b;
+            }
+            return out;
+        }
+
+        // TODO? Redesign so this generates a function?
+        function to2dIsometric(x, y, z) {
+            var xzAngle = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 0;
+            var yAngle = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : 0;
+
+            var mul = (0, _matrixMultiplication2.default)()(3);
+            // s/o to wikipedia for these rotation matrices
+            var xzRotateMatrix = [Math.cos(xzAngle), 0, -Math.sin(xzAngle), 0, 1, 0, Math.sin(xzAngle), 0, Math.cos(xzAngle)];
+            var yRotateMatrix = [1, 0, 0, 0, Math.cos(yAngle), Math.sin(yAngle), 0, -Math.sin(yAngle), Math.cos(yAngle)];
+            var transformMatrix = mul(yRotateMatrix, xzRotateMatrix);
+
+            var transformed = mul(transformMatrix, [x, y, z]);
+            // Just return the x and y
+            return {
+                x: transformed[0],
+                y: transformed[1]
+            };
+        }
+
+        /***/
+    }),
+    /* 1 */
+    /***/
+    (function (module, exports, __webpack_require__) {
+
+        "use strict";
+
+
+        Object.defineProperty(exports, "__esModule", {
+            value: true
+        });
+
+        var _createClass = function () {
+            function defineProperties(target, props) {
+                for (var i = 0; i < props.length; i++) {
+                    var descriptor = props[i];
+                    descriptor.enumerable = descriptor.enumerable || false;
+                    descriptor.configurable = true;
+                    if ("value" in descriptor) descriptor.writable = true;
+                    Object.defineProperty(target, descriptor.key, descriptor);
+                }
+            }
+            return function (Constructor, protoProps, staticProps) {
+                if (protoProps) defineProperties(Constructor.prototype, protoProps);
+                if (staticProps) defineProperties(Constructor, staticProps);
+                return Constructor;
+            };
+        }();
+
+        var _controllerUtil = __webpack_require__(5);
+
+        var _controller = __webpack_require__(4);
+
+        var _controller2 = _interopRequireDefault(_controller);
+
+        function _interopRequireDefault(obj) {
+            return obj && obj.__esModule ? obj : {
+                default: obj
+            };
+        }
+
+        function _classCallCheck(instance, Constructor) {
+            if (!(instance instanceof Constructor)) {
+                throw new TypeError("Cannot call a class as a function");
+            }
+        }
+
+        function _possibleConstructorReturn(self, call) {
+            if (!self) {
+                throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+            }
+            return call && (typeof call === "object" || typeof call === "function") ? call : self;
+        }
+
+        function _inherits(subClass, superClass) {
+            if (typeof superClass !== "function" && superClass !== null) {
+                throw new TypeError("Super expression must either be null or a function, not " + typeof superClass);
+            }
+            subClass.prototype = Object.create(superClass && superClass.prototype, {
+                constructor: {
+                    value: subClass,
+                    enumerable: false,
+                    writable: true,
+                    configurable: true
+                }
+            });
+            if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
+        }
+
+        var CanvasController = function (_Controller) {
+            _inherits(CanvasController, _Controller);
+
+            function CanvasController(id) {
+                var width = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+                var height = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
+
+                _classCallCheck(this, CanvasController);
+
+                var _this = _possibleConstructorReturn(this, (CanvasController.__proto__ || Object.getPrototypeOf(CanvasController)).call(this));
+
+                _this.id = id;
+                _this.canvas = document.getElementById(id);
+                if (width == null) {
+                    width = _this.canvas.width;
+                }
+                if (height == null) {
+                    height = _this.canvas.height;
+                }
+
+                /** @type {CanvasRenderingContext2D} */
+                _this.context = _this.canvas.getContext('2d');
+                _this.width = width;
+                _this.height = height;
+                return _this;
+            }
+
+            _createClass(CanvasController, [{
+                key: "isOnScreen",
+                value: function isOnScreen() {
+                    return (0, _controllerUtil.elementInView)(this.canvas);
+                }
+            }, {
+                key: "getScrollPosition",
+                value: function getScrollPosition() {
+                    return (0, _controllerUtil.getScrollPosition)(this.canvas);
+                }
+            }, {
+                key: "clear",
+                value: function clear() {
+                    // Clear the previous frame
+                    this.context.resetTransform();
+                    this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                }
+            }]);
+
+            return CanvasController;
+        }(_controller2.default);
+
+        exports.default = CanvasController;
+
+        /***/
+    }),
+    /* 2 */
+    /***/
+    (function (module, exports, __webpack_require__) {
+
+        "use strict";
+
+
+        Object.defineProperty(exports, "__esModule", {
+            value: true
+        });
+        exports.palette = undefined;
+        exports.rgb = rgb;
+        exports.grey = grey;
+
+        var _util = __webpack_require__(0);
+
+        function rgb(r, g, b) {
+            return 'rgb(' + r + ',' + g + ',' + b + ')';
+        }
+
+        function grey(whiteAmt) {
+            whiteAmt = (0, _util.clamp)(whiteAmt, 0, 1);
+            var whiteRgb = Math.floor(255 * whiteAmt);
+            return rgb(whiteRgb, whiteRgb, whiteRgb);
+        }
+
+        var palette = exports.palette = {
+            black: '#333',
+            blue: '#4657d7',
+            cyan: '#57a7cc',
+            pink: '#e91e63',
+            orange: '#ed7656'
+        };
+
+        /***/
+    }),
+    (function () {}),
+    /* 4 */
+    /***/
+    (function (module, exports, __webpack_require__) {
+
+        "use strict";
+
+
+        Object.defineProperty(exports, "__esModule", {
+            value: true
+        });
+
+        var _createClass = function () {
+            function defineProperties(target, props) {
+                for (var i = 0; i < props.length; i++) {
+                    var descriptor = props[i];
+                    descriptor.enumerable = descriptor.enumerable || false;
+                    descriptor.configurable = true;
+                    if ("value" in descriptor) descriptor.writable = true;
+                    Object.defineProperty(target, descriptor.key, descriptor);
+                }
+            }
+            return function (Constructor, protoProps, staticProps) {
+                if (protoProps) defineProperties(Constructor.prototype, protoProps);
+                if (staticProps) defineProperties(Constructor, staticProps);
+                return Constructor;
+            };
+        }();
+
+        function _classCallCheck(instance, Constructor) {
+            if (!(instance instanceof Constructor)) {
+                throw new TypeError("Cannot call a class as a function");
+            }
+        }
+
+        var Controller = function () {
+            function Controller() {
+                _classCallCheck(this, Controller);
+            }
+
+            _createClass(Controller, [{
+                key: "update",
+                value: function update(dt, mousePosition) {
+                    // nothing.
+                }
+            }, {
+                key: "isOnScreen",
+                value: function isOnScreen() {
+                    return true;
+                }
+            }, {
+                key: "render",
+                value: function render() {
+                    // nothing.
+                }
+            }]);
+
+            return Controller;
+        }();
+
+        exports.default = Controller;
+
+        /***/
+    }),
+    /* 5 */
+    /***/
+    (function (module, exports, __webpack_require__) {
+
+        "use strict";
+
+
+        Object.defineProperty(exports, "__esModule", {
+            value: true
+        });
+        exports.getScrollPosition = getScrollPosition;
+        exports.elementInView = elementInView;
+
+        function getScrollPosition(elem) {
+            var boundingRect = elem.getBoundingClientRect();
+            var centerY = (boundingRect.top + boundingRect.bottom) / 2;
+            var windowHeight = window.innerHeight || document.documentElement.clientHeight;
+            return centerY / windowHeight;
+        }
+
+        function elementInView(elem) {
+            // Thanks stack overflow https://stackoverflow.com/a/7557433
+            var boundingRect = elem.getBoundingClientRect();
+
+            return boundingRect.bottom >= 0 && boundingRect.top <= (window.innerHeight || document.documentElement.clientHeight) && boundingRect.right >= 0 && boundingRect.left <= (window.innerWidth || document.documentElement.clientWidth);
+        }
+
+        /***/
+    }),
+    /* 6 */
+    /***/
+    (function (module, exports, __webpack_require__) {
+
+        "use strict";
+
+
+        Object.defineProperty(exports, "__esModule", {
+            value: true
+        });
+        exports.getFourierData = getFourierData;
+        exports.getRealFourierData = getRealFourierData;
+        exports.resample2dData = resample2dData;
+
+        var _fft = __webpack_require__(9);
+
+        var _fft2 = _interopRequireDefault(_fft);
+
+        var _util = __webpack_require__(0);
+
+        function _interopRequireDefault(obj) {
+            return obj && obj.__esModule ? obj : {
+                default: obj
+            };
+        }
+
+        /**
+         * Do the fourier thing using a bunch of complex points
+         * 
+         * @param {Array<Number>} points Array of points, alternative with re, im pairs. Length must be a power of 2 
+         */
+        function getFourierData(points) {
+            if (points.length == 0) {
+                return [];
+            }
+            var numPoints = points.length / 2;
+            var fft = new _fft2.default(numPoints);
+
+            var out = fft.createComplexArray();
+            fft.transform(out, points);
+
+            // Transform into an API of points I find friendlier.
+            var fftData = [];
+            for (var i = 0; i < numPoints; i++) {
+                // to reorder the frequencies a little nicer, we pick from the front and back altermatively
+                var j = i % 2 == 0 ? i / 2 : numPoints - (i + 1) / 2;
+                var x = out[2 * j];
+                var y = out[2 * j + 1];
+                var freq = (j + numPoints / 2) % numPoints - numPoints / 2;
+                fftData.push({
+                    freq: freq,
+                    // a little expensive
+                    amplitude: Math.sqrt(x * x + y * y) / numPoints,
+                    // a lottle expensive :(
+                    phase: Math.atan2(y, x)
+                });
+            }
+            // fftData.sort((a, b) => b.amplitude - a.amplitude);
+            return fftData;
+        }
+
+        /**
+         * 
+         * @param {Array<Number>} points Array of values of some wave. Must be a power of 2.
+         */
+        function getRealFourierData(points) {
+            if (points.length == 0) {
+                return [];
+            }
+            var numPoints = points.length;
+            var fft = new _fft2.default(numPoints);
+
+            var formatedPoints = fft.createComplexArray();
+            fft.toComplexArray(points, formatedPoints);
+
+            var out = fft.createComplexArray();
+            fft.transform(out, formatedPoints);
+
+            // Transform into an API of points I find friendlier.
+            var fftData = [];
+            // We only have to read the first half of this because of symmetry things.
+            for (var i = 0; i < numPoints / 2; i++) {
+                var x = out[2 * i];
+                var y = out[2 * i + 1];
+                var freq = i;
+                fftData.push({
+                    freq: freq,
+                    // a little expensive
+                    // Also we gotta multiply this by 2 to account for the other side that
+                    amplitude: 2 * Math.sqrt(x * x + y * y) / numPoints,
+                    // a lottle expensive :(
+                    phase: Math.atan2(y, x)
+                });
+            }
+            // fftData.sort((a, b) => b.amplitude - a.amplitude);
+            return fftData;
+        }
+
+        /**
+         * Transforms a list of x, y points into input appropriate for a fourier transform.
+         */
+        function resample2dData(points, numSamples) {
+            if (points.length == 0) {
+                // Can't resample if we don't have ANY points
+                return [];
+            }
+            var newPoints = [];
+            for (var i = 0; i < numSamples; i++) {
+                var position = points.length * (i / numSamples);
+                var index = Math.floor(position);
+                var nextIndex = (index + 1) % points.length;
+                var amt = position - index;
+                newPoints.push(
+                    /* x */
+                    (0, _util.slurp)(points[index].x, points[nextIndex].x, amt),
+                    /* y */
+                    (0, _util.slurp)(points[index].y, points[nextIndex].y, amt));
+            }
+            return newPoints;
+        }
+
+        /***/
+    }),
+    /* 7 */
+    /***/
+    (function (module, exports, __webpack_require__) {
+
+        "use strict";
+
+        var _epicyclesController = __webpack_require__(8);
+
+        var _epicyclesController2 = _interopRequireDefault(_epicyclesController);
+
+        var _conductor = __webpack_require__(10);
+
+        var _conductor2 = _interopRequireDefault(_conductor);
+
+        var _titlePoints = __webpack_require__(11);
+
+        function _interopRequireDefault(obj) {
+            return obj && obj.__esModule ? obj : {
+                default: obj
+            };
+        }
+
+        var conductor = null;
+
+        function init() {
+
+            var controllers = [];
+
+            if (hasElement('fourier-title')) {
+                var fourierTitle = new _epicyclesController2.default('fourier-title');
+                fourierTitle.setPath(_titlePoints.titlePoints.map(function (p) {
+                    return {
+                        x: p.x * 1.9,
+                        y: p.y * 1.9
+                    };
+                }));
+                fourierTitle.period = 100; //角速度
+                controllers.push(fourierTitle);
+            }
+
+            conductor = new _conductor2.default(controllers);
+            conductor.start();
+        }
+
+        function hasElement(id) {
+            return document.getElementById(id) != null;
+        }
+
+        init();
+
+        /***/
+    }),
+    /* 8 */
+    /***/
+    (function (module, exports, __webpack_require__) {
+
+        "use strict";
+
+
+        Object.defineProperty(exports, "__esModule", {
+            value: true
+        });
+
+        var _createClass = function () {
+            function defineProperties(target, props) {
+                for (var i = 0; i < props.length; i++) {
+                    var descriptor = props[i];
+                    descriptor.enumerable = descriptor.enumerable || false;
+                    descriptor.configurable = true;
+                    if ("value" in descriptor) descriptor.writable = true;
+                    Object.defineProperty(target, descriptor.key, descriptor);
+                }
+            }
+            return function (Constructor, protoProps, staticProps) {
+                if (protoProps) defineProperties(Constructor.prototype, protoProps);
+                if (staticProps) defineProperties(Constructor, staticProps);
+                return Constructor;
+            };
+        }();
+
+        var _canvasController = __webpack_require__(1);
+
+        var _canvasController2 = _interopRequireDefault(_canvasController);
+
+        var _justFourierThings = __webpack_require__(6);
+
+        var _util = __webpack_require__(0);
+
+        var _color = __webpack_require__(2);
+
+        function _interopRequireDefault(obj) {
+            return obj && obj.__esModule ? obj : {
+                default: obj
+            };
+        }
+
+        function _classCallCheck(instance, Constructor) {
+            if (!(instance instanceof Constructor)) {
+                throw new TypeError("Cannot call a class as a function");
+            }
+        }
+
+        function _possibleConstructorReturn(self, call) {
+            if (!self) {
+                throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+            }
+            return call && (typeof call === "object" || typeof call === "function") ? call : self;
+        }
+
+        function _inherits(subClass, superClass) {
+            if (typeof superClass !== "function" && superClass !== null) {
+                throw new TypeError("Super expression must either be null or a function, not " + typeof superClass);
+            }
+            subClass.prototype = Object.create(superClass && superClass.prototype, {
+                constructor: {
+                    value: subClass,
+                    enumerable: false,
+                    writable: true,
+                    configurable: true
+                }
+            });
+            if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
+        }
+
+        var EpicyclesController = function (_CanvasController) {
+            _inherits(EpicyclesController, _CanvasController);
+
+            function EpicyclesController(id, width, height) {
+                _classCallCheck(this, EpicyclesController);
+
+                var _this = _possibleConstructorReturn(this, (EpicyclesController.__proto__ || Object.getPrototypeOf(EpicyclesController)).call(this, id, width, height));
+
+                _this.animate = true;
+
+                // [ {freq, amplitude, phase } ]
+                _this.fourierData = [];
+                // [ {x, y} ]
+                _this.fourierPath = [];
+                _this.numPoints = 0;
+                // What percentage of the path to draw
+                _this.pathAmt = 1;
+                _this.animatePathAmt = true;
+
+                _this.animAmt = 0;
+                _this.niceAnimAmt = 0;
+
+                _this.fourierAmt = 1;
+
+                _this.pathDirty = false;
+                return _this;
+            }
+
+            _createClass(EpicyclesController, [{
+                key: "setPath",
+                value: function setPath(path) {
+                    var numPoints = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : -1;
+                    var minAmplitude = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0.01;
+
+                    if (numPoints < 0) {
+                        numPoints = path.length;
+                    }
+                    this.numPoints = numPoints;
+                    this.animAmt = 0;
+                    this.niceAnimAmt = 0;
+                    this.fourierPath = [];
+                    // Get the fourier data, also filter out the really small terms.
+                    this.fourierData = (0, _justFourierThings.getFourierData)((0, _justFourierThings.resample2dData)(path, this.numPoints)).filter(function (f) {
+                        return f.amplitude > minAmplitude;
+                    });
+                    this.fourierData.sort(function (a, b) {
+                        return b.amplitude - a.amplitude;
+                    });
+                    console.log(this.fourierData.length + '/' + numPoints);
+                }
+            }, {
+                key: "setFourierAmt",
+                value: function setFourierAmt(amt) {
+                    this.fourierAmt = amt;
+                    this.pathDirty = true;
+                }
+            }, {
+                key: "recalculatePath",
+                value: function recalculatePath() {
+                    // then render everything.
+                    for (var i = 0; i < this.numPoints; i++) {
+                        this.niceAnimAmt += 1 / this.numPoints;
+                        this.addToPath();
+                    }
+                    this.niceAnimAmt -= 1;
+                }
+            }, {
+                key: "update",
+                value: function update(dt, mousePosition) {
+                    if (this.pathDirty) {
+                        this.recalculatePath();
+                        this.pathDirty = false;
+                    }
+
+                    if (!this.animate) {
+                        return;
+                    }
+                    this.animAmt += dt / this.period % 1;
+
+                    while (this.animAmt > 1) {
+                        this.animAmt--;
+                        this.niceAnimAmt--;
+                    }
+
+                    if (this.animatePathAmt) {
+                        var transitionFactor = 1 / 10;
+                        var pos = this.getScrollPosition();
+                        var desiredPathAmt = 0;
+                        if (pos < 0.8) {
+                            desiredPathAmt = 1;
+                        }
+                        this.pathAmt += transitionFactor * (desiredPathAmt - this.pathAmt);
+                        if (this.pathAmt >= 0.99) {
+                            this.pathAmt = 1;
+                        }
+                    }
+
+                    // some max iterations to stop it from hanging
+                    for (var i = 0; i < 20; i++) {
+                        if (this.niceAnimAmt >= this.animAmt) {
+                            break;
+                        }
+                        this.niceAnimAmt += 1 / this.numPoints;
+                        this.addToPath();
+                    }
+                }
+            }, {
+                key: "addToPath",
+                value: function addToPath() {
+                    if (this.fourierData.length == 0) {
+                        return;
+                    }
+                    var runningX = 0;
+                    var runningY = 0;
+                    var numFouriers = Math.round((0, _util.slurp)(2, this.fourierData.length, this.fourierAmt));
+                    for (var i = 0; i < numFouriers; i++) {
+                        var amplitude = this.fourierData[i].amplitude;
+                        var angle = 2 * Math.PI * this.fourierData[i].freq * this.niceAnimAmt + this.fourierData[i].phase;
+                        runningX += amplitude * Math.cos(angle);
+                        runningY += amplitude * Math.sin(angle);
+                    }
+
+                    this.fourierPath.push({
+                        x: runningX,
+                        y: runningY
+                    });
+                    while (this.fourierPath.length > this.numPoints * this.pathAmt && this.fourierPath.length > 0) {
+                        this.fourierPath.shift();
+                    }
+                }
+            }, {
+                key: "render",
+                value: function render() {
+                    this.clear();
+
+                    this.renderPath(this.fourierPath);
+                    this.renderCircles();
+                }
+            }, {
+                key: "renderPath",
+                value: function renderPath(path) {
+                    for (var i = 0; i < path.length - 1; i++) {
+                        this.context.beginPath();
+                        this.context.strokeStyle = _color.palette.blue;
+                        this.context.lineWidth = 1; //线粗细
+                        this.context.moveTo(path[i].x, path[i].y);
+                        this.context.lineTo(path[i + 1].x, path[i + 1].y);
+                        this.context.stroke();
+                    }
+                }
+            }, {
+                key: "renderCircles",
+                value: function renderCircles() {
+                    if (this.fourierData.length == 0) {
+                        return;
+                    }
+                    var runningX = 0;
+                    var runningY = 0;
+                    var numFouriers = Math.round((0, _util.slurp)(2, this.fourierData.length, this.fourierAmt));
+                    for (var i = 0; i < numFouriers; i++) {
+                        var amplitude = this.fourierData[i].amplitude;
+                        var angle = 2 * Math.PI * this.fourierData[i].freq * this.animAmt + this.fourierData[i].phase;
+                        runningX += amplitude * Math.cos(angle);
+                        runningY += amplitude * Math.sin(angle);
+                        if (i == 0) {
+                            continue; // we skip the first one because we just don't care about rendering the constant term
+                        }
+                        if (amplitude < 0.1) {
+                            continue; // skip the really tiny ones
+                        }
+                        this.context.beginPath();
+                        this.context.strokeStyle = _color.palette.cyan;
+                        this.context.globalAlpha = 0.2; //圆形不透明度
+                        this.context.lineWidth = 1;
+                        this.context.moveTo(runningX, runningY);
+                        this.context.arc(runningX, runningY, amplitude, angle - Math.PI, angle + Math.PI);
+                        this.context.stroke();
+                    }
+                    this.context.globalAlpha = 1; //图案不透明度
+                }
+            }]);
+
+            return EpicyclesController;
+        }(_canvasController2.default);
+
+        exports.default = EpicyclesController;
+
+        /***/
+    }),
+    /* 9 */
+    /***/
+    (function (module, exports, __webpack_require__) {
+
+        "use strict";
+
+
+        function FFT(size) {
+            this.size = size | 0;
+            if (this.size <= 1 || (this.size & this.size - 1) !== 0) throw new Error('FFT size must be a power of two and bigger than 1');
+
+            this._csize = size << 1;
+
+            // NOTE: Use of `var` is intentional for old V8 versions
+            var table = new Array(this.size * 2);
+            for (var i = 0; i < table.length; i += 2) {
+                var angle = Math.PI * i / this.size;
+                table[i] = Math.cos(angle);
+                table[i + 1] = -Math.sin(angle);
+            }
+            this.table = table;
+
+            // Find size's power of two
+            var power = 0;
+            for (var t = 1; this.size > t; t <<= 1) {
+                power++;
+            } // Calculate initial step's width:
+            //   * If we are full radix-4 - it is 2x smaller to give inital len=8
+            //   * Otherwise it is the same as `power` to give len=4
+            this._width = power % 2 === 0 ? power - 1 : power;
+
+            // Pre-compute bit-reversal patterns
+            this._bitrev = new Array(1 << this._width);
+            for (var j = 0; j < this._bitrev.length; j++) {
+                this._bitrev[j] = 0;
+                for (var shift = 0; shift < this._width; shift += 2) {
+                    var revShift = this._width - shift - 2;
+                    this._bitrev[j] |= (j >>> shift & 3) << revShift;
+                }
+            }
+
+            this._out = null;
+            this._data = null;
+            this._inv = 0;
+        }
+        module.exports = FFT;
+
+        FFT.prototype.fromComplexArray = function fromComplexArray(complex, storage) {
+            var res = storage || new Array(complex.length >>> 1);
+            for (var i = 0; i < complex.length; i += 2) {
+                res[i >>> 1] = complex[i];
+            }
+            return res;
+        };
+
+        FFT.prototype.createComplexArray = function createComplexArray() {
+            var res = new Array(this._csize);
+            for (var i = 0; i < res.length; i++) {
+                res[i] = 0;
+            }
+            return res;
+        };
+
+        FFT.prototype.toComplexArray = function toComplexArray(input, storage) {
+            var res = storage || this.createComplexArray();
+            for (var i = 0; i < res.length; i += 2) {
+                res[i] = input[i >>> 1];
+                res[i + 1] = 0;
+            }
+            return res;
+        };
+
+        FFT.prototype.completeSpectrum = function completeSpectrum(spectrum) {
+            var size = this._csize;
+            var half = size >>> 1;
+            for (var i = 2; i < half; i += 2) {
+                spectrum[size - i] = spectrum[i];
+                spectrum[size - i + 1] = -spectrum[i + 1];
+            }
+        };
+
+        FFT.prototype.transform = function transform(out, data) {
+            if (out === data) throw new Error('Input and output buffers must be different');
+
+            this._out = out;
+            this._data = data;
+            this._inv = 0;
+            this._transform4();
+            this._out = null;
+            this._data = null;
+        };
+
+        FFT.prototype.realTransform = function realTransform(out, data) {
+            if (out === data) throw new Error('Input and output buffers must be different');
+
+            this._out = out;
+            this._data = data;
+            this._inv = 0;
+            this._realTransform4();
+            this._out = null;
+            this._data = null;
+        };
+
+        FFT.prototype.inverseTransform = function inverseTransform(out, data) {
+            if (out === data) throw new Error('Input and output buffers must be different');
+
+            this._out = out;
+            this._data = data;
+            this._inv = 1;
+            this._transform4();
+            for (var i = 0; i < out.length; i++) {
+                out[i] /= this.size;
+            }
+            this._out = null;
+            this._data = null;
+        };
+
+        // radix-4 implementation
+        //
+        // NOTE: Uses of `var` are intentional for older V8 version that do not
+        // support both `let compound assignments` and `const phi`
+        FFT.prototype._transform4 = function _transform4() {
+            var out = this._out;
+            var size = this._csize;
+
+            // Initial step (permute and transform)
+            var width = this._width;
+            var step = 1 << width;
+            var len = size / step << 1;
+
+            var outOff;
+            var t;
+            var bitrev = this._bitrev;
+            if (len === 4) {
+                for (outOff = 0, t = 0; outOff < size; outOff += len, t++) {
+                    var off = bitrev[t];
+                    this._singleTransform2(outOff, off, step);
+                }
+            } else {
+                // len === 8
+                for (outOff = 0, t = 0; outOff < size; outOff += len, t++) {
+                    var _off = bitrev[t];
+                    this._singleTransform4(outOff, _off, step);
+                }
+            }
+
+            // Loop through steps in decreasing order
+            var inv = this._inv ? -1 : 1;
+            var table = this.table;
+            for (step >>= 2; step >= 2; step >>= 2) {
+                len = size / step << 1;
+                var quarterLen = len >>> 2;
+
+                // Loop through offsets in the data
+                for (outOff = 0; outOff < size; outOff += len) {
+                    // Full case
+                    var limit = outOff + quarterLen;
+                    for (var i = outOff, k = 0; i < limit; i += 2, k += step) {
+                        var A = i;
+                        var B = A + quarterLen;
+                        var C = B + quarterLen;
+                        var D = C + quarterLen;
+
+                        // Original values
+                        var Ar = out[A];
+                        var Ai = out[A + 1];
+                        var Br = out[B];
+                        var Bi = out[B + 1];
+                        var Cr = out[C];
+                        var Ci = out[C + 1];
+                        var Dr = out[D];
+                        var Di = out[D + 1];
+
+                        // Middle values
+                        var MAr = Ar;
+                        var MAi = Ai;
+
+                        var tableBr = table[k];
+                        var tableBi = inv * table[k + 1];
+                        var MBr = Br * tableBr - Bi * tableBi;
+                        var MBi = Br * tableBi + Bi * tableBr;
+
+                        var tableCr = table[2 * k];
+                        var tableCi = inv * table[2 * k + 1];
+                        var MCr = Cr * tableCr - Ci * tableCi;
+                        var MCi = Cr * tableCi + Ci * tableCr;
+
+                        var tableDr = table[3 * k];
+                        var tableDi = inv * table[3 * k + 1];
+                        var MDr = Dr * tableDr - Di * tableDi;
+                        var MDi = Dr * tableDi + Di * tableDr;
+
+                        // Pre-Final values
+                        var T0r = MAr + MCr;
+                        var T0i = MAi + MCi;
+                        var T1r = MAr - MCr;
+                        var T1i = MAi - MCi;
+                        var T2r = MBr + MDr;
+                        var T2i = MBi + MDi;
+                        var T3r = inv * (MBr - MDr);
+                        var T3i = inv * (MBi - MDi);
+
+                        // Final values
+                        var FAr = T0r + T2r;
+                        var FAi = T0i + T2i;
+
+                        var FCr = T0r - T2r;
+                        var FCi = T0i - T2i;
+
+                        var FBr = T1r + T3i;
+                        var FBi = T1i - T3r;
+
+                        var FDr = T1r - T3i;
+                        var FDi = T1i + T3r;
+
+                        out[A] = FAr;
+                        out[A + 1] = FAi;
+                        out[B] = FBr;
+                        out[B + 1] = FBi;
+                        out[C] = FCr;
+                        out[C + 1] = FCi;
+                        out[D] = FDr;
+                        out[D + 1] = FDi;
+                    }
+                }
+            }
+        };
+
+        // radix-2 implementation
+        //
+        // NOTE: Only called for len=4
+        FFT.prototype._singleTransform2 = function _singleTransform2(outOff, off, step) {
+            var out = this._out;
+            var data = this._data;
+
+            var evenR = data[off];
+            var evenI = data[off + 1];
+            var oddR = data[off + step];
+            var oddI = data[off + step + 1];
+
+            var leftR = evenR + oddR;
+            var leftI = evenI + oddI;
+            var rightR = evenR - oddR;
+            var rightI = evenI - oddI;
+
+            out[outOff] = leftR;
+            out[outOff + 1] = leftI;
+            out[outOff + 2] = rightR;
+            out[outOff + 3] = rightI;
+        };
+
+        // radix-4
+        //
+        // NOTE: Only called for len=8
+        FFT.prototype._singleTransform4 = function _singleTransform4(outOff, off, step) {
+            var out = this._out;
+            var data = this._data;
+            var inv = this._inv ? -1 : 1;
+            var step2 = step * 2;
+            var step3 = step * 3;
+
+            // Original values
+            var Ar = data[off];
+            var Ai = data[off + 1];
+            var Br = data[off + step];
+            var Bi = data[off + step + 1];
+            var Cr = data[off + step2];
+            var Ci = data[off + step2 + 1];
+            var Dr = data[off + step3];
+            var Di = data[off + step3 + 1];
+
+            // Pre-Final values
+            var T0r = Ar + Cr;
+            var T0i = Ai + Ci;
+            var T1r = Ar - Cr;
+            var T1i = Ai - Ci;
+            var T2r = Br + Dr;
+            var T2i = Bi + Di;
+            var T3r = inv * (Br - Dr);
+            var T3i = inv * (Bi - Di);
+
+            // Final values
+            var FAr = T0r + T2r;
+            var FAi = T0i + T2i;
+
+            var FBr = T1r + T3i;
+            var FBi = T1i - T3r;
+
+            var FCr = T0r - T2r;
+            var FCi = T0i - T2i;
+
+            var FDr = T1r - T3i;
+            var FDi = T1i + T3r;
+
+            out[outOff] = FAr;
+            out[outOff + 1] = FAi;
+            out[outOff + 2] = FBr;
+            out[outOff + 3] = FBi;
+            out[outOff + 4] = FCr;
+            out[outOff + 5] = FCi;
+            out[outOff + 6] = FDr;
+            out[outOff + 7] = FDi;
+        };
+
+        // Real input radix-4 implementation
+        FFT.prototype._realTransform4 = function _realTransform4() {
+            var out = this._out;
+            var size = this._csize;
+
+            // Initial step (permute and transform)
+            var width = this._width;
+            var step = 1 << width;
+            var len = size / step << 1;
+
+            var outOff;
+            var t;
+            var bitrev = this._bitrev;
+            if (len === 4) {
+                for (outOff = 0, t = 0; outOff < size; outOff += len, t++) {
+                    var off = bitrev[t];
+                    this._singleRealTransform2(outOff, off >>> 1, step >>> 1);
+                }
+            } else {
+                // len === 8
+                for (outOff = 0, t = 0; outOff < size; outOff += len, t++) {
+                    var _off2 = bitrev[t];
+                    this._singleRealTransform4(outOff, _off2 >>> 1, step >>> 1);
+                }
+            }
+
+            // Loop through steps in decreasing order
+            var inv = this._inv ? -1 : 1;
+            var table = this.table;
+            for (step >>= 2; step >= 2; step >>= 2) {
+                len = size / step << 1;
+                var halfLen = len >>> 1;
+                var quarterLen = halfLen >>> 1;
+                var hquarterLen = quarterLen >>> 1;
+
+                // Loop through offsets in the data
+                for (outOff = 0; outOff < size; outOff += len) {
+                    for (var i = 0, k = 0; i <= hquarterLen; i += 2, k += step) {
+                        var A = outOff + i;
+                        var B = A + quarterLen;
+                        var C = B + quarterLen;
+                        var D = C + quarterLen;
+
+                        // Original values
+                        var Ar = out[A];
+                        var Ai = out[A + 1];
+                        var Br = out[B];
+                        var Bi = out[B + 1];
+                        var Cr = out[C];
+                        var Ci = out[C + 1];
+                        var Dr = out[D];
+                        var Di = out[D + 1];
+
+                        // Middle values
+                        var MAr = Ar;
+                        var MAi = Ai;
+
+                        var tableBr = table[k];
+                        var tableBi = inv * table[k + 1];
+                        var MBr = Br * tableBr - Bi * tableBi;
+                        var MBi = Br * tableBi + Bi * tableBr;
+
+                        var tableCr = table[2 * k];
+                        var tableCi = inv * table[2 * k + 1];
+                        var MCr = Cr * tableCr - Ci * tableCi;
+                        var MCi = Cr * tableCi + Ci * tableCr;
+
+                        var tableDr = table[3 * k];
+                        var tableDi = inv * table[3 * k + 1];
+                        var MDr = Dr * tableDr - Di * tableDi;
+                        var MDi = Dr * tableDi + Di * tableDr;
+
+                        // Pre-Final values
+                        var T0r = MAr + MCr;
+                        var T0i = MAi + MCi;
+                        var T1r = MAr - MCr;
+                        var T1i = MAi - MCi;
+                        var T2r = MBr + MDr;
+                        var T2i = MBi + MDi;
+                        var T3r = inv * (MBr - MDr);
+                        var T3i = inv * (MBi - MDi);
+
+                        // Final values
+                        var FAr = T0r + T2r;
+                        var FAi = T0i + T2i;
+
+                        var FBr = T1r + T3i;
+                        var FBi = T1i - T3r;
+
+                        out[A] = FAr;
+                        out[A + 1] = FAi;
+                        out[B] = FBr;
+                        out[B + 1] = FBi;
+
+                        // Output final middle point
+                        if (i === 0) {
+                            var FCr = T0r - T2r;
+                            var FCi = T0i - T2i;
+                            out[C] = FCr;
+                            out[C + 1] = FCi;
+                            continue;
+                        }
+
+                        // Do not overwrite ourselves
+                        if (i === hquarterLen) continue;
+
+                        // In the flipped case:
+                        // MAi = -MAi
+                        // MBr=-MBi, MBi=-MBr
+                        // MCr=-MCr
+                        // MDr=MDi, MDi=MDr
+                        var ST0r = T1r;
+                        var ST0i = -T1i;
+                        var ST1r = T0r;
+                        var ST1i = -T0i;
+                        var ST2r = -inv * T3i;
+                        var ST2i = -inv * T3r;
+                        var ST3r = -inv * T2i;
+                        var ST3i = -inv * T2r;
+
+                        var SFAr = ST0r + ST2r;
+                        var SFAi = ST0i + ST2i;
+
+                        var SFBr = ST1r + ST3i;
+                        var SFBi = ST1i - ST3r;
+
+                        var SA = outOff + quarterLen - i;
+                        var SB = outOff + halfLen - i;
+
+                        out[SA] = SFAr;
+                        out[SA + 1] = SFAi;
+                        out[SB] = SFBr;
+                        out[SB + 1] = SFBi;
+                    }
+                }
+            }
+        };
+
+        // radix-2 implementation
+        //
+        // NOTE: Only called for len=4
+        FFT.prototype._singleRealTransform2 = function _singleRealTransform2(outOff, off, step) {
+            var out = this._out;
+            var data = this._data;
+
+            var evenR = data[off];
+            var oddR = data[off + step];
+
+            var leftR = evenR + oddR;
+            var rightR = evenR - oddR;
+
+            out[outOff] = leftR;
+            out[outOff + 1] = 0;
+            out[outOff + 2] = rightR;
+            out[outOff + 3] = 0;
+        };
+
+        // radix-4
+        //
+        // NOTE: Only called for len=8
+        FFT.prototype._singleRealTransform4 = function _singleRealTransform4(outOff, off, step) {
+            var out = this._out;
+            var data = this._data;
+            var inv = this._inv ? -1 : 1;
+            var step2 = step * 2;
+            var step3 = step * 3;
+
+            // Original values
+            var Ar = data[off];
+            var Br = data[off + step];
+            var Cr = data[off + step2];
+            var Dr = data[off + step3];
+
+            // Pre-Final values
+            var T0r = Ar + Cr;
+            var T1r = Ar - Cr;
+            var T2r = Br + Dr;
+            var T3r = inv * (Br - Dr);
+
+            // Final values
+            var FAr = T0r + T2r;
+
+            var FBr = T1r;
+            var FBi = -T3r;
+
+            var FCr = T0r - T2r;
+
+            var FDr = T1r;
+            var FDi = T3r;
+
+            out[outOff] = FAr;
+            out[outOff + 1] = 0;
+            out[outOff + 2] = FBr;
+            out[outOff + 3] = FBi;
+            out[outOff + 4] = FCr;
+            out[outOff + 5] = 0;
+            out[outOff + 6] = FDr;
+            out[outOff + 7] = FDi;
+        };
+
+        /***/
+    }),
+    /* 10 */
+    /***/
+    (function (module, exports, __webpack_require__) {
+
+        "use strict";
+
+
+        Object.defineProperty(exports, "__esModule", {
+            value: true
+        });
+
+        var _createClass = function () {
+            function defineProperties(target, props) {
+                for (var i = 0; i < props.length; i++) {
+                    var descriptor = props[i];
+                    descriptor.enumerable = descriptor.enumerable || false;
+                    descriptor.configurable = true;
+                    if ("value" in descriptor) descriptor.writable = true;
+                    Object.defineProperty(target, descriptor.key, descriptor);
+                }
+            }
+            return function (Constructor, protoProps, staticProps) {
+                if (protoProps) defineProperties(Constructor.prototype, protoProps);
+                if (staticProps) defineProperties(Constructor, staticProps);
+                return Constructor;
+            };
+        }();
+
+        function _classCallCheck(instance, Constructor) {
+            if (!(instance instanceof Constructor)) {
+                throw new TypeError("Cannot call a class as a function");
+            }
+        }
+
+        var Conductor = function () {
+            function Conductor(controllers) {
+                var _this = this;
+
+                _classCallCheck(this, Conductor);
+
+                this.lastTime = Date.now();
+                this.mousePosition = null;
+                this.controllers = controllers.slice();
+                this.updatingControllers = [];
+
+                // We can handle these all the same really.
+                document.addEventListener('mousemove', function (evt) {
+                    return _this.updateMousePosition(evt);
+                });
+                document.addEventListener('mousedown', function (evt) {
+                    return _this.updateMousePosition(evt);
+                });
+                document.addEventListener('mouseup', function (evt) {
+                    return _this.updateMousePosition(evt);
+                });
+
+                document.addEventListener('touchmove', function (evt) {
+                    return _this.updateTouchPosition(evt);
+                });
+                document.addEventListener('touchstart', function (evt) {
+                    return _this.updateTouchPosition(evt);
+                });
+                document.addEventListener('touchend', function (evt) {
+                    return _this.updateTouchPosition(evt);
+                });
+
+                window.addEventListener('resize', function (evt) {
+                    return _this.onResize(evt);
+                });
+            }
+
+            _createClass(Conductor, [{
+                key: 'start',
+                value: function start() {
+                    var _this2 = this;
+
+                    // Kick off the update loop
+                    window.requestAnimationFrame(function () {
+                        return _this2.everyFrame();
+                    });
+                }
+            }, {
+                key: 'onResize',
+                value: function onResize(evt) {
+                    this.controllers.forEach(function (controller) {
+                        if (typeof controller.onResize === 'function') {
+                            controller.onResize();
+                        }
+                    });
+                }
+            }, {
+                key: 'everyFrame',
+                value: function everyFrame() {
+                    var _this3 = this;
+
+                    this.update();
+                    this.render();
+                    requestAnimationFrame(function () {
+                        return _this3.everyFrame();
+                    });
+                }
+            }, {
+                key: 'update',
+                value: function update() {
+                    var _this4 = this;
+
+                    var curTime = Date.now();
+                    var dt = (curTime - this.lastTime) / 1000;
+
+                    this.updatingControllers = [];
+
+                    this.controllers.forEach(function (controller) {
+                        if (controller.isOnScreen()) {
+                            controller.update(dt, _this4.mousePosition);
+                            _this4.updatingControllers.push(controller);
+                        }
+                    });
+
+                    this.lastTime = curTime;
+
+                    var debug = document.getElementById('debug-content');
+                    if (debug) {
+                        debug.innerHTML = this.updatingControllers.map(function (c) {
+                            return c.id;
+                        }).join('<br>') + '<br>';
+                    }
+                }
+            }, {
+                key: 'render',
+                value: function render() {
+                    this.controllers.forEach(function (controller) {
+                        if (controller.isOnScreen()) {
+                            controller.render();
+                        }
+                    });
+                }
+            }, {
+                key: 'updateMousePosition',
+                value: function updateMousePosition(evt) {
+                    this.mousePosition = {
+                        x: evt.clientX,
+                        y: evt.clientY
+                    };
+                }
+            }, {
+                key: 'updateTouchPosition',
+                value: function updateTouchPosition(evt) {
+                    if (evt.touches.length > 0) {
+                        this.mousePosition = {
+                            x: evt.touches[0].clientX,
+                            y: evt.touches[0].clientY
+                        };
+                    }
+                }
+            }]);
+
+            return Conductor;
+        }();
+
+        exports.default = Conductor;
+
+        /***/
+    }),
+    /* 11 */
+    /***/
+    (function (module, exports, __webpack_require__) {
+
+        "use strict";
+
+
+        Object.defineProperty(exports, "__esModule", {
+            value: true
+        });
+        var titlePoints = exports.titlePoints = [{x:18.34,y:30.16},{x:21.52,y:29.40},{x:24.36,y:31.68},{x:27.13,y:34.06},
+            {x:29.81,y:36.53},{x:32.41,y:39.08},{x:34.93,y:41.72},{x:37.33,y:44.46},
+            {x:39.62,y:47.30},{x:41.79,y:50.23},{x:43.82,y:53.26},{x:45.70,y:56.39},
+            {x:47.40,y:59.61},{x:48.93,y:62.92},{x:50.22,y:66.33},{x:51.09,y:69.87},
+            {x:51.52,y:73.49},{x:51.40,y:77.12},{x:50.50,y:80.65},{x:48.53,y:83.69},
+            {x:45.54,y:85.71},{x:43.74,y:87.79},{x:43.78,y:91.44},{x:43.81,y:95.09},
+            {x:43.85,y:98.73},{x:43.89,y:102.38},{x:43.93,y:106.03},{x:43.97,y:109.67},
+            {x:44.38,y:113.13},{x:47.26,y:115.37},{x:50.13,y:117.62},{x:53.01,y:119.86},
+            {x:55.88,y:122.11},{x:58.76,y:124.35},{x:61.63,y:126.59},{x:62.40,y:128.89},
+            {x:59.35,y:130.88},{x:56.01,y:132.35},{x:52.49,y:133.28},{x:51.27,y:135.88},
+            {x:51.27,y:139.53},{x:51.27,y:143.17},{x:51.27,y:146.82},{x:51.27,y:150.46},
+            {x:51.27,y:154.11},{x:51.27,y:157.76},{x:51.27,y:161.40},{x:51.27,y:165.05},
+            {x:51.27,y:168.70},{x:51.27,y:172.34},{x:51.27,y:175.99},{x:51.27,y:179.64},
+            {x:51.27,y:183.28},{x:51.27,y:186.93},{x:51.27,y:190.58},{x:51.27,y:194.22},
+            {x:51.27,y:197.87},{x:51.27,y:201.52},{x:51.27,y:205.16},{x:51.27,y:208.81},
+            {x:51.27,y:212.45},{x:51.27,y:216.10},{x:51.27,y:219.75},{x:51.27,y:223.39},
+            {x:51.27,y:227.04},{x:51.27,y:230.69},{x:51.27,y:234.33},{x:51.27,y:237.98},
+            {x:51.54,y:241.36},{x:55.18,y:241.36},{x:57.62,y:239.68},{x:58.71,y:236.20},
+            {x:59.72,y:232.70},{x:60.66,y:229.17},{x:61.52,y:225.63},{x:62.30,y:222.07},
+            {x:63.01,y:218.49},{x:63.64,y:214.90},{x:64.19,y:211.30},{x:64.66,y:207.68},
+            {x:65.06,y:204.06},{x:65.37,y:200.42},{x:65.61,y:196.79},{x:65.83,y:193.15},
+            {x:66.04,y:189.50},{x:66.22,y:185.86},{x:66.39,y:182.22},{x:66.54,y:178.58},
+            {x:66.67,y:174.93},{x:66.78,y:171.29},{x:66.88,y:167.64},{x:66.95,y:164.00},
+            {x:67.01,y:160.35},{x:67.05,y:156.70},{x:67.07,y:153.06},{x:67.08,y:149.41},
+            {x:67.08,y:145.77},{x:67.08,y:142.12},{x:67.08,y:138.47},{x:67.08,y:134.83},
+            {x:67.08,y:131.18},{x:67.09,y:127.53},{x:67.11,y:123.89},{x:67.12,y:120.24},
+            {x:67.14,y:116.59},{x:67.15,y:112.95},{x:67.17,y:109.30},{x:67.18,y:105.65},
+            {x:67.20,y:102.01},{x:67.21,y:98.36},{x:67.23,y:94.72},{x:67.25,y:91.07},
+            {x:67.26,y:87.42},{x:67.28,y:83.78},{x:67.29,y:80.13},{x:67.31,y:76.48},
+            {x:67.32,y:72.84},{x:67.34,y:69.19},{x:67.35,y:65.54},{x:67.37,y:61.90},
+            {x:67.39,y:58.25},{x:69.65,y:58.26},{x:72.91,y:59.89},{x:76.17,y:61.52},
+            {x:79.43,y:63.15},{x:82.69,y:64.78},{x:86.28,y:65.03},{x:89.58,y:64.30},
+            {x:91.84,y:61.44},{x:94.11,y:58.59},{x:92.21,y:57.74},{x:88.57,y:57.74},
+            {x:86.09,y:56.44},{x:85.71,y:52.81},{x:88.44,y:51.65},{x:92.05,y:51.15},
+            {x:95.65,y:50.60},{x:99.25,y:50.01},{x:102.84,y:49.36},{x:106.42,y:48.68},
+            {x:109.99,y:47.94},{x:113.55,y:47.15},{x:117.11,y:46.32},{x:120.65,y:45.46},
+            {x:124.18,y:44.55},{x:127.69,y:43.58},{x:131.19,y:42.54},{x:134.67,y:41.45},
+            {x:138.13,y:40.29},{x:141.56,y:39.07},{x:144.98,y:37.80},{x:148.37,y:36.46},
+            {x:147.63,y:35.89},{x:143.99,y:35.89},{x:140.34,y:35.89},{x:136.69,y:35.89},
+            {x:133.05,y:35.89},{x:129.40,y:35.89},{x:125.76,y:35.89},{x:122.11,y:35.89},
+            {x:118.46,y:35.89},{x:114.82,y:35.89},{x:111.17,y:35.89},{x:107.52,y:35.89},
+            {x:103.88,y:35.89},{x:100.23,y:35.89},{x:96.58,y:35.89},{x:92.94,y:35.89},
+            {x:89.29,y:35.89},{x:85.64,y:35.89},{x:82.00,y:35.89},{x:79.64,y:37.37},
+            {x:78.93,y:40.95},{x:77.86,y:44.43},{x:76.34,y:47.74},{x:74.27,y:50.74},
+            {x:71.67,y:53.28},{x:68.49,y:55.05},{x:64.96,y:55.92},{x:61.34,y:55.77},
+            {x:58.10,y:54.17},{x:56.10,y:51.18},{x:56.04,y:47.58},{x:57.71,y:44.38},
+            {x:60.28,y:41.79},{x:62.83,y:39.19},{x:65.35,y:36.55},{x:67.66,y:33.73},
+            {x:69.71,y:30.72},{x:71.21,y:27.40},{x:72.05,y:23.86},{x:72.21,y:20.22},
+            {x:73.64,y:18.00},{x:77.29,y:18.00},{x:78.65,y:20.86},{x:79.37,y:24.43},
+            {x:80.75,y:27.12},{x:84.40,y:27.12},{x:88.04,y:27.12},{x:91.69,y:27.12},
+            {x:95.34,y:27.12},{x:98.98,y:27.12},{x:102.63,y:27.12},{x:106.28,y:27.12},
+            {x:109.92,y:27.12},{x:113.57,y:27.12},{x:117.21,y:27.12},{x:120.86,y:27.12},
+            {x:124.51,y:27.12},{x:128.15,y:27.12},{x:131.80,y:27.12},{x:135.45,y:27.12},
+            {x:139.09,y:27.12},{x:142.74,y:27.12},{x:146.39,y:27.12},{x:150.03,y:27.12},
+            {x:153.68,y:27.12},{x:157.33,y:27.12},{x:160.97,y:27.12},{x:164.62,y:27.12},
+            {x:168.26,y:27.12},{x:171.91,y:27.12},{x:175.56,y:27.12},{x:179.20,y:27.12},
+            {x:179.07,y:25.95},{x:176.00,y:23.98},{x:172.87,y:22.12},{x:169.67,y:20.37},
+            {x:166.43,y:18.70},{x:163.14,y:17.11},{x:159.82,y:15.62},{x:156.44,y:14.23},
+            {x:156.44,y:11.05},{x:158.76,y:9.63},{x:162.38,y:10.06},{x:165.99,y:10.58},
+            {x:169.58,y:11.19},{x:173.16,y:11.89},{x:176.71,y:12.71},{x:180.22,y:13.69},
+            {x:183.70,y:14.80},{x:187.09,y:16.13},{x:190.33,y:17.80},{x:193.37,y:19.81},
+            {x:196.01,y:22.30},{x:197.72,y:25.50},{x:200.15,y:27.08},{x:203.79,y:27.08},
+            {x:207.44,y:27.08},{x:211.09,y:27.08},{x:214.73,y:27.08},{x:218.38,y:27.08},
+            {x:222.03,y:27.08},{x:225.67,y:27.08},{x:229.32,y:27.08},{x:232.96,y:27.08},
+            {x:236.61,y:27.08},{x:240.26,y:27.08},{x:243.90,y:27.08},{x:247.55,y:27.08},
+            {x:251.20,y:27.08},{x:254.84,y:27.08},{x:258.49,y:27.08},{x:262.14,y:27.08},
+            {x:265.78,y:27.08},{x:269.43,y:27.08},{x:273.08,y:27.08},{x:276.72,y:27.08},
+            {x:280.37,y:27.08},{x:282.95,y:24.57},{x:285.49,y:21.95},{x:288.02,y:19.33},
+            {x:290.56,y:16.79},{x:293.16,y:19.35},{x:295.76,y:21.90},{x:298.36,y:24.46},
+            {x:300.96,y:27.02},{x:303.56,y:29.58},{x:306.16,y:32.13},{x:308.76,y:34.69},
+            {x:306.48,y:36.84},{x:302.92,y:37.55},{x:299.29,y:37.93},{x:296.35,y:39.63},
+            {x:293.76,y:42.21},{x:291.04,y:44.63},{x:288.18,y:46.89},{x:285.26,y:49.07},
+            {x:282.24,y:51.12},{x:279.13,y:53.03},{x:275.92,y:53.54},{x:272.66,y:51.92},
+            {x:273.90,y:48.95},{x:275.66,y:45.76},{x:277.36,y:42.54},{x:278.96,y:39.26},
+            {x:280.47,y:35.94},{x:276.87,y:35.91},{x:273.22,y:35.91},{x:269.57,y:35.91},
+            {x:265.93,y:35.91},{x:262.28,y:35.91},{x:258.63,y:35.91},{x:254.99,y:35.91},
+            {x:251.34,y:35.91},{x:247.69,y:35.91},{x:244.05,y:35.91},{x:240.40,y:35.91},
+            {x:236.75,y:35.91},{x:233.11,y:35.91},{x:229.46,y:35.91},{x:225.82,y:35.91},
+            {x:222.17,y:35.91},{x:218.52,y:35.91},{x:214.88,y:35.91},{x:211.23,y:35.91},
+            {x:207.58,y:35.91},{x:203.94,y:35.91},{x:200.29,y:35.91},{x:201.27,y:38.05},
+            {x:204.91,y:38.21},{x:208.55,y:38.43},{x:212.18,y:38.70},{x:215.82,y:39.02},
+            {x:219.44,y:39.39},{x:223.07,y:39.81},{x:226.68,y:40.29},{x:230.29,y:40.82},
+            {x:233.89,y:41.40},{x:237.47,y:42.08},{x:241.04,y:42.84},{x:244.59,y:43.68},
+            {x:248.11,y:44.62},{x:251.60,y:45.67},{x:255.04,y:46.87},{x:258.42,y:48.25},
+            {x:261.71,y:49.82},{x:264.87,y:51.64},{x:267.75,y:53.86},{x:270.11,y:56.63},
+            {x:271.35,y:60.01},{x:270.19,y:63.36},{x:266.87,y:64.69},{x:263.33,y:64.21},
+            {x:260.12,y:62.47},{x:256.84,y:60.88},{x:253.49,y:59.44},{x:250.10,y:58.11},
+            {x:246.68,y:56.83},{x:243.24,y:55.61},{x:239.79,y:54.44},{x:236.33,y:53.31},
+            {x:232.85,y:52.22},{x:229.35,y:51.17},{x:225.85,y:50.15},{x:222.34,y:49.16},
+            {x:218.82,y:48.21},{x:215.29,y:47.30},{x:211.75,y:46.41},{x:208.21,y:45.56},
+            {x:204.66,y:44.74},{x:201.10,y:43.94},{x:199.25,y:42.01},{x:199.84,y:38.41},
+            {x:198.79,y:35.89},{x:195.14,y:35.89},{x:191.50,y:35.89},{x:187.85,y:35.89},
+            {x:184.21,y:35.89},{x:180.56,y:35.89},{x:176.91,y:35.89},{x:173.27,y:35.89},
+            {x:169.62,y:35.89},{x:165.97,y:35.89},{x:162.33,y:35.89},{x:158.68,y:35.89},
+            {x:155.03,y:35.89},{x:156.71,y:37.62},{x:159.65,y:39.77},{x:162.60,y:41.92},
+            {x:165.55,y:44.07},{x:168.49,y:46.22},{x:166.25,y:48.08},{x:162.63,y:48.35},
+            {x:159.07,y:47.79},{x:155.57,y:48.81},{x:152.06,y:49.77},{x:148.52,y:50.67},
+            {x:144.97,y:51.51},{x:141.41,y:52.28},{x:137.83,y:52.99},{x:134.24,y:53.64},
+            {x:130.65,y:54.23},{x:127.71,y:55.12},{x:130.81,y:57.05},{x:133.90,y:58.98},
+            {x:137.00,y:60.90},{x:140.09,y:62.83},{x:143.19,y:64.76},{x:146.28,y:66.69},
+            {x:146.40,y:69.21},{x:143.26,y:70.99},{x:139.66,y:71.46},{x:136.17,y:71.41},
+            {x:134.09,y:74.40},{x:132.00,y:77.39},{x:129.91,y:80.38},{x:127.77,y:83.33},
+            {x:125.53,y:86.20},{x:123.20,y:89.01},{x:123.32,y:90.48},{x:126.95,y:90.17},
+            {x:130.58,y:89.86},{x:134.22,y:89.55},{x:136.96,y:87.85},{x:138.69,y:84.64},
+            {x:140.31,y:81.38},{x:141.94,y:78.11},{x:143.87,y:75.73},{x:146.92,y:77.73},
+            {x:149.97,y:79.73},{x:153.02,y:81.73},{x:156.07,y:83.73},{x:159.12,y:85.73},
+            {x:162.04,y:87.83},{x:163.89,y:90.57},{x:167.54,y:90.57},{x:171.18,y:90.57},
+            {x:174.83,y:90.57},{x:178.48,y:90.57},{x:182.12,y:90.57},{x:185.77,y:90.57},
+            {x:189.29,y:90.27},{x:191.79,y:87.62},{x:193.96,y:85.11},{x:190.32,y:85.11},
+            {x:186.67,y:85.11},{x:183.02,y:85.11},{x:179.38,y:85.11},{x:175.73,y:85.11},
+            {x:172.08,y:85.11},{x:168.44,y:85.11},{x:165.14,y:84.65},{x:164.17,y:81.13},
+            {x:163.21,y:77.62},{x:165.11,y:76.29},{x:168.76,y:76.29},{x:172.40,y:76.29},
+            {x:176.05,y:76.29},{x:179.70,y:76.29},{x:183.34,y:76.29},{x:186.99,y:76.29},
+            {x:190.02,y:74.87},{x:192.53,y:72.22},{x:192.10,y:70.83},{x:188.46,y:70.83},
+            {x:184.81,y:70.83},{x:181.17,y:70.83},{x:177.52,y:70.83},{x:173.87,y:70.83},
+            {x:170.23,y:70.83},{x:166.58,y:70.83},{x:162.93,y:70.83},{x:159.29,y:70.83},
+            {x:157.37,y:68.56},{x:156.39,y:65.04},{x:156.03,y:62.00},{x:159.67,y:62.00},
+            {x:163.32,y:62.00},{x:166.97,y:62.00},{x:170.61,y:62.00},{x:174.26,y:62.00},
+            {x:177.32,y:61.54},{x:176.27,y:58.05},{x:174.92,y:54.66},{x:173.28,y:51.41},
+            {x:172.94,y:48.60},{x:176.07,y:47.48},{x:179.50,y:48.72},{x:182.79,y:50.28},
+            {x:185.80,y:52.33},{x:188.17,y:55.09},{x:189.29,y:58.51},{x:188.41,y:61.99},
+            {x:191.97,y:62.03},{x:195.16,y:60.97},{x:197.68,y:58.33},{x:200.20,y:55.69},
+            {x:202.91,y:58.05},{x:205.62,y:60.49},{x:208.34,y:62.92},{x:211.05,y:65.36},
+            {x:211.26,y:68.36},{x:208.33,y:70.42},{x:204.73,y:70.85},{x:201.08,y:70.85},
+            {x:197.43,y:70.85},{x:193.92,y:70.90},{x:196.73,y:73.22},{x:199.44,y:75.66},
+            {x:202.16,y:78.08},{x:204.08,y:80.97},{x:202.02,y:83.88},{x:198.58,y:84.99},
+            {x:194.94,y:85.06},{x:196.42,y:86.91},{x:199.15,y:89.32},{x:201.90,y:91.71},
+            {x:204.32,y:94.44},{x:204.38,y:92.14},{x:206.20,y:90.19},{x:209.27,y:88.42},
+            {x:211.58,y:85.60},{x:213.50,y:82.50},{x:215.26,y:79.30},{x:216.90,y:76.05},
+            {x:218.44,y:72.74},{x:219.89,y:69.40},{x:221.27,y:66.02},{x:222.57,y:62.62},
+            {x:223.79,y:59.18},{x:224.90,y:55.71},{x:227.46,y:56.19},{x:230.57,y:58.09},
+            {x:233.69,y:59.99},{x:236.80,y:61.88},{x:239.92,y:63.78},{x:243.03,y:65.68},
+            {x:245.16,y:67.82},{x:242.44,y:70.18},{x:238.94,y:71.12},{x:235.30,y:71.11},
+            {x:232.72,y:72.83},{x:230.69,y:75.86},{x:228.62,y:78.86},{x:226.50,y:81.83},
+            {x:224.31,y:84.75},{x:222.04,y:87.60},{x:220.50,y:89.96},{x:224.13,y:89.66},
+            {x:227.76,y:89.36},{x:231.39,y:89.00},{x:235.01,y:88.51},{x:236.73,y:85.39},
+            {x:238.30,y:82.10},{x:239.83,y:78.79},{x:241.40,y:75.50},{x:243.75,y:74.91},
+            {x:246.80,y:76.91},{x:249.85,y:78.91},{x:252.90,y:80.90},{x:255.94,y:82.90},
+            {x:258.99,y:84.90},{x:259.81,y:87.29},{x:256.72,y:89.16},{x:253.13,y:89.70},
+            {x:249.50,y:89.39},{x:247.47,y:92.41},{x:245.37,y:95.39},{x:243.21,y:98.33},
+            {x:241.01,y:101.23},{x:238.76,y:104.10},{x:236.47,y:106.94},{x:234.16,y:109.77},
+            {x:231.83,y:112.57},{x:229.47,y:115.35},{x:227.09,y:118.11},{x:224.68,y:120.85},
+            {x:227.96,y:120.51},{x:231.57,y:120.00},{x:235.18,y:119.48},{x:238.79,y:118.96},
+            {x:242.40,y:118.45},{x:242.93,y:116.06},{x:241.59,y:112.67},{x:240.09,y:109.35},
+            {x:238.46,y:106.08},{x:240.31,y:104.01},{x:243.36,y:104.69},{x:246.18,y:107.00},
+            {x:248.86,y:109.47},{x:251.36,y:112.12},{x:253.60,y:115.00},{x:255.46,y:118.13},
+            {x:256.96,y:121.45},{x:257.99,y:124.95},{x:258.35,y:128.57},{x:257.77,y:132.15},
+            {x:255.88,y:135.23},{x:252.64,y:136.76},{x:249.14,y:136.12},{x:247.10,y:133.17},
+            {x:246.41,y:129.60},{x:245.94,y:125.98},{x:243.45,y:125.34},{x:239.99,y:126.50},
+            {x:236.53,y:127.66},{x:233.07,y:128.82},{x:229.62,y:129.98},{x:226.16,y:131.15},
+            {x:222.70,y:132.31},{x:219.25,y:133.47},{x:215.79,y:134.63},{x:212.96,y:136.86},
+            {x:211.40,y:133.99},{x:209.95,y:130.64},{x:208.50,y:127.30},{x:207.05,y:123.95},
+            {x:209.20,y:122.21},{x:212.34,y:120.52},{x:214.93,y:117.96},{x:217.40,y:115.27},
+            {x:219.72,y:112.46},{x:221.92,y:109.55},{x:224.05,y:106.59},{x:226.10,y:103.58},
+            {x:228.07,y:100.51},{x:229.95,y:97.38},{x:226.68,y:98.54},{x:223.24,y:99.76},
+            {x:219.77,y:100.90},{x:216.30,y:102.01},{x:213.18,y:103.64},{x:210.21,y:105.42},
+            {x:208.72,y:102.09},{x:207.24,y:98.76},{x:205.75,y:95.43},{x:203.91,y:96.45},
+            {x:201.22,y:98.79},{x:197.65,y:99.40},{x:197.56,y:100.64},{x:200.42,y:102.91},
+            {x:203.27,y:105.19},{x:206.12,y:107.46},{x:208.98,y:109.73},{x:206.97,y:112.03},
+            {x:203.55,y:113.26},{x:202.99,y:116.45},{x:202.99,y:120.10},{x:202.99,y:123.75},
+            {x:202.99,y:127.39},{x:202.99,y:131.04},{x:200.36,y:133.02},{x:196.84,y:133.96},
+            {x:195.54,y:135.15},{x:198.41,y:137.40},{x:201.28,y:139.64},{x:204.16,y:141.89},
+            {x:207.03,y:144.13},{x:206.44,y:146.44},{x:203.10,y:147.87},{x:200.40,y:149.38},
+            {x:199.93,y:152.99},{x:199.46,y:156.61},{x:198.98,y:160.22},{x:198.51,y:163.84},
+            {x:198.03,y:167.45},{x:197.56,y:171.07},{x:197.08,y:174.68},{x:196.61,y:178.30},
+            {x:199.06,y:175.96},{x:201.60,y:176.24},{x:204.10,y:178.89},{x:206.61,y:181.54},
+            {x:209.11,y:184.20},{x:211.62,y:186.85},{x:211.52,y:183.68},{x:210.58,y:180.16},
+            {x:209.72,y:176.69},{x:213.36,y:176.69},{x:217.00,y:176.68},{x:217.00,y:173.03},
+            {x:217.00,y:169.39},{x:217.00,y:165.74},{x:217.00,y:162.10},{x:217.00,y:158.45},
+            {x:217.00,y:154.80},{x:217.00,y:151.16},{x:217.00,y:147.51},{x:217.00,y:143.86},
+            {x:217.00,y:140.22},{x:218.15,y:137.88},{x:221.77,y:138.34},{x:225.38,y:138.81},
+            {x:229.00,y:139.28},{x:232.62,y:139.74},{x:235.74,y:140.53},{x:233.99,y:143.70},
+            {x:230.79,y:145.35},{x:229.47,y:147.95},{x:229.47,y:151.60},{x:229.47,y:155.24},
+            {x:229.47,y:158.89},{x:229.47,y:162.54},{x:230.11,y:164.27},{x:232.21,y:161.29},
+            {x:234.20,y:158.24},{x:236.06,y:155.10},{x:237.81,y:151.90},{x:239.48,y:148.66},
+            {x:241.08,y:145.39},{x:242.63,y:142.08},{x:244.49,y:140.07},{x:247.53,y:142.09},
+            {x:250.57,y:144.10},{x:253.60,y:146.12},{x:256.64,y:148.14},{x:259.68,y:150.16},
+            {x:262.00,y:150.86},{x:262.00,y:147.21},{x:262.00,y:143.56},{x:262.00,y:139.92},
+            {x:262.00,y:136.27},{x:262.00,y:132.62},{x:262.00,y:128.98},{x:262.00,y:125.33},
+            {x:262.00,y:121.68},{x:262.00,y:118.04},{x:262.00,y:114.39},{x:262.00,y:110.74},
+            {x:262.00,y:107.10},{x:262.00,y:103.45},{x:262.00,y:99.81},{x:262.00,y:96.16},
+            {x:262.00,y:92.51},{x:262.00,y:88.87},{x:262.00,y:85.22},{x:262.00,y:81.57},
+            {x:262.00,y:77.93},{x:263.12,y:75.55},{x:266.74,y:76.02},{x:270.35,y:76.49},
+            {x:273.97,y:76.95},{x:277.59,y:77.42},{x:281.21,y:77.84},{x:282.97,y:75.96},
+            {x:282.97,y:72.31},{x:282.97,y:68.66},{x:282.97,y:65.02},{x:282.97,y:61.37},
+            {x:282.97,y:57.72},{x:285.43,y:56.86},{x:289.05,y:57.31},{x:292.67,y:57.76},
+            {x:296.29,y:58.20},{x:299.91,y:58.65},{x:303.53,y:59.10},{x:304.56,y:61.20},
+            {x:302.13,y:63.86},{x:298.81,y:65.34},{x:295.74,y:66.50},{x:295.74,y:70.14},
+            {x:295.74,y:73.79},{x:295.74,y:77.44},{x:295.74,y:81.08},{x:295.74,y:84.73},
+            {x:295.74,y:88.38},{x:295.74,y:92.02},{x:295.74,y:95.67},{x:295.74,y:99.32},
+            {x:295.74,y:102.96},{x:295.74,y:106.61},{x:295.74,y:110.26},{x:295.74,y:113.90},
+            {x:295.74,y:117.55},{x:295.74,y:121.19},{x:295.74,y:124.84},{x:295.74,y:128.49},
+            {x:295.74,y:132.13},{x:295.74,y:135.78},{x:295.74,y:139.43},{x:295.74,y:143.07},
+            {x:295.74,y:146.72},{x:295.74,y:150.37},{x:295.74,y:154.01},{x:295.74,y:157.66},
+            {x:295.74,y:161.31},{x:295.74,y:164.95},{x:295.74,y:168.60},{x:295.74,y:172.24},
+            {x:295.74,y:175.89},{x:295.74,y:179.54},{x:295.74,y:183.18},{x:295.74,y:186.83},
+            {x:295.74,y:190.48},{x:295.74,y:194.12},{x:295.74,y:197.77},{x:295.74,y:201.42},
+            {x:295.74,y:205.06},{x:295.74,y:208.71},{x:295.74,y:212.36},{x:295.74,y:216.00},
+            {x:295.62,y:219.65},{x:295.27,y:223.27},{x:294.58,y:226.85},{x:293.42,y:230.31},
+            {x:291.33,y:233.26},{x:288.31,y:235.29},{x:284.90,y:236.57},{x:281.35,y:237.36},
+            {x:280.68,y:233.97},{x:279.78,y:230.45},{x:278.13,y:227.21},{x:275.28,y:224.98},
+            {x:271.90,y:223.63},{x:269.90,y:221.52},{x:269.90,y:217.87},{x:273.26,y:218.15},
+            {x:276.89,y:218.54},{x:280.53,y:218.49},{x:282.79,y:215.95},{x:282.93,y:212.31},
+            {x:282.93,y:208.67},{x:282.93,y:205.02},{x:282.93,y:201.38},{x:282.93,y:197.73},
+            {x:282.93,y:194.08},{x:282.93,y:190.44},{x:282.93,y:186.79},{x:282.93,y:183.14},
+            {x:282.93,y:179.50},{x:282.93,y:175.85},{x:282.93,y:172.20},{x:282.93,y:168.56},
+            {x:282.93,y:164.91},{x:282.93,y:161.26},{x:282.93,y:157.62},{x:282.93,y:153.97},
+            {x:282.93,y:150.33},{x:282.93,y:146.68},{x:282.93,y:143.03},{x:282.93,y:139.39},
+            {x:282.93,y:135.74},{x:282.93,y:132.09},{x:282.93,y:128.45},{x:282.93,y:124.80},
+            {x:282.93,y:121.15},{x:282.93,y:117.51},{x:282.93,y:113.86},{x:282.93,y:110.21},
+            {x:282.93,y:106.57},{x:282.93,y:102.92},{x:282.93,y:99.27},{x:282.93,y:95.63},
+            {x:282.93,y:91.98},{x:282.93,y:88.34},{x:282.93,y:84.69},{x:282.93,y:81.04},
+            {x:282.46,y:77.87},{x:280.19,y:79.75},{x:277.58,y:82.22},{x:274.42,y:83.60},
+            {x:274.42,y:87.25},{x:274.42,y:90.89},{x:274.42,y:94.54},{x:274.42,y:98.18},
+            {x:274.42,y:101.83},{x:274.42,y:105.48},{x:274.42,y:109.12},{x:274.42,y:112.77},
+            {x:274.42,y:116.42},{x:274.42,y:120.06},{x:274.42,y:123.71},{x:274.42,y:127.36},
+            {x:274.42,y:131.00},{x:274.42,y:134.65},{x:274.42,y:138.30},{x:274.42,y:141.94},
+            {x:274.42,y:145.59},{x:274.42,y:149.24},{x:274.42,y:152.88},{x:274.42,y:156.53},
+            {x:274.42,y:160.17},{x:274.42,y:163.82},{x:274.42,y:167.47},{x:274.42,y:171.11},
+            {x:274.42,y:174.76},{x:274.42,y:178.41},{x:274.42,y:182.05},{x:274.42,y:185.70},
+            {x:274.42,y:189.35},{x:274.42,y:192.99},{x:274.42,y:196.64},{x:274.42,y:200.29},
+            {x:273.03,y:203.44},{x:269.97,y:205.41},{x:266.52,y:206.57},{x:262.89,y:206.79},
+            {x:262.00,y:204.03},{x:262.00,y:200.39},{x:262.00,y:196.74},{x:262.00,y:193.10},
+            {x:262.00,y:189.45},{x:262.00,y:185.80},{x:262.00,y:182.16},{x:262.00,y:178.51},
+            {x:262.00,y:174.86},{x:262.00,y:171.22},{x:262.00,y:167.57},{x:262.00,y:163.92},
+            {x:262.00,y:160.28},{x:262.00,y:156.63},{x:262.00,y:152.98},{x:259.57,y:154.03},
+            {x:256.09,y:155.03},{x:252.44,y:155.05},{x:249.63,y:155.87},{x:247.34,y:158.71},
+            {x:244.94,y:161.46},{x:242.43,y:164.10},{x:239.82,y:166.65},{x:237.12,y:169.10},
+            {x:234.32,y:171.44},{x:231.44,y:173.66},{x:229.42,y:176.28},{x:232.71,y:176.64},
+            {x:236.35,y:176.64},{x:240.00,y:176.64},{x:243.65,y:176.64},{x:246.17,y:174.31},
+            {x:248.45,y:171.46},{x:250.79,y:169.41},{x:253.48,y:171.86},{x:256.19,y:174.31},
+            {x:258.73,y:176.92},{x:261.16,y:179.64},{x:261.56,y:182.91},{x:258.79,y:185.19},
+            {x:255.22,y:185.76},{x:251.57,y:185.76},{x:247.92,y:185.76},{x:244.28,y:185.76},
+            {x:241.85,y:186.67},{x:242.99,y:190.13},{x:244.31,y:193.53},{x:245.81,y:196.86},
+            {x:247.48,y:200.10},{x:249.32,y:203.25},{x:251.38,y:206.25},{x:253.70,y:209.07},
+            {x:256.24,y:211.68},{x:258.99,y:214.07},{x:261.93,y:216.22},{x:265.04,y:218.13},
+            {x:265.46,y:221.23},{x:262.70,y:222.61},{x:259.18,y:223.56},{x:256.15,y:225.47},
+            {x:254.53,y:228.71},{x:253.68,y:232.25},{x:254.50,y:234.83},{x:258.04,y:235.72},
+            {x:261.54,y:236.75},{x:264.99,y:237.90},{x:268.41,y:239.19},{x:271.76,y:240.62},
+            {x:275.03,y:242.24},{x:278.18,y:244.08},{x:281.20,y:246.11},{x:284.07,y:248.36},
+            {x:286.66,y:250.92},{x:288.90,y:253.80},{x:290.67,y:256.98},{x:291.63,y:260.48},
+            {x:291.50,y:264.11},{x:289.64,y:267.16},{x:286.26,y:268.39},{x:282.64,y:268.13},
+            {x:279.71,y:266.18},{x:277.45,y:263.32},{x:275.08,y:260.54},{x:272.62,y:257.86},
+            {x:270.05,y:255.26},{x:267.40,y:252.77},{x:264.68,y:250.33},{x:261.93,y:247.94},
+            {x:259.12,y:245.61},{x:256.26,y:243.36},{x:253.34,y:241.17},{x:250.37,y:239.05},
+            {x:248.35,y:236.74},{x:250.16,y:233.86},{x:253.29,y:233.98},{x:254.00,y:230.40},
+            {x:251.37,y:227.88},{x:249.08,y:225.05},{x:247.12,y:221.97},{x:245.31,y:218.81},
+            {x:243.61,y:215.58},{x:242.15,y:212.24},{x:240.81,y:208.85},{x:239.77,y:205.36},
+            {x:238.82,y:201.84},{x:237.96,y:198.29},{x:237.18,y:194.73},{x:236.47,y:191.16},
+            {x:235.82,y:187.57},{x:233.71,y:185.76},{x:230.07,y:185.76},{x:229.45,y:188.79},
+            {x:229.45,y:192.44},{x:229.45,y:196.08},{x:229.45,y:199.73},{x:229.45,y:203.38},
+            {x:229.45,y:207.02},{x:229.45,y:210.67},{x:229.75,y:213.91},{x:233.21,y:212.74},
+            {x:236.58,y:211.37},{x:239.93,y:209.92},{x:241.92,y:211.82},{x:242.65,y:215.03},
+            {x:239.89,y:217.41},{x:237.09,y:219.75},{x:234.28,y:222.07},{x:231.44,y:224.36},
+            {x:228.58,y:226.62},{x:225.69,y:228.84},{x:224.05,y:232.02},{x:221.77,y:234.85},
+            {x:219.36,y:232.99},{x:217.03,y:230.19},{x:214.69,y:227.39},{x:212.36,y:224.59},
+            {x:211.37,y:221.92},{x:214.05,y:219.45},{x:216.31,y:216.61},{x:217.01,y:213.07},
+            {x:217.01,y:209.43},{x:217.01,y:205.78},{x:217.01,y:202.13},{x:217.01,y:198.49},
+            {x:217.01,y:194.84},{x:217.01,y:191.19},{x:217.01,y:187.55},{x:215.15,y:185.76},
+            {x:212.00,y:186.41},{x:209.49,y:188.92},{x:206.95,y:190.89},{x:206.76,y:194.53},
+            {x:206.48,y:198.17},{x:206.12,y:201.80},{x:205.67,y:205.41},{x:205.14,y:209.02},
+            {x:204.48,y:212.61},{x:203.54,y:216.13},{x:202.24,y:219.53},{x:200.44,y:222.70},
+            {x:198.07,y:225.46},{x:195.13,y:227.61},{x:191.78,y:229.02},{x:188.23,y:229.83},
+            {x:184.61,y:230.30},{x:180.97,y:230.42},{x:180.70,y:233.44},{x:184.31,y:233.97},
+            {x:187.88,y:234.70},{x:191.40,y:235.65},{x:194.84,y:236.85},{x:198.18,y:238.31},
+            {x:201.35,y:240.11},{x:204.10,y:242.49},{x:206.24,y:245.43},{x:207.26,y:248.91},
+            {x:206.64,y:252.45},{x:204.22,y:255.12},{x:200.79,y:256.24},{x:197.33,y:255.31},
+            {x:194.28,y:253.32},{x:191.30,y:251.22},{x:188.31,y:249.12},{x:185.32,y:247.03},
+            {x:182.32,y:244.97},{x:179.30,y:242.93},{x:176.27,y:240.90},{x:173.16,y:238.99},
+            {x:169.96,y:237.25},{x:168.88,y:234.63},{x:171.14,y:232.85},{x:174.78,y:232.97},
+            {x:178.42,y:233.22},{x:180.51,y:231.80},{x:180.31,y:228.18},{x:178.61,y:224.98},
+            {x:175.70,y:222.84},{x:172.23,y:221.75},{x:169.33,y:220.62},{x:169.33,y:216.97},
+            {x:171.87,y:215.91},{x:175.52,y:216.07},{x:179.15,y:216.31},{x:182.80,y:216.46},
+            {x:186.44,y:216.36},{x:189.78,y:215.13},{x:191.66,y:212.03},{x:192.77,y:208.56},
+            {x:193.41,y:204.98},{x:193.87,y:201.36},{x:191.73,y:203.50},{x:188.85,y:205.64},
+            {x:185.25,y:206.15},{x:181.61,y:206.15},{x:177.96,y:206.15},{x:174.32,y:206.15},
+            {x:170.67,y:206.15},{x:167.02,y:206.15},{x:163.38,y:206.15},{x:159.73,y:206.15},
+            {x:156.36,y:205.79},{x:155.42,y:202.26},{x:154.47,y:198.74},{x:155.84,y:197.00},
+            {x:159.49,y:197.00},{x:163.13,y:197.00},{x:166.78,y:197.00},{x:170.43,y:197.00},
+            {x:174.07,y:197.00},{x:177.53,y:196.56},{x:180.03,y:193.91},{x:182.55,y:191.79},
+            {x:185.21,y:194.29},{x:187.86,y:196.79},{x:190.52,y:199.29},{x:193.38,y:201.26},
+            {x:194.17,y:198.05},{x:194.54,y:194.43},{x:194.89,y:190.80},{x:193.10,y:189.10},
+            {x:189.45,y:189.10},{x:185.80,y:189.10},{x:182.16,y:189.10},{x:178.51,y:189.10},
+            {x:174.86,y:189.10},{x:171.46,y:189.77},{x:168.64,y:192.08},{x:165.78,y:192.35},
+            {x:162.87,y:190.15},{x:159.97,y:187.95},{x:157.06,y:185.75},{x:157.46,y:183.45},
+            {x:160.19,y:181.29},{x:160.68,y:177.68},{x:161.16,y:174.06},{x:161.64,y:170.45},
+            {x:162.11,y:166.83},{x:162.56,y:163.21},{x:162.95,y:159.59},{x:163.29,y:155.96},
+            {x:164.07,y:153.08},{x:167.59,y:154.03},{x:171.11,y:154.98},{x:174.63,y:155.94},
+            {x:178.15,y:156.89},{x:181.67,y:157.84},{x:185.19,y:158.80},{x:184.62,y:161.54},
+            {x:181.99,y:164.03},{x:178.60,y:165.33},{x:174.98,y:165.70},{x:174.09,y:168.75},
+            {x:173.68,y:172.37},{x:173.19,y:175.99},{x:172.64,y:179.59},{x:175.80,y:180.00},
+            {x:179.45,y:180.00},{x:183.10,y:180.00},{x:184.43,y:177.40},{x:184.85,y:173.77},
+            {x:185.28,y:170.15},{x:185.71,y:166.53},{x:186.13,y:162.91},{x:186.56,y:159.29},
+            {x:186.99,y:155.67},{x:187.41,y:152.05},{x:187.19,y:149.00},{x:183.54,y:149.00},
+            {x:179.90,y:149.00},{x:176.25,y:149.00},{x:172.60,y:149.00},{x:168.96,y:149.00},
+            {x:165.31,y:149.00},{x:161.66,y:149.00},{x:160.37,y:145.84},{x:159.32,y:142.35},
+            {x:159.65,y:139.88},{x:163.30,y:139.88},{x:166.94,y:139.88},{x:170.59,y:139.88},
+            {x:174.24,y:139.88},{x:177.88,y:139.88},{x:181.53,y:139.88},{x:185.18,y:139.88},
+            {x:188.26,y:138.63},{x:190.67,y:135.90},{x:190.20,y:134.17},{x:190.20,y:130.52},
+            {x:190.20,y:126.87},{x:190.20,y:123.23},{x:190.20,y:119.58},{x:190.20,y:115.94},
+            {x:188.17,y:114.32},{x:184.52,y:114.32},{x:180.88,y:114.32},{x:177.23,y:114.32},
+            {x:174.09,y:114.83},{x:174.09,y:118.47},{x:175.21,y:121.00},{x:178.86,y:121.00},
+            {x:182.50,y:121.00},{x:186.15,y:121.00},{x:189.80,y:121.00},{x:190.09,y:124.35},
+            {x:190.09,y:128.00},{x:188.56,y:130.12},{x:184.92,y:130.12},{x:181.27,y:130.12},
+            {x:177.63,y:130.12},{x:174.09,y:130.23},{x:173.05,y:133.43},{x:169.77,y:135.02},
+            {x:166.26,y:135.97},{x:162.62,y:136.20},{x:161.32,y:133.86},{x:161.32,y:130.21},
+            {x:161.32,y:126.56},{x:161.32,y:122.92},{x:161.32,y:119.27},{x:161.32,y:115.62},
+            {x:161.32,y:111.98},{x:161.32,y:108.33},{x:161.32,y:104.68},{x:161.32,y:101.04},
+            {x:162.32,y:99.00},{x:165.60,y:100.61},{x:168.87,y:102.21},{x:172.15,y:103.81},
+            {x:175.42,y:105.42},{x:179.05,y:105.51},{x:182.69,y:105.51},{x:186.34,y:105.51},
+            {x:189.65,y:104.63},{x:192.35,y:102.18},{x:195.04,y:99.73},{x:192.16,y:99.43},
+            {x:188.52,y:99.43},{x:184.87,y:99.43},{x:181.22,y:99.43},{x:177.58,y:99.43},
+            {x:173.93,y:99.43},{x:170.28,y:99.43},{x:166.64,y:99.43},{x:164.89,y:96.93},
+            {x:163.92,y:93.42},{x:162.85,y:89.94},{x:161.11,y:88.61},{x:158.07,y:90.57},
+            {x:154.50,y:91.22},{x:150.90,y:90.75},{x:148.56,y:93.11},{x:146.44,y:96.08},
+            {x:144.29,y:99.02},{x:142.05,y:101.91},{x:139.65,y:104.64},{x:137.26,y:107.40},
+            {x:134.88,y:110.15},{x:132.47,y:112.89},{x:130.02,y:115.60},{x:127.52,y:118.25},
+            {x:126.13,y:120.26},{x:129.75,y:119.77},{x:133.36,y:119.30},{x:136.98,y:118.83},
+            {x:140.58,y:118.28},{x:144.17,y:117.65},{x:143.30,y:114.26},{x:142.12,y:110.81},
+            {x:140.74,y:107.43},{x:140.17,y:104.42},{x:143.05,y:102.62},{x:145.84,y:104.96},
+            {x:148.51,y:107.45},{x:151.00,y:110.11},{x:153.24,y:112.99},{x:155.12,y:116.11},
+            {x:156.63,y:119.42},{x:157.75,y:122.89},{x:158.27,y:126.50},{x:157.98,y:130.12},
+            {x:156.49,y:133.42},{x:153.74,y:135.73},{x:150.16,y:135.99},{x:147.17,y:134.10},
+            {x:146.38,y:130.58},{x:146.02,y:126.95},{x:144.91,y:124.51},{x:141.45,y:125.64},
+            {x:138.00,y:126.82},{x:134.56,y:128.02},{x:131.12,y:129.25},{x:127.69,y:130.48},
+            {x:124.25,y:131.70},{x:120.81,y:132.91},{x:117.55,y:134.35},{x:115.11,y:137.05},
+            {x:117.24,y:138.35},{x:120.86,y:138.81},{x:124.48,y:139.28},{x:128.09,y:139.75},
+            {x:131.71,y:140.22},{x:131.70,y:142.74},{x:129.00,y:145.09},{x:126.34,y:146.71},
+            {x:126.34,y:150.36},{x:126.34,y:154.01},{x:126.34,y:157.65},{x:126.34,y:161.30},
+            {x:126.34,y:164.95},{x:128.56,y:162.15},{x:130.67,y:159.18},{x:132.66,y:156.12},
+            {x:134.51,y:152.98},{x:136.28,y:149.79},{x:137.99,y:146.57},{x:139.65,y:143.33},
+            {x:141.26,y:140.07},{x:144.20,y:142.21},{x:147.15,y:144.36},{x:150.10,y:146.51},
+            {x:153.04,y:148.66},{x:155.99,y:150.81},{x:158.94,y:152.95},{x:156.59,y:155.21},
+            {x:153.09,y:156.14},{x:149.47,y:155.83},{x:146.56,y:156.55},{x:144.22,y:159.34},
+            {x:141.78,y:162.05},{x:139.25,y:164.68},{x:136.63,y:167.22},{x:133.91,y:169.64},
+            {x:131.07,y:171.93},{x:128.13,y:174.08},{x:126.62,y:176.50},{x:130.27,y:176.50},
+            {x:133.91,y:176.50},{x:137.56,y:176.50},{x:140.31,y:174.63},{x:142.58,y:171.78},
+            {x:144.86,y:168.93},{x:147.43,y:171.45},{x:150.01,y:174.03},{x:152.59,y:176.61},
+            {x:155.17,y:179.19},{x:156.34,y:182.12},{x:153.94,y:184.76},{x:150.42,y:185.60},
+            {x:146.78,y:185.62},{x:143.13,y:185.62},{x:139.48,y:185.62},{x:139.23,y:188.21},
+            {x:140.36,y:191.67},{x:141.68,y:195.07},{x:143.19,y:198.39},{x:144.89,y:201.62},
+            {x:146.76,y:204.74},{x:148.91,y:207.69},{x:151.29,y:210.45},{x:153.90,y:213.00},
+            {x:156.71,y:215.32},{x:159.70,y:217.40},{x:162.86,y:219.22},{x:162.60,y:222.64},
+            {x:159.30,y:223.51},{x:155.81,y:224.55},{x:153.01,y:226.77},{x:151.58,y:230.10},
+            {x:150.36,y:233.53},{x:149.30,y:236.99},{x:147.49,y:240.09},{x:144.30,y:241.80},
+            {x:140.95,y:242.70},{x:140.95,y:246.34},{x:140.95,y:249.99},{x:140.95,y:253.64},
+            {x:141.36,y:257.22},{x:144.44,y:258.83},{x:148.08,y:259.08},{x:151.73,y:259.17},
+            {x:155.37,y:259.19},{x:159.02,y:259.19},{x:162.66,y:259.19},{x:166.31,y:259.19},
+            {x:169.96,y:259.19},{x:173.60,y:259.19},{x:177.25,y:259.19},{x:180.90,y:259.19},
+            {x:184.54,y:259.19},{x:188.19,y:259.19},{x:191.84,y:259.19},{x:195.48,y:259.19},
+            {x:199.13,y:259.19},{x:202.78,y:259.19},{x:206.42,y:259.19},{x:210.07,y:259.19},
+            {x:213.71,y:259.18},{x:217.36,y:259.14},{x:221.01,y:259.06},{x:224.65,y:258.90},
+            {x:228.25,y:258.34},{x:231.38,y:256.59},{x:233.34,y:253.52},{x:234.76,y:250.17},
+            {x:235.91,y:246.71},{x:237.03,y:243.24},{x:238.11,y:239.76},{x:240.83,y:238.51},
+            {x:241.49,y:241.50},{x:241.49,y:245.15},{x:241.49,y:248.79},{x:241.49,y:252.44},
+            {x:241.49,y:256.08},{x:244.63,y:257.42},{x:247.93,y:258.96},{x:249.95,y:261.84},
+            {x:249.46,y:265.41},{x:247.06,y:268.08},{x:243.70,y:269.47},{x:240.16,y:270.32},
+            {x:236.56,y:270.92},{x:232.95,y:271.41},{x:229.32,y:271.79},{x:225.68,y:272.07},
+            {x:222.04,y:272.25},{x:218.40,y:272.37},{x:214.75,y:272.47},{x:211.11,y:272.55},
+            {x:207.46,y:272.60},{x:203.82,y:272.65},{x:200.17,y:272.68},{x:196.52,y:272.70},
+            {x:192.88,y:272.71},{x:189.23,y:272.71},{x:185.58,y:272.71},{x:181.94,y:272.71},
+            {x:178.29,y:272.71},{x:174.64,y:272.71},{x:171.00,y:272.71},{x:167.35,y:272.71},
+            {x:163.70,y:272.71},{x:160.06,y:272.71},{x:156.41,y:272.71},{x:152.77,y:272.71},
+            {x:149.12,y:272.70},{x:145.47,y:272.57},{x:141.84,y:272.33},{x:138.21,y:271.98},
+            {x:134.66,y:271.16},{x:131.33,y:269.68},{x:128.77,y:267.13},{x:127.53,y:263.72},
+            {x:127.04,y:260.11},{x:127.00,y:256.47},{x:127.00,y:252.82},{x:127.00,y:249.17},
+            {x:127.00,y:245.53},{x:127.00,y:241.88},{x:127.00,y:238.24},{x:127.00,y:234.59},
+            {x:128.92,y:233.14},{x:132.53,y:233.62},{x:136.15,y:234.11},{x:139.76,y:234.59},
+            {x:143.38,y:235.07},{x:146.99,y:235.56},{x:149.85,y:234.74},{x:151.21,y:231.36},
+            {x:148.67,y:228.84},{x:146.33,y:226.05},{x:144.30,y:223.01},{x:142.45,y:219.87},
+            {x:140.76,y:216.64},{x:139.33,y:213.29},{x:138.01,y:209.89},{x:136.86,y:206.43},
+            {x:135.83,y:202.94},{x:134.91,y:199.41},{x:134.11,y:195.85},{x:133.42,y:192.27},
+            {x:132.85,y:188.67},{x:131.77,y:185.75},{x:128.13,y:185.75},{x:126.40,y:187.67},
+            {x:126.40,y:191.31},{x:126.40,y:194.96},{x:126.40,y:198.61},{x:126.40,y:202.25},
+            {x:126.40,y:205.90},{x:126.40,y:209.55},{x:126.40,y:213.19},{x:128.45,y:213.81},
+            {x:131.86,y:212.52},{x:135.24,y:211.15},{x:138.14,y:210.40},{x:139.46,y:213.80},
+            {x:138.44,y:216.58},{x:135.63,y:218.91},{x:132.84,y:221.26},{x:130.05,y:223.61},
+            {x:127.23,y:225.92},{x:124.36,y:228.17},{x:121.87,y:230.66},{x:120.06,y:233.81},
+            {x:117.53,y:234.81},{x:114.51,y:235.82},{x:114.16,y:239.29},{x:113.76,y:242.91},
+            {x:112.93,y:246.46},{x:111.69,y:249.89},{x:110.10,y:253.17},{x:108.17,y:256.26},
+            {x:105.91,y:259.11},{x:103.33,y:261.69},{x:100.45,y:263.93},{x:97.33,y:265.80},
+            {x:93.93,y:267.12},{x:90.35,y:267.80},{x:86.72,y:267.81},{x:83.29,y:266.62},
+            {x:80.60,y:264.20},{x:79.56,y:260.76},{x:80.74,y:257.38},{x:83.62,y:255.20},
+            {x:86.91,y:253.63},{x:90.24,y:252.13},{x:93.58,y:250.67},{x:96.85,y:249.07},
+            {x:100.01,y:247.25},{x:103.03,y:245.21},{x:105.64,y:242.67},{x:107.65,y:239.64},
+            {x:108.98,y:236.25},{x:112.15,y:235.83},{x:115.60,y:235.20},{x:115.95,y:232.90},
+            {x:113.61,y:230.10},{x:111.27,y:227.31},{x:108.93,y:224.51},{x:108.21,y:221.91},
+            {x:110.96,y:219.51},{x:113.29,y:216.73},{x:114.00,y:213.19},{x:114.00,y:209.55},
+            {x:114.00,y:205.90},{x:114.00,y:202.25},{x:114.00,y:198.61},{x:114.00,y:194.96},
+            {x:114.00,y:191.31},{x:114.00,y:187.67},{x:112.26,y:185.76},{x:108.62,y:185.76},
+            {x:106.25,y:184.09},{x:105.32,y:180.56},{x:104.38,y:177.04},{x:107.50,y:176.64},
+            {x:111.15,y:176.64},{x:114.00,y:175.84},{x:114.00,y:172.20},{x:114.00,y:168.55},
+            {x:114.00,y:164.91},{x:114.00,y:161.26},{x:114.00,y:157.61},{x:114.00,y:153.97},
+            {x:114.00,y:150.32},{x:114.00,y:146.67},{x:114.00,y:143.03},{x:114.00,y:139.38},
+            {x:114.54,y:136.76},{x:112.70,y:133.62},{x:110.85,y:130.47},{x:109.01,y:127.33},
+            {x:107.17,y:124.18},{x:109.16,y:122.28},{x:112.32,y:120.55},{x:115.10,y:118.19},
+            {x:117.68,y:115.62},{x:120.04,y:112.84},{x:122.26,y:109.95},{x:124.44,y:107.02},
+            {x:126.55,y:104.05},{x:128.62,y:101.04},{x:129.30,y:99.13},{x:125.90,y:100.45},
+            {x:122.43,y:101.54},{x:118.92,y:102.55},{x:115.70,y:103.95},{x:112.75,y:105.99},
+            {x:111.11,y:102.98},{x:109.63,y:99.65},{x:108.14,y:96.32},{x:106.66,y:92.99},
+            {x:107.82,y:90.66},{x:110.99,y:89.07},{x:113.45,y:86.39},{x:115.49,y:83.37},
+            {x:117.33,y:80.22},{x:119.04,y:77.00},{x:120.61,y:73.70},{x:122.07,y:70.37},
+            {x:123.46,y:66.99},{x:124.78,y:63.59},{x:126.01,y:60.16},{x:127.12,y:56.69},
+            {x:125.94,y:54.92},{x:122.33,y:55.42},{x:118.71,y:55.88},{x:115.09,y:56.29},
+            {x:111.46,y:56.66},{x:107.83,y:56.99},{x:104.19,y:57.27},{x:100.56,y:57.51},
+            {x:96.91,y:57.71},{x:97.02,y:59.05},{x:99.91,y:61.28},{x:102.80,y:63.50},
+            {x:105.69,y:65.72},{x:108.58,y:67.95},{x:110.95,y:70.25},{x:107.94,y:72.20},
+            {x:104.48,y:73.35},{x:103.57,y:76.29},{x:103.57,y:79.94},{x:103.57,y:83.58},
+            {x:103.57,y:87.23},{x:103.57,y:90.88},{x:103.57,y:94.52},{x:103.57,y:98.17},
+            {x:103.57,y:101.81},{x:103.57,y:105.46},{x:103.57,y:109.11},{x:103.57,y:112.75},
+            {x:103.57,y:116.40},{x:103.57,y:120.05},{x:103.57,y:123.69},{x:103.57,y:127.34},
+            {x:103.57,y:130.99},{x:103.57,y:134.63},{x:103.57,y:138.28},{x:103.57,y:141.93},
+            {x:103.57,y:145.57},{x:103.57,y:149.22},{x:103.57,y:152.87},{x:103.57,y:156.51},
+            {x:103.57,y:160.16},{x:103.57,y:163.80},{x:103.57,y:167.45},{x:103.57,y:171.10},
+            {x:103.57,y:174.74},{x:103.57,y:178.39},{x:103.57,y:182.04},{x:103.57,y:185.68},
+            {x:103.57,y:189.33},{x:103.57,y:192.98},{x:103.57,y:196.62},{x:103.57,y:200.27},
+            {x:103.57,y:203.92},{x:103.57,y:207.56},{x:103.57,y:211.21},{x:103.57,y:214.85},
+            {x:103.54,y:218.50},{x:103.31,y:222.14},{x:102.79,y:225.75},{x:101.83,y:229.26},
+            {x:100.13,y:232.46},{x:97.31,y:234.74},{x:93.96,y:236.18},{x:90.43,y:237.09},
+            {x:88.19,y:235.90},{x:87.39,y:232.34},{x:86.05,y:228.96},{x:83.66,y:226.27},
+            {x:80.36,y:224.75},{x:76.82,y:223.88},{x:75.91,y:221.01},{x:77.10,y:218.71},
+            {x:80.72,y:219.16},{x:84.34,y:219.48},{x:87.99,y:219.44},{x:90.50,y:217.13},
+            {x:90.76,y:213.50},{x:90.76,y:209.86},{x:90.76,y:206.21},{x:90.76,y:202.56},
+            {x:90.76,y:198.92},{x:90.76,y:195.27},{x:90.76,y:191.62},{x:90.76,y:187.98},
+            {x:90.76,y:184.33},{x:90.76,y:180.68},{x:90.76,y:177.04},{x:90.76,y:173.39},
+            {x:90.76,y:169.74},{x:90.76,y:166.10},{x:87.51,y:165.70},{x:83.86,y:165.70},
+            {x:80.22,y:165.70},{x:79.70,y:162.67},{x:79.81,y:159.03},{x:81.09,y:156.58},
+            {x:84.73,y:156.58},{x:88.38,y:156.58},{x:90.79,y:155.34},{x:90.79,y:151.70},
+            {x:90.79,y:148.05},{x:90.79,y:144.40},{x:90.79,y:140.76},{x:90.79,y:137.11},
+            {x:90.79,y:133.47},{x:90.79,y:129.82},{x:90.79,y:126.17},{x:90.79,y:122.53},
+            {x:90.48,y:119.19},{x:86.83,y:119.19},{x:83.19,y:119.19},{x:79.89,y:118.84},
+            {x:79.89,y:115.19},{x:79.89,y:111.55},{x:82.06,y:110.07},{x:85.71,y:110.07},
+            {x:89.35,y:110.07},{x:90.79,y:107.86},{x:90.79,y:104.21},{x:90.79,y:100.57},
+            {x:90.79,y:96.92},{x:90.79,y:93.28},{x:90.79,y:89.63},{x:90.79,y:85.98},
+            {x:90.79,y:82.34},{x:90.79,y:78.69},{x:90.79,y:75.04},{x:88.00,y:74.19},
+            {x:84.35,y:74.19},{x:80.70,y:74.19},{x:79.85,y:76.98},{x:79.85,y:80.63},
+            {x:79.85,y:84.28},{x:79.85,y:87.92},{x:79.85,y:91.57},{x:79.85,y:95.22},
+            {x:79.85,y:98.86},{x:79.85,y:102.51},{x:79.85,y:106.15},{x:79.85,y:109.80},
+            {x:79.85,y:113.45},{x:79.85,y:117.09},{x:79.85,y:120.74},{x:79.85,y:124.39},
+            {x:79.85,y:128.03},{x:79.85,y:131.68},{x:79.85,y:135.33},{x:79.85,y:138.97},
+            {x:79.85,y:142.62},{x:79.85,y:146.27},{x:79.85,y:149.91},{x:79.85,y:153.56},
+            {x:79.83,y:157.20},{x:79.71,y:160.85},{x:79.58,y:164.49},{x:79.46,y:168.14},
+            {x:79.31,y:171.78},{x:79.10,y:175.42},{x:78.86,y:179.06},{x:78.57,y:182.69},
+            {x:78.24,y:186.33},{x:77.86,y:189.95},{x:77.44,y:193.57},{x:76.97,y:197.19},
+            {x:76.46,y:200.80},{x:75.90,y:204.40},{x:75.30,y:208.00},{x:74.63,y:211.58},
+            {x:73.84,y:215.14},{x:72.94,y:218.68},{x:71.93,y:222.18},{x:70.81,y:225.65},
+            {x:69.59,y:229.09},{x:68.25,y:232.48},{x:66.82,y:235.83},{x:65.27,y:239.14},
+            {x:63.63,y:242.39},{x:61.66,y:244.61},{x:58.68,y:242.51},{x:55.40,y:241.37},
+            {x:51.75,y:241.37},{x:51.27,y:244.54},{x:51.27,y:248.18},{x:53.87,y:250.44},
+            {x:56.07,y:253.35},{x:58.39,y:256.16},{x:60.87,y:258.83},{x:63.52,y:261.34},
+            {x:66.31,y:263.69},{x:69.24,y:265.85},{x:72.30,y:267.84},{x:75.48,y:269.62},
+            {x:78.77,y:271.19},{x:82.14,y:272.59},{x:85.57,y:273.83},{x:89.05,y:274.91},
+            {x:92.57,y:275.86},{x:96.12,y:276.68},{x:99.70,y:277.38},{x:103.30,y:277.95},
+            {x:106.91,y:278.47},{x:110.53,y:278.93},{x:114.15,y:279.34},{x:117.78,y:279.70},
+            {x:121.41,y:280.00},{x:125.05,y:280.25},{x:128.69,y:280.45},{x:132.34,y:280.60},
+            {x:135.98,y:280.69},{x:139.63,y:280.76},{x:143.27,y:280.83},{x:146.92,y:280.89},
+            {x:150.56,y:280.94},{x:154.21,y:280.99},{x:157.86,y:281.03},{x:161.50,y:281.07},
+            {x:165.15,y:281.10},{x:168.80,y:281.12},{x:172.44,y:281.14},{x:176.09,y:281.15},
+            {x:179.74,y:281.16},{x:183.38,y:281.17},{x:187.03,y:281.17},{x:190.67,y:281.17},
+            {x:194.32,y:281.17},{x:197.97,y:281.17},{x:201.61,y:281.16},{x:205.26,y:281.16},
+            {x:208.91,y:281.15},{x:212.55,y:281.14},{x:216.20,y:281.14},{x:219.85,y:281.13},
+            {x:223.49,y:281.12},{x:227.14,y:281.11},{x:230.79,y:281.09},{x:234.43,y:281.08},
+            {x:238.08,y:281.06},{x:241.72,y:281.05},{x:245.37,y:281.03},{x:249.02,y:281.01},
+            {x:252.66,y:280.98},{x:256.31,y:280.95},{x:259.96,y:280.91},{x:263.60,y:280.85},
+            {x:267.25,y:280.80},{x:270.89,y:280.73},{x:274.54,y:280.66},{x:278.19,y:280.58},
+            {x:281.83,y:280.49},{x:285.48,y:280.39},{x:289.12,y:280.29},{x:292.77,y:280.18},
+            {x:296.41,y:280.07},{x:300.06,y:279.95},{x:303.70,y:279.82},{x:307.34,y:279.69},
+            {x:308.41,y:282.23},{x:306.58,y:284.40},{x:303.15,y:285.64},{x:300.12,y:287.65},
+            {x:297.82,y:290.45},{x:296.44,y:293.82},{x:293.45,y:294.64},{x:289.80,y:294.64},
+            {x:286.16,y:294.64},{x:282.51,y:294.64},{x:278.86,y:294.64},{x:275.22,y:294.64},
+            {x:271.57,y:294.64},{x:267.92,y:294.64},{x:264.28,y:294.64},{x:260.63,y:294.64},
+            {x:256.98,y:294.64},{x:253.34,y:294.64},{x:249.69,y:294.64},{x:246.05,y:294.64},
+            {x:242.40,y:294.64},{x:238.75,y:294.64},{x:235.11,y:294.64},{x:231.46,y:294.64},
+            {x:227.81,y:294.64},{x:224.17,y:294.64},{x:220.52,y:294.64},{x:216.87,y:294.64},
+            {x:213.23,y:294.64},{x:209.58,y:294.64},{x:205.93,y:294.64},{x:202.29,y:294.64},
+            {x:198.64,y:294.64},{x:194.99,y:294.64},{x:191.35,y:294.64},{x:187.70,y:294.64},
+            {x:184.06,y:294.64},{x:180.41,y:294.64},{x:176.76,y:294.63},{x:173.12,y:294.61},
+            {x:169.47,y:294.59},{x:165.82,y:294.56},{x:162.18,y:294.52},{x:158.53,y:294.47},
+            {x:154.89,y:294.41},{x:151.24,y:294.33},{x:147.59,y:294.25},{x:143.95,y:294.16},
+            {x:140.30,y:294.05},{x:136.66,y:293.92},{x:133.02,y:293.79},{x:129.37,y:293.62},
+            {x:125.73,y:293.42},{x:122.10,y:293.16},{x:118.46,y:292.85},{x:114.83,y:292.48},
+            {x:111.21,y:292.05},{x:107.60,y:291.55},{x:104.00,y:290.98},{x:100.41,y:290.32},
+            {x:96.85,y:289.57},{x:93.30,y:288.73},{x:89.78,y:287.77},{x:86.30,y:286.68},
+            {x:82.87,y:285.44},{x:79.50,y:284.04},{x:76.21,y:282.48},{x:73.01,y:280.74},
+            {x:69.91,y:278.81},{x:66.97,y:276.66},{x:64.15,y:274.35},{x:61.45,y:271.90},
+            {x:58.88,y:269.31},{x:56.45,y:266.59},{x:54.17,y:263.75},{x:52.03,y:260.79},
+            {x:49.83,y:257.92},{x:46.48,y:256.60},{x:43.65,y:258.66},{x:41.82,y:261.81},
+            {x:40.25,y:265.10},{x:38.84,y:268.46},{x:37.58,y:271.89},{x:36.39,y:275.33},
+            {x:35.24,y:278.79},{x:34.13,y:282.26},{x:33.05,y:285.75},{x:31.98,y:289.23},
+            {x:30.90,y:292.72},{x:31.38,y:296.27},{x:29.23,y:297.19},{x:26.54,y:294.73},
+            {x:23.84,y:292.28},{x:21.14,y:289.82},{x:18.45,y:287.36},{x:15.75,y:284.91},
+            {x:17.85,y:281.99},{x:19.97,y:279.02},{x:22.06,y:276.03},{x:24.09,y:273.01},
+            {x:26.10,y:269.96},{x:28.10,y:266.92},{x:30.15,y:263.90},{x:32.28,y:260.94},
+            {x:34.44,y:258.00},{x:36.64,y:255.09},{x:37.62,y:251.79},{x:37.62,y:248.14},
+            {x:37.62,y:244.50},{x:37.62,y:240.85},{x:37.62,y:237.20},{x:37.62,y:233.56},
+            {x:37.62,y:229.91},{x:37.62,y:226.26},{x:37.62,y:222.62},{x:37.62,y:218.97},
+            {x:37.62,y:215.32},{x:37.62,y:211.68},{x:37.62,y:208.03},{x:37.62,y:204.39},
+            {x:37.62,y:200.74},{x:37.62,y:197.09},{x:37.62,y:193.45},{x:37.62,y:189.80},
+            {x:37.62,y:186.15},{x:37.62,y:182.51},{x:37.62,y:178.86},{x:37.62,y:175.21},
+            {x:37.62,y:171.57},{x:37.62,y:167.92},{x:37.62,y:164.27},{x:37.62,y:160.63},
+            {x:37.62,y:156.98},{x:37.62,y:153.34},{x:37.62,y:149.69},{x:37.62,y:146.04},
+            {x:37.62,y:142.40},{x:37.62,y:138.75},{x:37.62,y:135.10},{x:37.62,y:131.46},
+            {x:34.08,y:131.35},{x:30.43,y:131.35},{x:26.79,y:131.35},{x:23.14,y:131.35},
+            {x:19.85,y:130.87},{x:18.81,y:127.37},{x:17.76,y:123.88},{x:19.20,y:122.23},
+            {x:22.84,y:122.23},{x:26.49,y:122.23},{x:30.13,y:122.23},{x:33.78,y:122.23},
+            {x:36.65,y:120.39},{x:39.18,y:117.77},{x:41.72,y:115.15},{x:44.00,y:112.43},
+            {x:43.95,y:108.78},{x:43.91,y:105.13},{x:43.87,y:101.49},{x:43.83,y:97.84},
+            {x:43.78,y:94.19},{x:43.74,y:90.55},{x:43.70,y:86.90},{x:40.98,y:85.45},
+            {x:38.17,y:83.18},{x:36.22,y:80.11},{x:35.26,y:76.62},{x:34.64,y:73.02},
+            {x:33.92,y:69.45},{x:33.10,y:65.90},{x:32.18,y:62.37},{x:31.15,y:58.87},
+            {x:30.01,y:55.41},{x:28.76,y:51.98},{x:27.40,y:48.60},{x:25.91,y:45.27},
+            {x:24.30,y:42.00},{x:22.56,y:38.79},{x:20.67,y:35.68},{x:18.64,y:32.65}            
+        ];
+    }),
+    /******/
+]);
+		</script>
+</body>
+
+</html>
