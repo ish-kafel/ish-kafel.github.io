@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+
+<style>
+	body input {
+		width: 300px;
+	}
+</style>
+
+<body>
+	<input type="text" id="label" placeholder="厂牌" value=""></input><br />
+	<input type="text" id="date" placeholder="日期" value=""></input><br />
+	<input type="text" id="songn" placeholder="歌曲名称" value=""></input><br />
+	<a id="link" href="mailto:yyyquku@163.com">邮件模板</a><br />
+	<button onclick="genrLink()">生成邮件链接</button>
+	<script>
+		String.prototype.trim = function () {
+			return this.replace(/(^\s*)|(\s*$)/g, "")
+		}
+		var $ = s => document.querySelector(s)
+		var mail = "yyyquku@163.com"
+		var year = new Date().getFullYear()
+		var month = new Date().getMonth() + 1
+		month < 9 && (month = "0" + month)
+		var day = new Date().getDate()
+		$("#date").value = year + "-" + month + "-" + Math.floor(day/10)
+
+		function genrLink() {
+            var label = $("#label").value
+			var date = $("#date").value
+			var temp = $("#songn").value
+			var arr = temp.split(" - ")
+			var pro = arr[0],
+				song = arr[1],
+				songName, ft, str = ""
+			pro = pro.split(/[&,]/g)
+			for (var i = 0; i < pro.length; i++) {
+				pro[i] = pro[i].trim()
+			}
+			if (song.match(/\./)) {
+				song = song.split("(")
+				songName = song[0].trim()
+				ft = song[1].split(".")[1].replace(/(^\s*)|(\)\s*$)/g, "")
+				pro.push(ft)
+			} else {
+				songName = song.trim()
+			}
+			pro = pro.join("、")
+			temp = temp.replace(/&/g, "%26")
+			var str =
+				`厂牌：${label}<br>发行时间：${date}<br>专辑名：${songName}<br>歌手：${pro}<br><br>曲目01：${songName}<br>歌手：${pro}`
+			$("#link").href = `mailto:${mail}?subject=${temp}&body=${str}`
+		}
+	</script>
+</body>
+
+</html>
