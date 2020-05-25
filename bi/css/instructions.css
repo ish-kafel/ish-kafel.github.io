@@ -1,0 +1,197 @@
+body {
+  margin: 0; 
+  padding: 0;
+  background-color: #FFF;
+}
+#main_canvas_holder, #main_canvas {
+  display: block;
+  position: relative;
+  top: 0;
+}
+#main_canvas_holder {
+/*  height: calc(100vh - 120px);
+  width: calc(100vw - 20px);*/
+}
+
+/* Green */
+#green {
+    display: block;
+    background-color: #DDD;
+    min-height: 120px;
+    vertical-align: top;
+}
+.green_container {
+    display: block;
+}
+
+/* Preview */
+.preview, .input_frame {
+  display: table-cell;
+  border: 2px solid black;
+  padding: 0.5em;
+}
+
+/* Color picker */
+.color_container {
+  display: inline-block;
+  text-align: center;
+  line-height: 2em;
+  font-weight: bold;
+  border: none;
+  padding: 0.1em;
+  cursor: pointer;
+}
+.color_ele {
+  display: block;
+  width: 2em;
+  height: 2em;
+  border-radius: 2em;
+}
+
+/*
+  Decorations:
+*/
+#instructions_decorations {
+  position: absolute;
+  left: 0;
+  top: 100px;
+}
+#pli {
+  display: none;
+  border: 2px solid black;
+  border-radius: 8px;
+  background-color: #FFF;
+  cursor: pointer;
+  margin-left: 2px;
+}
+#pli_drag_horizontal, #pli_drag_vertical, .decoration_holder, #instructions_decorations {
+  /* Prevent text select: */
+  -webkit-user-select: none; /* Safari + Chrome */
+  -moz-user-select: none; /* Firefox */
+  -khtml-user-select: none; /* Linux */
+  -ms-user-select: none; /* IE */
+}
+#pli_drag_horizontal {
+  display: none;
+  cursor: col-resize;
+  border-left: 2px solid black;
+  cursor: col-resize;
+  width: 1vw;
+  margin-bottom: 2px;
+}
+#pli_drag_vertical {
+  display: none;
+  cursor: row-resize;
+  border-top: 2px solid black;
+  cursor: row-resize;
+  height: 2vh;
+  margin-left: 4px;
+}
+
+#empty_step {
+  display: none;
+  border: 2px dotted black;
+  margin-left: 2px;
+  padding: 4px;
+  color: black;
+  text-align: center;
+}
+.decoration_holder {
+  display: inline;
+}
+#multiplier, #rotator {
+  vertical-align: top;
+  display: inline;
+  visibility: hidden;
+  font-family: sans-serif;
+  font-weight: bold;
+  color: black;
+  margin-left: 4px;
+}
+#rotator svg {
+  vertical-align: top;
+  width: 10vw;
+  height: 10vw;
+}
+
+/*
+ Renderer for PLI
+ */
+#pli_render_canvas {
+    position: fixed;
+    left: 0;
+    top: 0;
+    display: none;
+}
+
+/*
+  Preview:
+*/
+#generated {
+    display: none;
+}
+
+/*
+  Editor:
+ */
+#editor {
+  margin-left: 0.5em;
+  padding-top: 0.3em;
+}
+.editor_control {
+  display: inline;
+  text-align: center;
+}
+.editor_radio_button {
+  display: none; 
+}
+.editor_radio_button + .editor_radio_label {
+  display: inline-block;
+  background-color: #DDD;
+  margin-right: 1vw;
+  cursor: pointer;
+}
+.editor_radio_button:checked + .editor_radio_label {
+  background-color: #AAA;
+}
+.editor_input {
+  width: 6vw;
+  text-align: center;
+  font-size: 3VW;
+  border: none;
+  position: relative;
+  top: -0.1em;
+}
+.editor_button, .pli_button {
+  border: none;
+  margin: 0;
+  padding: 0 1.1vw;
+  background-color: #DDD;
+  cursor: pointer;
+}
+.save_button {
+  margin-right: 1vw;
+  margin-top: 0em;
+  background-color: #444;
+  border: 0.3vw solid #222;
+  font-size: 2.5VW;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  position: relative;
+  top: -0.2em;
+}
+.editor_radio_label svg {
+  width: 9vw;
+  height: 3vw;
+  fill: #F66;
+  stroke-width: 1;
+  stroke: black;
+}
+.editor_button svg, .pli_button svg {
+  width: 3vw;
+  height: 3vw;
+  fill: #F66;
+  stroke-width: 1;
+  stroke: black;
+}
