@@ -9,7 +9,8 @@
  * @see <a href="http://jeromeetienne.github.com/jquery-qrcode/" target="_blank">http://jeromeetienne.github.com/jquery-qrcode/</a>
  */
 var QRCode;
-
+var maxLen = 0;
+var lowMax = Infinity;
 (function () {
   //---------------------------------------------------------------------
   // QRCode for JavaScript
@@ -35,10 +36,10 @@ var QRCode;
     //转 UTF-8
     for (var i = 0, l = this.data.length; i < l; i++) {
       var byteArray = []
-      var code = this.data.codePointAt(i)//支持辅助平面文字(SMP)(大于U+FFFF)
+      var code = this.data.codePointAt(i) //支持辅助平面文字(SMP)(大于U+FFFF)
       var utf8 = false
 
-      if (SMP) { //SMP字符用codePointAt产生两部分，第一部分为Unicode值，第二部分
+      if (SMP) { //SMP字符用codePointAt产生两部分，取第一部分为Unicode值
         SMP = !SMP
         continue
       } else if (code >= 0x10000) {
@@ -67,15 +68,13 @@ var QRCode;
 
     //如果有0x80以上的字符，加bom头
     if (utf8) {
-      this.parsedData.unshift(191)
-      this.parsedData.unshift(187)
-      this.parsedData.unshift(239)
+      this.parsedData.unshift(239, 187, 191)
     }
   }
 
   //添加QR8bitByte原型方法:读取长度与写入
   QR8bitByte.prototype = {
-    getLength: function (buffer) {  //返回位流长度
+    getLength: function (buffer) { //返回位流长度
       return this.parsedData.length
     },
     write: function (buffer) {
@@ -101,20 +100,20 @@ var QRCode;
       this.dataList.push(newData)
       this.dataCache = null
     },
-    isDark: function (row, col) {    //返回某个位置数据
-      if (row < 0 || this.moduleCount <= row
-       || col < 0 || this.moduleCount <= col) {
-        throw new Error(row + ',' + col)
+    isDark: function (row, col) { //返回某个位置数据
+      if (row < 0 || this.moduleCount <= row ||
+        col < 0 || this.moduleCount <= col) {
+        return undefined //throw new Error(row + ',' + col)
       }
       return this.modules[row][col]
     },
     getModuleCount: function () {
       return this.moduleCount
     },
-    make: function () {     //最终掩膜
+    make: function () { //最终掩膜
       this.makeImpl(false, this.getBestMaskPattern())
     },
-    makeImpl: function (test, maskPattern) {  //测试掩膜及应用
+    makeImpl: function (test, maskPattern) { //测试掩膜及应用
       this.moduleCount = this.typeNumber * 4 + 17
       this.modules = new Array(this.moduleCount)
       for (var row = 0; row < this.moduleCount; row++) {
@@ -148,9 +147,9 @@ var QRCode;
           if (col + c <= -1 || this.moduleCount <= col + c) {
             continue
           }
-          if ((0 <= r && r <= 6 && (c == 0 || c == 6))
-           || (0 <= c && c <= 6 && (r == 0 || r == 6))
-           || (2 <= r && r <= 4 && 2 <= c && c <= 4)) {
+          if ((0 <= r && r <= 6 && (c == 0 || c == 6)) ||
+            (0 <= c && c <= 6 && (r == 0 || r == 6)) ||
+            (2 <= r && r <= 4 && 2 <= c && c <= 4)) {
             this.modules[row + r][col + c] = true
           } else {
             this.modules[row + r][col + c] = false
@@ -212,9 +211,9 @@ var QRCode;
           }
           for (var r = -2; r <= 2; r++) {
             for (var c = -2; c <= 2; c++) {
-              if (r == -2 || r == 2
-               || c == -2 || c == 2
-               || (r == 0 && c == 0)) {
+              if (r == -2 || r == 2 ||
+                c == -2 || c == 2 ||
+                (r == 0 && c == 0)) {
                 this.modules[row + r][col + c] = true
               } else {
                 this.modules[row + r][col + c] = false
@@ -454,9 +453,9 @@ var QRCode;
       [6, 26, 54, 82, 110, 138, 166],
       [6, 30, 58, 86, 114, 142, 170]
     ],
-    G15: 1335, //10100110111
-    G18: 7973, //1111100100101
-    G15_MASK: 21522, //101010000010010
+    G15: 0b10100110111,
+    G18: 0b1111100100101,
+    G15_MASK: 0b101010000010010,
     getBCHTypeInfo: function (data) {
       var d = data << 10
       while (QRUtil.getBCHDigit(d) - QRUtil.getBCHDigit(QRUtil.G15) >= 0) {
@@ -484,24 +483,24 @@ var QRCode;
     },
     getMask: function (maskPattern, i, j) {
       switch (maskPattern) {
-      case QRMaskPattern.PATTERN000:
-        return (i + j) % 2 == 0
-      case QRMaskPattern.PATTERN001:
-        return i % 2 == 0
-      case QRMaskPattern.PATTERN010:
-        return j % 3 == 0
-      case QRMaskPattern.PATTERN011:
-        return (i + j) % 3 == 0
-      case QRMaskPattern.PATTERN100:
-        return (Math.floor(i / 2) + Math.floor(j / 3)) % 2 == 0
-      case QRMaskPattern.PATTERN101:
-        return (i * j) % 2 + (i * j) % 3 == 0
-      case QRMaskPattern.PATTERN110:
-        return ((i * j) % 2 + (i * j) % 3) % 2 == 0
-      case QRMaskPattern.PATTERN111:
-        return ((i * j) % 3 + (i + j) % 2) % 2 == 0
-      default:
-        throw new Error('bad maskPattern:' + maskPattern)
+        case QRMaskPattern.PATTERN000:
+          return (i + j) % 2 == 0
+        case QRMaskPattern.PATTERN001:
+          return i % 2 == 0
+        case QRMaskPattern.PATTERN010:
+          return j % 3 == 0
+        case QRMaskPattern.PATTERN011:
+          return (i + j) % 3 == 0
+        case QRMaskPattern.PATTERN100:
+          return (Math.floor(i / 2) + Math.floor(j / 3)) % 2 == 0
+        case QRMaskPattern.PATTERN101:
+          return (i * j) % 2 + (i * j) % 3 == 0
+        case QRMaskPattern.PATTERN110:
+          return ((i * j) % 2 + (i * j) % 3) % 2 == 0
+        case QRMaskPattern.PATTERN111:
+          return ((i * j) % 3 + (i + j) % 2) % 2 == 0
+        default:
+          throw new Error('bad maskPattern:' + maskPattern)
       }
     },
     getErrorCorrectPolynomial: function (errorCorrectLength) {
@@ -514,42 +513,42 @@ var QRCode;
     getLengthInBits: function (mode, type) {
       if (1 <= type && type < 10) {
         switch (mode) {
-        case QRMode.MODE_NUMBER:
-          return 10
-        case QRMode.MODE_ALPHA_NUM:
-          return 9
-        case QRMode.MODE_8BIT_BYTE:
-          return 8
-        case QRMode.MODE_KANJI:
-          return 8
-        default:
-          throw new Error('mode:' + mode)
+          case QRMode.MODE_NUMBER:
+            return 10
+          case QRMode.MODE_ALPHA_NUM:
+            return 9
+          case QRMode.MODE_8BIT_BYTE:
+            return 8
+          case QRMode.MODE_KANJI:
+            return 8
+          default:
+            throw new Error('mode:' + mode)
         }
       } else if (type < 27) {
         switch (mode) {
-        case QRMode.MODE_NUMBER:
-          return 12
-        case QRMode.MODE_ALPHA_NUM:
-          return 11
-        case QRMode.MODE_8BIT_BYTE:
-          return 16
-        case QRMode.MODE_KANJI:
-          return 10
-        default:
-          throw new Error('mode:' + mode)
+          case QRMode.MODE_NUMBER:
+            return 12
+          case QRMode.MODE_ALPHA_NUM:
+            return 11
+          case QRMode.MODE_8BIT_BYTE:
+            return 16
+          case QRMode.MODE_KANJI:
+            return 10
+          default:
+            throw new Error('mode:' + mode)
         }
       } else if (type < 41) {
         switch (mode) {
-        case QRMode.MODE_NUMBER:
-          return 14
-        case QRMode.MODE_ALPHA_NUM:
-          return 13
-        case QRMode.MODE_8BIT_BYTE:
-          return 16
-        case QRMode.MODE_KANJI:
-          return 12
-        default:
-          throw new Error('mode:' + mode)
+          case QRMode.MODE_NUMBER:
+            return 14
+          case QRMode.MODE_ALPHA_NUM:
+            return 13
+          case QRMode.MODE_8BIT_BYTE:
+            return 16
+          case QRMode.MODE_KANJI:
+            return 12
+          default:
+            throw new Error('mode:' + mode)
         }
       } else {
         throw new Error('type:' + type)
@@ -597,26 +596,26 @@ var QRCode;
       }
       for (row = 0; row < moduleCount; row++) {
         for (col = 0; col < moduleCount - 6; col++) {
-          if (qrCode.isDark(row, col)
-          && !qrCode.isDark(row, col + 1)
-          &&  qrCode.isDark(row, col + 2)
-          &&  qrCode.isDark(row, col + 3)
-          &&  qrCode.isDark(row, col + 4)
-          && !qrCode.isDark(row, col + 5)
-          &&  qrCode.isDark(row, col + 6)) {
+          if (qrCode.isDark(row, col) &&
+            !qrCode.isDark(row, col + 1) &&
+            qrCode.isDark(row, col + 2) &&
+            qrCode.isDark(row, col + 3) &&
+            qrCode.isDark(row, col + 4) &&
+            !qrCode.isDark(row, col + 5) &&
+            qrCode.isDark(row, col + 6)) {
             lostPoint += 40
           }
         }
       }
       for (col = 0; col < moduleCount; col++) {
         for (row = 0; row < moduleCount - 6; row++) {
-          if (qrCode.isDark(row, col)
-          && !qrCode.isDark(row + 1, col)
-          &&  qrCode.isDark(row + 2, col)
-          &&  qrCode.isDark(row + 3, col)
-          &&  qrCode.isDark(row + 4, col)
-          && !qrCode.isDark(row + 5, col)
-          &&  qrCode.isDark(row + 6, col)) {
+          if (qrCode.isDark(row, col) &&
+            !qrCode.isDark(row + 1, col) &&
+            qrCode.isDark(row + 2, col) &&
+            qrCode.isDark(row + 3, col) &&
+            qrCode.isDark(row + 4, col) &&
+            !qrCode.isDark(row + 5, col) &&
+            qrCode.isDark(row + 6, col)) {
             lostPoint += 40
           }
         }
@@ -723,197 +722,197 @@ var QRCode;
     [1, 26, 16],
     [1, 26, 13],
     [1, 26, 9],
-    
+
     [1, 44, 34],
     [1, 44, 28],
     [1, 44, 22],
     [1, 44, 16],
-    
+
     [1, 70, 55],
     [1, 70, 44],
     [2, 35, 17],
     [2, 35, 13],
-    
+
     [1, 100, 80],
     [2, 50, 32],
     [2, 50, 24],
     [4, 25, 9],
-    
+
     [1, 134, 108],
     [2, 67, 43],
     [2, 33, 15, 2, 34, 16],
     [2, 33, 11, 2, 34, 12],
-    
+
     [2, 86, 68],
     [4, 43, 27],
     [4, 43, 19],
     [4, 43, 15],
-    
+
     [2, 98, 78],
     [4, 49, 31],
     [2, 32, 14, 4, 33, 15],
     [4, 39, 13, 1, 40, 14],
-    
+
     [2, 121, 97],
     [2, 60, 38, 2, 61, 39],
     [4, 40, 18, 2, 41, 19],
     [4, 40, 14, 2, 41, 15],
-    
+
     [2, 146, 116],
     [3, 58, 36, 2, 59, 37],
     [4, 36, 16, 4, 37, 17],
     [4, 36, 12, 4, 37, 13],
-    
+
     [2, 86, 68, 2, 87, 69],
     [4, 69, 43, 1, 70, 44],
     [6, 43, 19, 2, 44, 20],
     [6, 43, 15, 2, 44, 16],
-    
+
     [4, 101, 81],
     [1, 80, 50, 4, 81, 51],
     [4, 50, 22, 4, 51, 23],
     [3, 36, 12, 8, 37, 13],
-    
+
     [2, 116, 92, 2, 117, 93],
     [6, 58, 36, 2, 59, 37],
     [4, 46, 20, 6, 47, 21],
     [7, 42, 14, 4, 43, 15],
-    
+
     [4, 133, 107],
     [8, 59, 37, 1, 60, 38],
     [8, 44, 20, 4, 45, 21],
     [12, 33, 11, 4, 34, 12],
-    
+
     [3, 145, 115, 1, 146, 116],
     [4, 64, 40, 5, 65, 41],
     [11, 36, 16, 5, 37, 17],
     [11, 36, 12, 5, 37, 13],
-    
+
     [5, 109, 87, 1, 110, 88],
     [5, 65, 41, 5, 66, 42],
     [5, 54, 24, 7, 55, 25],
     [11, 36, 12, 7, 37, 13],
-    
+
     [5, 122, 98, 1, 123, 99],
     [7, 73, 45, 3, 74, 46],
     [15, 43, 19, 2, 44, 20],
     [3, 45, 15, 13, 46, 16],
-    
+
     [1, 135, 107, 5, 136, 108],
     [10, 74, 46, 1, 75, 47],
     [1, 50, 22, 15, 51, 23],
     [2, 42, 14, 17, 43, 15],
-    
+
     [5, 150, 120, 1, 151, 121],
     [9, 69, 43, 4, 70, 44],
     [17, 50, 22, 1, 51, 23],
     [2, 42, 14, 19, 43, 15],
-    
+
     [3, 141, 113, 4, 142, 114],
     [3, 70, 44, 11, 71, 45],
     [17, 47, 21, 4, 48, 22],
     [9, 39, 13, 16, 40, 14],
-    
+
     [3, 135, 107, 5, 136, 108],
     [3, 67, 41, 13, 68, 42],
     [15, 54, 24, 5, 55, 25],
     [15, 43, 15, 10, 44, 16],
-    
+
     [4, 144, 116, 4, 145, 117],
     [17, 68, 42],
     [17, 50, 22, 6, 51, 23],
     [19, 46, 16, 6, 47, 17],
-    
+
     [2, 139, 111, 7, 140, 112],
     [17, 74, 46],
     [7, 54, 24, 16, 55, 25],
     [34, 37, 13],
-    
+
     [4, 151, 121, 5, 152, 122],
     [4, 75, 47, 14, 76, 48],
     [11, 54, 24, 14, 55, 25],
     [16, 45, 15, 14, 46, 16],
-    
+
     [6, 147, 117, 4, 148, 118],
     [6, 73, 45, 14, 74, 46],
     [11, 54, 24, 16, 55, 25],
     [30, 46, 16, 2, 47, 17],
-    
+
     [8, 132, 106, 4, 133, 107],
     [8, 75, 47, 13, 76, 48],
     [7, 54, 24, 22, 55, 25],
     [22, 45, 15, 13, 46, 16],
-    
+
     [10, 142, 114, 2, 143, 115],
     [19, 74, 46, 4, 75, 47],
     [28, 50, 22, 6, 51, 23],
     [33, 46, 16, 4, 47, 17],
-    
+
     [8, 152, 122, 4, 153, 123],
     [22, 73, 45, 3, 74, 46],
     [8, 53, 23, 26, 54, 24],
     [12, 45, 15, 28, 46, 16],
-    
+
     [3, 147, 117, 10, 148, 118],
     [3, 73, 45, 23, 74, 46],
     [4, 54, 24, 31, 55, 25],
     [11, 45, 15, 31, 46, 16],
-    
+
     [7, 146, 116, 7, 147, 117],
     [21, 73, 45, 7, 74, 46],
     [1, 53, 23, 37, 54, 24],
     [19, 45, 15, 26, 46, 16],
-    
+
     [5, 145, 115, 10, 146, 116],
     [19, 75, 47, 10, 76, 48],
     [15, 54, 24, 25, 55, 25],
     [23, 45, 15, 25, 46, 16],
-    
+
     [13, 145, 115, 3, 146, 116],
     [2, 74, 46, 29, 75, 47],
     [42, 54, 24, 1, 55, 25],
     [23, 45, 15, 28, 46, 16],
-    
+
     [17, 145, 115],
     [10, 74, 46, 23, 75, 47],
     [10, 54, 24, 35, 55, 25],
     [19, 45, 15, 35, 46, 16],
-    
+
     [17, 145, 115, 1, 146, 116],
     [14, 74, 46, 21, 75, 47],
     [29, 54, 24, 19, 55, 25],
     [11, 45, 15, 46, 46, 16],
-    
+
     [13, 145, 115, 6, 146, 116],
     [14, 74, 46, 23, 75, 47],
     [44, 54, 24, 7, 55, 25],
     [59, 46, 16, 1, 47, 17],
-    
+
     [12, 151, 121, 7, 152, 122],
     [12, 75, 47, 26, 76, 48],
     [39, 54, 24, 14, 55, 25],
     [22, 45, 15, 41, 46, 16],
-    
+
     [6, 151, 121, 14, 152, 122],
     [6, 75, 47, 34, 76, 48],
     [46, 54, 24, 10, 55, 25],
     [2, 45, 15, 64, 46, 16],
-    
+
     [17, 152, 122, 4, 153, 123],
     [29, 74, 46, 14, 75, 47],
     [49, 54, 24, 10, 55, 25],
     [24, 45, 15, 46, 46, 16],
-    
+
     [4, 152, 122, 18, 153, 123],
     [13, 74, 46, 32, 75, 47],
     [48, 54, 24, 14, 55, 25],
     [42, 45, 15, 32, 46, 16],
-    
+
     [20, 147, 117, 4, 148, 118],
     [40, 75, 47, 7, 76, 48],
     [43, 54, 24, 22, 55, 25],
     [10, 45, 15, 67, 46, 16],
-    
+
     [19, 148, 118, 6, 149, 119],
     [18, 75, 47, 31, 76, 48],
     [34, 54, 24, 34, 55, 25],
@@ -940,16 +939,16 @@ var QRCode;
 
   QRRSBlock.getRsBlockTable = function (typeNumber, errorCorrectLevel) {
     switch (errorCorrectLevel) {
-    case QRErrorCorrectLevel.L:
-      return QRRSBlock.RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 0]
-    case QRErrorCorrectLevel.M:
-      return QRRSBlock.RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 1]
-    case QRErrorCorrectLevel.Q:
-      return QRRSBlock.RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 2]
-    case QRErrorCorrectLevel.H:
-      return QRRSBlock.RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 3]
-    default:
-      return undefined
+      case QRErrorCorrectLevel.L:
+        return QRRSBlock.RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 0]
+      case QRErrorCorrectLevel.M:
+        return QRRSBlock.RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 1]
+      case QRErrorCorrectLevel.Q:
+        return QRRSBlock.RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 2]
+      case QRErrorCorrectLevel.H:
+        return QRRSBlock.RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 3]
+      default:
+        return undefined
     }
   }
 
@@ -1026,10 +1025,6 @@ var QRCode;
     [2953, 2331, 1663, 1273]
   ]
 
-  function _isSupportCanvas() {
-    return typeof CanvasRenderingContext2D != 'undefined'
-  }
-
   // android 2.x doesn't support Data-URI spec
   function _getAndroid() {
     var android = false
@@ -1058,8 +1053,10 @@ var QRCode;
       var _htOption = this._htOption
       var _el = this._el
       var nCount = oQRCode.getModuleCount()
-      var nWidth = Math.floor(_htOption.width / nCount)
-      var nHeight = Math.floor(_htOption.height / nCount)
+      let wid = _htOption.width
+      let hei = _htOption.height
+      var nWidth = Math.floor(wid / nCount)
+      var nHeight = Math.floor(hei / nCount)
 
       this.clear()
 
@@ -1071,9 +1068,9 @@ var QRCode;
       }
 
       var svg = makeSVG('svg', {
-        'viewBox': '0 0 ' + String(nCount) + ' ' + String(nCount),
-        'width': '100%',
-        'height': '100%',
+        'viewBox': `0 0 ${nCount} ${nCount}`,
+        'width': wid,
+        'height': hei,
         'fill': _htOption.colorLight
       })
       svg.setAttributeNS('http://www.w3.org/2000/xmlns/', 'xmlns:xlink', 'http://www.w3.org/1999/xlink')
@@ -1084,22 +1081,160 @@ var QRCode;
         'width': '100%',
         'height': '100%'
       }))
-      svg.appendChild(makeSVG('rect', {
-        'fill': _htOption.colorDark,
-        'width': '1',
-        'height': '1',
-        'id': 'template'
-      }))
 
-      for (var row = 0; row < nCount; row++) {
-        for (var col = 0; col < nCount; col++) {
-          if (oQRCode.isDark(row, col)) {
-            var child = makeSVG('use', {
-              'x': String(col),
-              'y': String(row)
-            })
-            child.setAttributeNS('http://www.w3.org/1999/xlink', 'href', '#template')
-            svg.appendChild(child)
+      if (_htOption.pathCombine) {
+        let coordArr = []
+        let cornerMap = new Map()
+        for (var col = 0; col <= nCount; col++) {
+          let rowArr = []
+          for (var row = 0; row <= nCount; row++) {
+            let n = 0
+            oQRCode.isDark(col, row) && n++;
+            oQRCode.isDark(col - 1, row) && n++;
+            oQRCode.isDark(col, row - 1) && n++;
+            oQRCode.isDark(col - 1, row - 1) && n++;
+            if (n % 2) {
+              cornerMap.set(String([row, col]), n)
+            }
+            if (n === 2 && oQRCode.isDark(col, row) === oQRCode.isDark(col - 1, row - 1)) {
+              rowArr.push("x")
+            } else {
+              rowArr.push(n)
+            }
+          }
+          coordArr.push(rowArr)
+        }
+        let pathStr = '',
+          cornerArr = [],
+          key = ''
+        let turnRight
+        let directArr = ['h', 'v', 'h-', 'v-']
+        let cornerIter = cornerMap.entries()
+        let x, y, thisLen = 0,
+          thisMax = 0
+        while (cornerMap.size) {
+          cornerArr = cornerIter.next().value
+          key = cornerArr[0];
+          [x, y] = key.split(',')
+          x = +x
+          y = +y
+          let direct = 0
+          let straight = 1
+          turnRight = coordArr[y][x]
+          pathStr += `M${x} ${y}h`
+          x++
+          cornerMap.delete(key)
+          while (true) {
+            let state = coordArr[y][x]
+            if (state == 2) {
+              straight++
+            } else if (state == 'x') {
+              turnRight = 4 - turnRight //过交叉点转向方向改变
+              straight++
+            } else if (state == 1 || state == 3) {
+              pathStr += straight
+              if (cornerMap.has('' + x + ',' + y)) {
+                if (state == turnRight) {
+                  ++direct
+                  direct > 3 && (direct = 0)
+                } else {
+                  --direct
+                  direct < 0 && (direct = 3)
+                }
+                thisLen += straight
+                pathStr += directArr[direct]
+                cornerMap.delete('' + x + ',' + y)
+                straight = 1
+              } else {
+                thisLen += straight
+                if (thisLen > maxLen) maxLen = thisLen
+                if (thisLen > thisMax) thisMax = thisLen
+                thisLen = 0
+                pathStr += 'z'
+                break
+              }
+            }
+            switch (direct) {
+              case 0:
+                x++
+                break;
+              case 1:
+                y++
+                break;
+              case 2:
+                x--
+                break;
+              case 3:
+                y--;
+                break;
+              default:
+                throw new Error('Invalid direct.')
+            }
+          }
+        }
+        console.log(maxLen)
+        if (_htOption.animeSVG) {
+          let path = makeSVG('path', {
+            'style': `stroke:#000;fill-rule:evenodd;`,
+            'stroke-width': 0.4,
+            'stroke-dasharray': thisMax,
+            'stroke-linejoin': 'round',
+            'stroke-linecap': 'round',
+            'd': pathStr
+          })
+          path.appendChild(makeSVG('animate', {
+            'id': 'dash',
+            'attributeName': 'stroke-dashoffset',
+            'attributeType': 'CSS',
+            'begin': '0s',
+            'dur': thisMax * 0.007 + 's',
+            'from': thisMax,
+            'to': 0,
+            'fill': 'freeze'
+          }))
+          path.appendChild(makeSVG('animate', {
+            'attributeName': 'fill',
+            'attributeType': 'CSS',
+            'begin': 'dash.end',
+            'dur': '2s',
+            'from': '#0000',
+            'to': '#000f',
+            'fill': 'freeze'
+          }))
+          path.appendChild(makeSVG('animate', {
+            'attributeName': 'stroke-width',
+            'attributeType': 'CSS',
+            'begin': 'dash.end',
+            'dur': '0.8s',
+            'to': 0,
+            'fill': 'freeze'
+          }))
+          svg.appendChild(path)
+        } else {
+          svg.appendChild(makeSVG('path', {
+            'fill': _htOption.colorDark,
+            'style': 'fill-rule:evenodd',
+            'd': pathStr
+          }))
+        }
+      } else {
+        svg.appendChild(makeSVG('rect', {
+          'fill': _htOption.colorDark,
+          'width': '1',
+          'height': '1',
+          'id': 'template'
+        }))
+
+        for (var row = 0; row < nCount; row++) {
+          for (var col = 0; col < nCount; col++) {
+            if (oQRCode.isDark(row, col)) {
+              var child = makeSVG('use', {
+                'x': String(col),
+                'y': String(row)
+              })
+              child.setAttributeNS('http://www.w3.org/1999/xlink', 'href', '#template')
+              svg.appendChild(child)
+            }
           }
         }
       }
@@ -1111,10 +1246,9 @@ var QRCode;
     return Drawing
   })()
 
-  var useSVG = document.documentElement.tagName.toLowerCase() === 'svg'
+  // Drawing in DOM by using Table tag 
 
-  // Drawing in DOM by using Table tag
-  var Drawing = useSVG ? svgDrawer : !_isSupportCanvas() ? (function () {
+  var tableDrawer = (function () {
     var Drawing = function (el, htOption) {
       this._el = el
       this._htOption = htOption
@@ -1164,7 +1298,9 @@ var QRCode;
     }
 
     return Drawing
-  })() : (function () { // Drawing in Canvas
+  })()
+
+  var canvasDrawer = (function () { // Drawing in Canvas
     function _onMakeImage() {
       this._elImage.src = this._elCanvas.toDataURL('image/png')
       this._elImage.style.display = 'block'
@@ -1368,18 +1504,18 @@ var QRCode;
       var nLimit = 0
 
       switch (nCorrectLevel) {
-      case QRErrorCorrectLevel.L:
-        nLimit = QRCodeLimitLength[i][0]
-        break
-      case QRErrorCorrectLevel.M:
-        nLimit = QRCodeLimitLength[i][1]
-        break
-      case QRErrorCorrectLevel.Q:
-        nLimit = QRCodeLimitLength[i][2]
-        break
-      case QRErrorCorrectLevel.H:
-        nLimit = QRCodeLimitLength[i][3]
-        break
+        case QRErrorCorrectLevel.L:
+          nLimit = QRCodeLimitLength[i][0]
+          break
+        case QRErrorCorrectLevel.M:
+          nLimit = QRCodeLimitLength[i][1]
+          break
+        case QRErrorCorrectLevel.Q:
+          nLimit = QRCodeLimitLength[i][2]
+          break
+        case QRErrorCorrectLevel.H:
+          nLimit = QRCodeLimitLength[i][3]
+          break
       }
 
       if (length <= nLimit) {
@@ -1399,6 +1535,10 @@ var QRCode;
   function _getUTF8Length(sText) {
     var replacedText = encodeURI(sText).toString().replace(/%[0-9a-fA-F]{2}/g, 'a')
     return replacedText.length + (replacedText.length != sText ? 3 : 0)
+  }
+
+  function _isSupportCanvas() {
+    return typeof CanvasRenderingContext2D != 'undefined'
   }
 
   /**
@@ -1425,6 +1565,7 @@ var QRCode;
    * @param {String} [vOption.colorDark="#000000"]
    * @param {String} [vOption.colorLight="#ffffff"]
    * @param {QRCode.CorrectLevel} [vOption.correctLevel=QRCode.CorrectLevel.H] [L|M|Q|H] 
+   * @param {pathCombine} [vOption.pathCombine=true]
    */
   QRCode = function (el, vOption) {
     this._htOption = {
@@ -1433,7 +1574,8 @@ var QRCode;
       typeNumber: 1,
       colorDark: '#000000',
       colorLight: '#ffffff',
-      correctLevel: QRErrorCorrectLevel.H
+      correctLevel: QRErrorCorrectLevel.H,
+      pathCombine: false
     }
 
     if (typeof vOption === 'string') {
@@ -1453,9 +1595,7 @@ var QRCode;
       el = document.getElementById(el)
     }
 
-    if (this._htOption.useSVG) {
-      Drawing = svgDrawer
-    }
+    Drawing = this._htOption.useSVG ? svgDrawer : _isSupportCanvas() ? canvasDrawer : tableDrawer
 
     this._android = _getAndroid()
     this._el = el
