@@ -53,6 +53,7 @@
   <div id="qrcode" style="margin-top:15px;"></div>
 
   <script type="text/javascript">
+    let $ = s => document.querySelector(s)
     let qr = {
       width: 500,
       height: 500,
@@ -90,8 +91,6 @@
         i++
       }
     }
-
-    var $ = s => document.querySelector(s)
 
     if (qr.useSVG) {
       $("#usesvg").checked = true
