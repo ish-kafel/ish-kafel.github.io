@@ -1,67 +1,184 @@
-﻿<html>
+<html>
 
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-	<script type="text/javascript" src="js/qrcode.js"></script>
-	<style>
-		@font-face{
-	font-family: 'Cuniform';
-	src:url(font/NotoSansCuneiform-Regular.woff2) format("woff2");
-	unicode-range:U+12000-123FF;
-}
-button,textarea{
-	font-family: 'Cuniform','monospace';
-	width: 300;
-	font-size: 16;
-}
-select{
-	height: 46;
-	width: 50;
-	font-size: 16;
-	vertical-align: 16.5;
-}
-</style>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <meta name="viewport"
+    content="width=device-width, user-scalable=yes, initial-scale=0.7, maximum-scale=0.7, minimum-scale=0.6" />
+  <script type="text/javascript" src="qrcode.js"></script>
+  <style>
+    @font-face {
+      font-family: 'Cuniform';
+      src: url(font/NotoSansCuneiform-Regular.woff2) format("woff2");
+      unicode-range: U+12000-123FF;
+    }
+
+    input[type="checkbox"] {
+      zoom: 1.5;
+      vertical-align: bottom;
+    }
+
+    button {
+      width: 90;
+      font-size: 16;
+    }
+
+    textarea {
+      font-family: 'monospace';
+      width: 500;
+      height: 115;
+      font-size: 16;
+    }
+
+    select {
+      height: 27;
+      width: 50;
+      font-size: 16;
+    }
+  </style>
 </head>
 
 <body>
-	<button onclick="javascript:window.location.href='../'">回首页</button><br>
-	<textarea id="text" oninput="makeCode()">Everyday Fighting!</textarea><select id='se' onchange="cha()">
-		<option value='L'>低</option>
-		<option value='M'>中</option>
-		<option value='Q'>优</option>
-		<option selected="selected" value="H">高</option>
-	</select>
-	<div id="qrcode" style="margin-top:15px;"></div>
+  <button onclick="javascript:window.location.href='../'">回首页</button><br>
+  <textarea id="text" oninput="make()"></textarea>
+  <div>
+    <select id='se' onchange="changeErrorLevel()">
+      <option value='L'>低</option>
+      <option value='M'>中</option>
+      <option value='Q'>优</option>
+      <option selected="selected" value="H">高</option>
+    </select>
+    <input id="usesvg" type="checkbox" onclick="useSvg()" checked="checked" />使用SVG<input id="minisvg" type="checkbox"
+      onclick="mini()" checked="checked" />压缩SVG<input id="animesvg" type="checkbox" onclick="anime()" />SVG绘制动画
+    <button style="display:none" onclick="randomStr()">随机生成</button></div>
+  <div id="qrcode" style="margin-top:15px;"></div>
 
-	<script type="text/javascript">
-		var qr = {
-			width: 500,
-			height: 500,
-			colorDark: "#000000",
-			colorLight: "#ffffff",
-			correctLevel: QRCode.CorrectLevel.H
-		}
+  <script type="text/javascript">
+    let qr = {
+      width: 500,
+      height: 500,
+      colorDark: "#000",
+      colorLight: "#fff",
+      correctLevel: QRCode.CorrectLevel.H,
+      useSVG: true,
+      pathCombine: true,
+      animeSVG: false
+    }
 
-		var $ = selector => document.querySelector(selector)
-		var qrcode = new QRCode($("#qrcode"), qr);
+    function randomWord(min, max) {
+      var str = "",
+        range = min,
+        arr = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ',
+        pos;
+      if (max) {
+        range = Math.round(Math.random() * (max - min)) + min;
+      }
+      for (var i = 0; i < range; i++) {
+        pos = Math.round(Math.random() * (arr.length - 1));
+        str += arr[pos];
+      }
+      return str;
+    }
 
-		function cha() {
-			var tn = $("#qrcode")
-			tn.removeChild(tn.childNodes[0])
-			tn.removeChild(tn.childNodes[0])
+    function randomStr() {
+      $("#text").value = randomWord(1270)
+      make()
+      let num = 26510
+      let i = 0
+      while (maxLen <= num && i < 100) {
+        $("#text").value = randomWord(1270)
+        make()
+        i++
+      }
+    }
 
-			var x = $("#se").value;
-			qr.correctLevel = QRCode.CorrectLevel[x]
+    var $ = s => document.querySelector(s)
 
-			qrcode = new QRCode($("#qrcode"), qr);
-			qrcode.makeCode($("#text").value)
-		}
+    if (qr.useSVG) {
+      $("#usesvg").checked = true
+    } else {
+      $("#usesvg").checked = false
+    }
 
-		function makeCode() {
-			var elText = $("#text").value;
-			qrcode.makeCode(elText);
-		}
+    if (qr.pathCombine) {
+      $("#minisvg").checked = true
+    } else {
+      $("#minisvg").checked = false
+    }
 
-		makeCode();
-	</script>
+    var qrcode = new QRCode($("#qrcode"), qr);
+
+    function changeErrorLevel() {
+      var tn = $("#qrcode")
+      while (tn.childNodes[0]) {
+        tn.removeChild(tn.childNodes[0])
+      }
+      var x = $("#se").value;
+      qr.correctLevel = QRCode.CorrectLevel[x]
+      qrcode = new QRCode($("#qrcode"), qr);
+      qrcode.makeCode($("#text").value)
+    }
+
+    function useSvg() {
+      let chkbx = $("#usesvg")
+      let tn = $("#qrcode")
+      if (chkbx.checked) {
+        qr.useSVG = true
+        $("#minisvg").disabled = false
+        $("#animesvg").disabled = false
+      } else {
+        qr.useSVG = false
+        $("#minisvg").disabled = true
+        $("#animesvg").disabled = true
+      }
+      while (tn.childNodes[0]) {
+        tn.removeChild(tn.childNodes[0])
+      }
+      qrcode = new QRCode($("#qrcode"), qr);
+      qrcode.makeCode($("#text").value)
+    }
+
+    function mini() {
+      let chkbx = $("#minisvg")
+      let tn = $("#qrcode")
+      if (chkbx.checked) {
+        qr.pathCombine = true
+        $("#animesvg").disabled = false
+      } else {
+        qr.pathCombine = false
+        $("#animesvg").disabled = true
+      }
+      while (tn.childNodes[0]) {
+        tn.removeChild(tn.childNodes[0])
+      }
+      qrcode = new QRCode($("#qrcode"), qr);
+      qrcode.makeCode($("#text").value)
+    }
+
+    function anime() {
+      let chkbx = $("#animesvg")
+      let tn = $("#qrcode")
+      if (chkbx.checked) {
+        qr.animeSVG = true
+      } else {
+        qr.animeSVG = false
+      }
+      while (tn.childNodes[0]) {
+        tn.removeChild(tn.childNodes[0])
+      }
+      qrcode = new QRCode($("#qrcode"), qr);
+      qrcode.makeCode($("#text").value)
+    }
+
+    function make() {
+      //qrcode.clear()
+      let tn = $("#qrcode")
+      while (tn.childNodes[0]) {
+        tn.removeChild(tn.childNodes[0])
+      }
+      qrcode = new QRCode($("#qrcode"), qr);
+      qrcode.makeCode($("#text").value)
+    }
+
+    make();
+  </script>
 </body>
