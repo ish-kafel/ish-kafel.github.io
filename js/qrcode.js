@@ -1172,7 +1172,7 @@ var lowMax = Infinity;
             }
           }
         }
-        console.log(maxLen)
+        //console.log(maxLen)
         if (_htOption.animeSVG) {
           let path = makeSVG('path', {
             'style': `stroke:#000;fill-rule:evenodd;`,
