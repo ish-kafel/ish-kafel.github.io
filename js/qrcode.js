@@ -1197,8 +1197,8 @@ var lowMax = Infinity;
             'attributeType': 'CSS',
             'begin': 'dash.end',
             'dur': '2s',
-            'from': '#0000',
-            'to': '#000f',
+            'from': '#00000000',
+            'to': '#0000000f',
             'fill': 'freeze'
           }))
           path.appendChild(makeSVG('animate', {
