@@ -1175,7 +1175,7 @@ var lowMax = Infinity;
         //console.log(maxLen)
         if (_htOption.animeSVG) {
           let path = makeSVG('path', {
-            'style': `stroke:#000;fill-rule:evenodd;`,
+            'style': `stroke:#000;fill-rule:evenodd;fill:#000;fill-opacity:0;`,
             'stroke-width': 0.4,
             'stroke-dasharray': thisMax,
             'stroke-linejoin': 'round',
