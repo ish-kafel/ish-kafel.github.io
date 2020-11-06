@@ -1193,12 +1193,12 @@ var lowMax = Infinity;
             'fill': 'freeze'
           }))
           path.appendChild(makeSVG('animate', {
-            'attributeName': 'fill',
+            'attributeName': 'fill-opacity',
             'attributeType': 'CSS',
             'begin': 'dash.end',
             'dur': '2s',
-            'from': '#00000000',
-            'to': '#000000ff',
+            'from': 0,
+            'to': 1,
             'fill': 'freeze'
           }))
           path.appendChild(makeSVG('animate', {
