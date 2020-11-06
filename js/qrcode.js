@@ -1187,7 +1187,7 @@ var lowMax = Infinity;
             'attributeName': 'stroke-dashoffset',
             'attributeType': 'CSS',
             'begin': '0s',
-            'dur': thisMax * 0.007 + 's',
+            'dur': thisMax * 0.018 + 's',
             'from': thisMax,
             'to': 0,
             'fill': 'freeze'
