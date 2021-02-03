@@ -2,7 +2,7 @@
 
 <head>
 	<meta name="viewport"
-		content="width=device-width, user-scalable=yes, initial-scale=1, maximum-scale=1.5, minimum-scale=0.8" />
+		content="width=device-width, user-scalable=yes, initial-scale=0.7, maximum-scale=0.7, minimum-scale=0.7" />
 	<script src="./js/qrcodeldr.js"></script>
 </head>
 
@@ -11,20 +11,7 @@
 	<input id="btn" type="button" value="生成文件" />
 	<script>
 		let $ = s => document.querySelector(s)
-		let eleTextarea = $('#text');
-		let text = eleTextarea.value
-		let qr = new QRCode()
 		let eleButton = $('#btn');
-
-		let qrmap = qr.makeCode(text)
-		let len = qrmap.length
-		let str = '0 QRCode Model\n0 Name: QRCodeModel\n0 Author:  ish-kafel QRCode Model Generator\n'
-		for (let i = 0; i < len; i++) {
-			for (let j = 0; j < len; j++) {
-				str += [1, 15 * +!qrmap[i][j], (1 - len + 2 * j) * 10, -8, (len - 1 - 2 * i) * 10, '1 0 0 0 1 0 0 0 1 3024.dat\n']
-					.join(' ')
-			}
-		}
 
 		var funDownload = function (content, filename) {
 			let eleLink = document.createElement('a');
@@ -39,6 +26,18 @@
 
 		if ('download' in document.createElement('a')) {
 			eleButton.addEventListener('click', function () {
+				let text = $('#text').value
+				let qrmap = new QRCode().makeCode(text)
+				let len = qrmap.length
+				let str = '0 QRCode Model\n0 Name: QRCodeModel\n0 Author:  ish-kafel QRCode Model Generator\n'
+				for (let i = 0; i < len; i++) {
+					for (let j = 0; j < len; j++) {
+						str += [1, 15 * +!qrmap[i][j], (1 - len + 2 * j) * 10, -8, (len - 1 - 2 * i) * 10,
+								'1 0 0 0 1 0 0 0 1 3024.dat\n'
+							]
+							.join(' ')
+					}
+				}
 				funDownload(str, 'QRCode.ldr');
 			});
 		} else {
