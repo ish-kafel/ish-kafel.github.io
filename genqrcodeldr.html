@@ -1,0 +1,50 @@
+<html>
+
+<head>
+	<script src="./js/qrcodeldr.js"></script>
+</head>
+
+<body>
+	<textarea id="text" style="width:300;height:200">ish-kafel QRCode Model Generator</textarea><br />
+	<input id="btn" type="button" value="生成文件" />
+	<script>
+		let $ = s => document.querySelector(s)
+		let eleTextarea = $('#text');
+		let text = eleTextarea.value
+		let qr = new QRCode()
+		let eleButton = $('#btn');
+
+		let qrmap = qr.makeCode(text)
+		let len = qrmap.length
+		let str = '0 QRCode Model\n0 Name: QRCodeModel\n0 Author:  ish-kafel QRCode Model Generator\n'
+		for (let i = 0; i < len; i++) {
+			for (let j = 0; j < len; j++) {
+				str += [1, 15 * +!qrmap[i][j], (1 - len + 2 * j) * 10, -8, (len - 1 - 2 * i) * 10, '1 0 0 0 1 0 0 0 1 3024.dat\n']
+					.join(' ')
+			}
+		}
+
+		var funDownload = function (content, filename) {
+			let eleLink = document.createElement('a');
+			eleLink.download = filename;
+			eleLink.style.display = 'none';
+			let blob = new Blob([content]);
+			eleLink.href = URL.createObjectURL(blob);
+			document.body.appendChild(eleLink);
+			eleLink.click();
+			document.body.removeChild(eleLink);
+		};
+
+		if ('download' in document.createElement('a')) {
+			eleButton.addEventListener('click', function () {
+				funDownload(str, 'QRCode.ldr');
+			});
+		} else {
+			eleButton.onclick = function () {
+				alert('浏览器不支持');
+			};
+		}
+	</script>
+</body>
+
+</html>
