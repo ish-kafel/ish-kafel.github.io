@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg version="1.1" id="gradient" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 300 350" width="100%" height="100%">
+  <script>
+    <![CDATA[
+    let $ = s => document.querySelector(s)
+
+    function makeSVG(tag, attrs, ns = 'http://www.w3.org/2000/svg') {
+      var el = document.createElementNS(ns, tag)
+      if (attrs)
+        for (var k in attrs)
+          if (attrs.hasOwnProperty(k)) el.setAttribute(k, attrs[k])
+      return el
+    }
+
+    function tohex(num) {
+      if (num < 0) { num = 0 }
+      else if (num > 255) { num = 255 }
+      return Math.round(num).toString(16).padStart(2, "0")
+    }
+
+    function hex(R, G, B) {
+      return "#" + tohex(R) + tohex(G) + tohex(B)
+    }
+
+    function lumi(R, G, B) {
+      return (((R / 255) ** 2.2 + (1.5 * G / 255) ** 2.2 + (0.6 * B / 255) ** 2.2) / (1 + 1.5 ** 2.2 + 0.6 ** 2.2)) ** (1 / 2.2)
+    }
+
+    let svg = $("#gradient")
+    //start defs
+    let defs = svg.appendChild(makeSVG('defs'))
+    defs.appendChild(makeSVG('pattern', { id: "grid", width: 0.078125, height: 0.078125 }))
+    let rr = 0xa0
+    let gg = 0xc0
+    let bb = 0xC0
+    let stroke = lumi(rr, gg, bb) < 0.5 ? "white" : "black"
+    let baxis = defs.appendChild(makeSVG('linearGradient', { id: 'baxis' }))
+    let baxisstart = baxis.appendChild(makeSVG('stop', { 'stop-color': hex(rr, 0, 0) }))
+    let baxisend = baxis.appendChild(makeSVG('stop', { offset: 1, 'stop-color': hex(rr, 0, 0xff) }))
+    let gaxis = defs.appendChild(makeSVG('linearGradient', { id: 'gaxis', y1: 1, x2: 0 }))
+    let gaxisstart = gaxis.appendChild(makeSVG('stop', { 'stop-color': hex(rr, 0, 0) }))
+    let gaxisend = gaxis.appendChild(makeSVG('stop', { offset: 1, 'stop-color': hex(rr, 0xff, 0) }))
+    let barline = defs.appendChild(makeSVG('linearGradient', { id: 'barline' }))
+    let barstart = barline.appendChild(makeSVG('stop', { 'stop-color': hex(0, gg, bb) }))
+    let barend = barline.appendChild(makeSVG('stop', { offset: 1, 'stop-color': hex(0xff, gg, bb) }))
+    //end defs
+    let maing = svg.appendChild(makeSVG('g', { transform: 'translate(22)' }))
+    maing.appendChild(makeSVG('path', { fill: 'black', d: 'M0 0h256v256h-256z' }))
+    maing.appendChild(makeSVG('path', { fill: 'url(#baxis)', d: 'M0 0h256v256h-256z' }))
+    maing.appendChild(makeSVG('path', { fill: 'url(#gaxis)', d: 'M0 0h256v256h-256z', style: 'mix-blend-mode: lighten', id: 'upper' }))
+    let pp = maing.appendChild(makeSVG('path', { id: "pp", fill: hex(rr, gg, bb), transform: 'translate(' + bb + ' ' + (0x100 - gg) + ')', d: "M-5 0a5 5 0 00 10 0a5 5 0 00-10 0z", stroke: stroke }))
+    let barg = maing.appendChild(makeSVG('g', { transform: 'translate(0 270)' }))
+    barg.appendChild(makeSVG('path', { fill: "url(#barline)", d: "M0 0v20h256v-20z" }))
+    let bar = barg.appendChild(makeSVG('path', { fill: hex(rr, gg, bb), transform: 'translate(' + rr + ')', d: "M-4 0h8v20h-8z", stroke:stroke}))
+    let foreign = maing.appendChild(makeSVG('foreignObject', { x: 100, y: 300, width: 58, height: 100 }))
+    let input = foreign.appendChild(makeSVG('input', { style: 'width:48px;font-family:Consolas,monospace;', maxlength: 6, value: tohex(rr) + tohex(gg) + tohex(bb) }, "http://www.w3.org/1999/xhtml"))
+
+    let winWidth = window.innerWidth
+    let winHeight = window.innerHeight
+    let prevstroke = "white"
+    let newstroke = ""
+    $("#upper").ontouchmove = function(e) { e.preventDefault() }
+
+    function updatebargradient(G, B) {
+      barstart.setAttribute("stop-color", hex(0, G, B))
+      barend.setAttribute("stop-color", hex(0xFF, G, B))
+    }
+
+    function updateppgradient(R) {
+      baxisstart.setAttribute("stop-color", hex(R, 0, 0))
+      baxisend.setAttribute("stop-color", hex(R, 0, 0xff))
+      gaxisstart.setAttribute("stop-color", hex(R, 0, 0))
+      gaxisend.setAttribute("stop-color", hex(R, 0xff, 0))
+    }
+
+    function updatefill(R, G, B) {
+      bar.setAttribute("fill", hex(R, G, B))
+      pp.setAttribute("fill", hex(R, G, B))
+    }
+
+    function updatestroke(L) {
+      newstroke = (L < 0.5) ? "white" : "black"
+      if (newstroke != prevstroke) {
+        bar.setAttribute("stroke", newstroke)
+        pp.setAttribute("stroke", newstroke)
+        prevstroke = newstroke
+      }
+    }
+
+    function cut(num) {
+      if (num < 0) return 0
+      if (num > 255) return 255
+      return num
+    }
+
+    function getrgb(color, index) {
+      return {
+        R: parseInt(color.substr(index, 2), 16),
+        G: parseInt(color.substr(index + 2, 2), 16),
+        B: parseInt(color.substr(index + 4, 2), 16)
+      }
+    }
+    bar.ontouchmove = function(e) {
+      let movex = e.touches[0].clientX / winWidth * 300 - 22
+      movex = cut(movex)
+      let R = movex
+      let color = this.getAttribute("fill")
+      let { G, B } = getrgb(color, 1)
+      updateppgradient(R)
+      updatefill(R, G, B)
+      input.value = hex(R, G, B).slice(1)
+      this.setAttribute("transform", "translate(" + movex + ")")
+      updatestroke(lumi(R, G, B))
+      e.preventDefault()
+    }
+    pp.ontouchmove = function(e) {
+      let movex = e.touches[0].clientX / winWidth * 300 - 22
+      let movey = (e.touches[0].clientY - winHeight / 2) / winWidth * 300 + 350 / 2
+      movex = cut(movex)
+      movey = cut(movey)
+      let G = 255 - movey
+      let B = movex
+      let { R } = getrgb(this.getAttribute("fill"), 1)
+      updatebargradient(G, B)
+      updatefill(R, G, B)
+      input.value = hex(R, G, B).slice(1)
+      this.setAttribute("transform", "translate(" + movex + "," + movey + ")")
+      updatestroke(lumi(R, G, B))
+      e.preventDefault()
+    }
+    input.oninput = function(e) {
+      let color = this.value
+      if (/^[0-9a-fA-F]{6}$/.test(color)) {
+        let { R, G, B } = getrgb(color, 0)
+        updateppgradient(R)
+        updatebargradient(G, B)
+        updatefill(R, G, B)
+        pp.setAttribute("transform", "translate(" + B + "," + (255 - G) + ")")
+        bar.setAttribute("transform", "translate(" + R + ")")
+        updatestroke(lumi(R, G, B))
+      }
+    }
+    ]]>
+  </script>
+</svg>
