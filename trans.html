@@ -1,4 +1,4 @@
-﻿<html>
+<html>
 <meta charset="utf-8">
 <style>
   body {
@@ -6,12 +6,31 @@
   }
 
   textarea {
-    font-size: 3rem
+    font-size: min(4vmin, 35px);
+  }
+
+  #btn,
+  #ta,
+  #select {
+    font-size: min(3vmin, 30px);
+  }
+
+  #select {
+    margin: 1% 0 1%
+  }
+
+  #btn {
+    margin:5% 0 1%
+  }
+
+  .te {
+    width: 80%;
+    height: 40%;
   }
 </style>
 
 <body>
-  <button onclick="javascript:window.location.href='../'">回首页</button>
+  <button id="btn" onclick="javascript:window.location.href='../'">回首页</button>
   <div id="ta">字体选择：
     <select id="select" onchange="cha()">
       <option value="b0">粗体 𝐀𝟎</option>
@@ -28,31 +47,14 @@
       <option value="sansbi">无衬线粗斜体 𝘼</option>
       <option value="m0">等宽体 𝙰𝟶</option>
     </select> 注：带0的表示该字体支持数字<br>
-    <textarea name="te" placeholder="由此输入文字" oninput="cha()"></textarea><br>
-    <textarea name="te" placeholder="此处显示字体效果" style="font-family:Noto Sans Math;"></textarea>
+    <textarea class="te" placeholder="由此输入文字" oninput="cha()"></textarea><br>
+    <textarea class="te" placeholder="此处显示字体效果" style="font-family:Noto Sans Math;"></textarea>
   </div>
   <script>
-    var html = document.documentElement;
-    var $ = s => document.querySelector(s)
-
-    function fontS() {
-      var hW = html.offsetWidth / 50;
-      html.style.fontSize = hW + "px";
-    }
-    window.onresize = function () {
-      fontS();
-    }
-    var a = document.getElementsByName("te")
-    var wid = document.body.clientWidth
-    var hei = document.body.clientHeight
-    a[0].style.width = wid * 0.75
-    a[0].style.height = hei * 0.4
-    a[1].style.width = wid * 0.75
-    a[1].style.height = hei * 0.4
-    //a[2].style.width = wid * 0.1
-    //a[2].style.height = wid * 0.06
-    //a[2].style.fontSize = 10+"px"
-    var font = {
+    let $a = s => document.querySelectorAll(s)
+    let $ = s => document.querySelector(s)
+    let a = $a(".te")
+    let font = {
       b0: "𝐀 𝐁 𝐂 𝐃 𝐄 𝐅 𝐆 𝐇 𝐈 𝐉 𝐊 𝐋 𝐌 𝐍 𝐎 𝐏 𝐐 𝐑 𝐒 𝐓 𝐔 𝐕 𝐖 𝐗 𝐘 𝐙 𝐚 𝐛 𝐜 𝐝 𝐞 𝐟 𝐠 𝐡 𝐢 𝐣 𝐤 𝐥 𝐦 𝐧 𝐨 𝐩 𝐪 𝐫 𝐬 𝐭 𝐮 𝐯 𝐰 𝐱 𝐲 𝐳 𝟬 𝟭 𝟮 𝟯 𝟰 𝟱 𝟲 𝟳 𝟴 𝟵",
       i: "𝐴 𝐵 𝐶 𝐷 𝐸 𝐹 𝐺 𝐻 𝐼 𝐽 𝐾 𝐿 𝑀 𝑁 𝑂 𝑃 𝑄 𝑅 𝑆 𝑇 𝑈 𝑉 𝑊 𝑋 𝑌 𝑍 𝑎 𝑏 𝑐 𝑑 𝑒 𝑓 𝑔 ℎ 𝑖 𝑗 𝑘 𝑙 𝑚 𝑛 𝑜 𝑝 𝑞 𝑟 𝑠 𝑡 𝑢 𝑣 𝑤 𝑥 𝑦 𝑧",
       bi: "𝑨 𝑩 𝑪 𝑫 𝑬 𝑭 𝑮 𝑯 𝑰 𝑱 𝑲 𝑳 𝑴 𝑵 𝑶 𝑷 𝑸 𝑹 𝑺 𝑻 𝑼 𝑽 𝑾 𝑿 𝒀 𝒁 𝒂 𝒃 𝒄 𝒅 𝒆 𝒇 𝒈 𝒉 𝒊 𝒋 𝒌 𝒍 𝒎 𝒏 𝒐 𝒑 𝒒 𝒓 𝒔 𝒕 𝒖 𝒗 𝒘 𝒙 𝒚 𝒛",
@@ -69,32 +71,29 @@
     }
 
     function cha() {
-      var sFont = $("#select").value
-      var eng = a[0].value
-      var reg,alrt
+      let sFont = $("#select").value
+      let eng = a[0].value
+      let reg, alrt
       if (sFont.match(/0/)) {
         reg = new RegExp(/[^A-Za-z0-9 ]/, "g")
-        alrt="仅支持字母、数字和空格"
-      }else{
+        alrt = "仅支持字母、数字和空格"
+      } else {
         reg = new RegExp(/[^A-Za-z ]/, "g")
-        alrt="仅支持字母和空格"
+        alrt = "仅支持字母和空格"
       }
       if (eng.match(reg)) {
         a[0].value = eng.replace(reg, "")
         alert(alrt)
       } else {
-        var engl = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
-        var sl = font[sFont]
+        let engl = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
+        let sl = font[sFont]
         sl = sl.split(" "), engl = engl.split("")
-        var str = eng.split("")
+        let str = eng.split("")
         for (var i = 0; i < str.length; i++) {
-          if (str[i] == " ") {
-            continue
-          }
-          var j = engl.indexOf("" + str[i])
+          if (str[i] == " ") continue
+          let j = engl.indexOf("" + str[i])
           str[i] = sl[j];
         }
-
         a[1].value = str.join("")
       }
     }
