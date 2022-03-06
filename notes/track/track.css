@@ -1,11 +1,11 @@
 @font-face {
   font-family: a;
-  src: url(font/bQSUfYhuCn5q.db74f7a563ec017311bc.otf) format("opentype")
+  src: url(../font/bQSUfYhuCn5q.db74f7a563ec017311bc.otf) format("opentype")
 }
 
 @font-face {
   font-family: b;
-  src: url(font/G68C3crED4Jg.fed8e64030b578000a92.otf) format("opentype")
+  src: url(../font/G68C3crED4Jg.fed8e64030b578000a92.otf) format("opentype")
 }
 
 body {
@@ -24,14 +24,14 @@ body {
 #as {
   display: none;
   width: 65vh;
-  height: 50vh;
+  height: 55vh;
   float: left;
   line-height: 4vh;
   overflow: hidden
 }
 
 #as div {
-  height: 50vh;
+  height: 55vh;
   overflow: hidden
 }
 
@@ -53,7 +53,8 @@ h1 {
   font-family: b;
   font-size: 6vh;
   padding-top: 6%;
-  letter-spacing: 1vh
+  letter-spacing: 1vh;
+  width: 75vh
 }
 
 h2 {
