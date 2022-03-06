@@ -1,11 +1,11 @@
 @font-face {
   font-family: a;
-  src: url(font/bQSUfYhuCn5q.db74f7a563ec017311bc.otf) format("opentype")
+  src: url(../font/bQSUfYhuCn5q.db74f7a563ec017311bc.otf) format("opentype")
 }
 
 @font-face {
   font-family: b;
-  src: url(font/G68C3crED4Jg.fed8e64030b578000a92.otf) format("opentype")
+  src: url(../font/G68C3crED4Jg.fed8e64030b578000a92.otf) format("opentype")
 }
 
 body {
