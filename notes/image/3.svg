@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="540" height="617">
+  <g fill="none" stroke="#fff" stroke-linejoin="round">
+    <path d="M242 14l284 118v354l-228 117-284-117v-354z" stroke-width="28"></path>
+    <path d="M242 14v354l-228 118M526 132l-228 118v354" stroke-width="14"></path>
+  </g>
+  <path d="M14 124.4l208 86v15.5l-208-86zM261.6 226.8l39.4 16.4v15.5l-39.4-16.4zM318.5 392l208 86v15.5l-208-86zM239.5 359l39.4 16.4v15.5l-39.4-16.4z" fill="#fff"></path>
+</svg>
