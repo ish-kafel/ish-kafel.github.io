@@ -1,0 +1,112 @@
+@font-face {
+  font-family: a;
+  src: url(font/bQSUfYhuCn5q.db74f7a563ec017311bc.otf) format("opentype")
+}
+
+@font-face {
+  font-family: b;
+  src: url(font/G68C3crED4Jg.fed8e64030b578000a92.otf) format("opentype")
+}
+
+body {
+  margin: 0;
+  background-color: #000;
+  color: #fff;
+  overflow: hidden;
+  min-width: 100vw
+}
+
+#widget {
+  position: absolute;
+  display: none;
+  width: 3vh;
+  margin-top: 84.3vh;
+  margin-left: 90%;
+  pointer-events: auto
+}
+
+#playbar {
+  position: relative;
+  width: 100%;
+  height: 3vh;
+  z-index: 2;
+  pointer-events: none
+}
+
+#playb {
+  width: 0;
+  height: 10%;
+  float: left;
+  background-color: #fff
+}
+
+#aq,
+#as,
+#au {
+  width: 100vw;
+  margin: auto
+}
+
+#dl {
+  display: none;
+  float: right;
+  font-size: 2.5vw;
+  margin-top: 10%;
+  padding-right: 1%
+}
+
+p {
+  font-family: a;
+  font-size: 3vw
+}
+
+h1 {
+  display: none;
+  font-family: b;
+  font-size: 6vw;
+  padding: 15% 1% 10%;
+  letter-spacing: 2vw
+}
+
+#aq img {
+  display: none;
+  padding: 1%;
+  width: 48%
+}
+
+#as img {
+  width: min(6vw , 4vh);
+  float: right
+}
+
+.pause {
+  display: none
+}
+
+#as>div {
+  display: none;
+  width: 98%;
+  padding: 1%
+}
+
+audio {
+  display: none
+}
+
+#overlay {
+  position: absolute;
+  display: none;
+  width: 100%;
+  height: 120vh;
+  background-color: #00000080;
+  opacity: 0;
+  z-index: 2
+}
+
+#oveb p {
+  display: block;
+  float: none;
+  font-size: min(3.4vw,2.5vh);
+  padding-top: 3%;
+  margin: 0
+}
