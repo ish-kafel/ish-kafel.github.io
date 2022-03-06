@@ -2,19 +2,28 @@ var scroll = 0,
   toggle = 0;
 $(document).ready(function() {
   var e = new URLSearchParams(window.location.search).get("n");
+  let y, dy = 0
   $("#as").load("87281033ea7b2e2b/" + e, function() {
     document.getElementById("as").childNodes.forEach(e => {
       e.addEventListener("wheel", function(t) {
         t.deltaY < 0 ? e.scrollBy(0, .1 * -window.innerHeight) : t.deltaY > 0 && e.scrollBy(0, .1 * window.innerHeight)
       })
+      e.addEventListener("touchstart", function(t) {
+        let touch = t.touches[0]
+        y = touch.clientY - dy
+      })
+      e.addEventListener("touchmove", function(t) {
+        let touch = t.touches[0]
+        dy = touch.clientY - y
+        if (dy > 0) dy = 0
+        if (dy < e.clientHeight - e.scrollHeight) dy = e.clientHeight - e.scrollHeight
+        e.scrollTo(0, -dy)
+      })
     })
-  }), $.getJSON("87281033ea7b2e2b/num.json", function(t) {
+  })
+  $.getJSON("87281033ea7b2e2b/num.json", function(t) {
     var n = t[e];
     $("#aq > h1").html(n[0])
-    $("iframe:eq(0)").prop({
-      src: "https://www.youtube-nocookie.com/embed/" + n[1]
-    })
-    $("iframe:eq(1)").prop({ src: "https://open.spotify.com/embed/track/" + n[2] })
     setTimeout(function() {
       $("#aq").children().each(function(e) {
         $(this).delay(300 * e).fadeIn(1400, function() {
@@ -22,7 +31,9 @@ $(document).ready(function() {
         })
       })
     }, 1e3)
-  }), $("#widget").on("click", function e() {
+  })
+  $("#widget").on("click", function e() {
+    dy = 0
     var t = $("#widget");
     t.off("click", e);
     setTimeout(function() {
