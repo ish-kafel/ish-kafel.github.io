@@ -75,7 +75,7 @@ $(document).ready(function() {
     $("#title p:eq(1)").delay(600).fadeIn(1400)
     $("#connect").delay(600).animate({ height: "toggle" }, 2e3)
   })
-  a = ["", "", 82, "", -910]
+  a = ["#663e12a7baf56641", "", 82, "", -910,3782]
   setTimeout(function() {
     window.addEventListener("wheel", screnabled)
     window.addEventListener("wheel", e)
