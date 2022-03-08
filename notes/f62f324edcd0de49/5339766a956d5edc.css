@@ -13,25 +13,24 @@ body {
   background-color: #000;
   color: #fff;
   overflow: hidden;
-  width: 100vh
 }
 
 #aq {
-  width: 90vh;
-  margin: auto
+  width: 90vmin;
+  margin-left: calc((100vw - 90vmin)/2)
 }
 
 #as {
   display: none;
-  width: 65vh;
-  height: 55vh;
+  width: calc(90vmin - 2vh);
+  height: 65vh;
   float: left;
-  line-height: 5vh;
+  line-height: 4vh;
   overflow: hidden
 }
 
 #as div {
-  height: 55vh;
+  height: 65vh;
   overflow: hidden
 }
 
@@ -46,15 +45,14 @@ body {
 p {
   margin: 0;
   font-family: a;
-  font-size: 1.8vh
+  font-size: 2vmin
 }
 
 h1 {
   font-family: b;
-  font-size: 6vh;
+  font-size: 6.4vmin;
   padding-top: 6%;
   letter-spacing: 1vh;
-  max-width: 75vh
 }
 
 h2 {
