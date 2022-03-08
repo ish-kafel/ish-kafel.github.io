@@ -26,7 +26,7 @@ function addUser(e, t, n, a) {
 }
 
 function removeUserID(e) {
-  for (var t = 0; t < user.length; t++) {
+  for (let t = 0; t < user.length; t++) {
     if (user[t][0] == e) {
       $("#enemyradar" + user[t][1]).remove()
       user.splice(t, 1);
@@ -36,7 +36,7 @@ function removeUserID(e) {
 }
 
 function removeUserSID(e) {
-  for (var t = 0; t < user.length; t++) {
+  for (let t = 0; t < user.length; t++) {
     if (user[t][1] == e) {
       $("#enemyradar" + user[t][1]).remove()
       user.splice(t, 1);
@@ -44,10 +44,10 @@ function removeUserSID(e) {
     }
   }
 }
-var a
-var ready = 0
-var n = "#logo img"
-var scroll = 0;
+let a
+let ready = 0
+let n = "#logo img"
+let scroll = 0;
 
 function screnabled(e) {
   if (e.deltaY < 0) {
@@ -76,15 +76,16 @@ function touchon(e) {
   let touch = e.touches[0]
   x = touch.pageX
   y = touch.clientY - dy
-  //console.log([x, y])
 }
 window.addEventListener("touchstart", touchon)
 
 function screnabled1(e) {
+  let h = document.getElementById(a[0].split('#')[1]).scrollHeight / a[5] * (a[5] - 260)
   let touch = e.touches[0]
   dy = touch.clientY - y
-  //console.log(dy)
   if (dy > 0) dy = 0
+  if (dy < -h) dy = -h
+  //console.log([dy, -h])
   scroll = dy
   $("body").css({ transform: "translateY(" + dy + "px)" })
   $("#widget,#overlay").css({
@@ -175,15 +176,15 @@ function widget(e) {
   }
 }
 $(document).ready(function() {
-  //if (3 == localStorage.length) {
-  $("#ret").load('3df37adce26893dc/12ad4c9811af86cf.html div#next')
-  $("#logo").css({
-    "margin-top": "-8vh"
-  })
-  setTimeout(function() {
-    $("#next").fadeIn(1400)
-  }, 1400)
-  //}
+  if (3 == localStorage.length) {
+    $("#ret").load('3df37adce26893dc/12ad4c9811af86cf.html div#next')
+    $("#logo").css({
+      "margin-top": "-8vh"
+    })
+    setTimeout(function() {
+      $("#next").fadeIn(1400)
+    }, 1400)
+  }
   $(n).hide()
   setTimeout(function() {
     $(n).each(function(e) {
@@ -205,7 +206,7 @@ $(document).ready(function() {
   }, 1e3)
   $(n).click(function() {
     if (1 == ready) {
-      a = [["3df37adce26893dc/12ad4c9811af86cf.html div#boxa", 2, 85, "#1,#2", -680], ["3df37adce26893dc/30d27baeb71828b0.html div#boxb", -29.5, 116.5, "#2", -860], ["3df37adce26893dc/f9a59aa722e934b4.html div#boxc", -61.6, 148.6, "", -1020]][$(n).index(this)]
+      a = [["3df37adce26893dc/12ad4c9811af86cf.html div#boxa", 2, 85, "#1,#2", -680, 2914], ["3df37adce26893dc/30d27baeb71828b0.html div#boxb", -29.5, 116.5, "#2", -860, 3727], ["3df37adce26893dc/f9a59aa722e934b4.html div#boxc", -61.6, 148.6, "", -1020, 4383]][$(n).index(this)]
       localStorage.setItem($(n).index(this), 1)
       $(n).unbind("mouseenter mouseleave click").css({
         "transition-duration": ""
