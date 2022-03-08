@@ -19,14 +19,12 @@ function touchon(t) {
   let touch = t.touches[0]
   x = touch.pageX
   y = touch.clientY - dy
-  console.log([x, y])
 }
 window.addEventListener("touchstart", touchon)
 
 function screnabled1(t) {
   let touch = t.touches[0]
   dy = touch.clientY - y
-  console.log(dy)
   if (dy > 0) dy = 0
   $("body").css({
     transform: "translateY(" + dy + "px)"
@@ -53,8 +51,6 @@ function widget1(t) {
   }
 }
 $(document).ready(function() {
-  console.log(window.innerHeight)
-  console.log(window.innerWidth)
   setTimeout(function() {
     $("#aq,#as,#au").children().each(function(t) {
       $(this).delay(200 * t).fadeIn(1400, function() {

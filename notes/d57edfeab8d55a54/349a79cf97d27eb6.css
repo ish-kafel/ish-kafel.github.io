@@ -44,7 +44,8 @@ body {
 #as,
 #au {
   width: 100vw;
-  margin: auto
+  margin: auto;
+  line-height: min(5vh, 9.77vw)
 }
 
 #dl {
@@ -57,13 +58,13 @@ body {
 
 p {
   font-family: a;
-  font-size: 3vw
+  font-size: 1.2vmin
 }
 
 h1 {
   display: none;
   font-family: b;
-  font-size: 6vw;
+  font-size: 4vmin;
   padding: 15% 1% 10%;
   letter-spacing: 2vw
 }
@@ -75,7 +76,7 @@ h1 {
 }
 
 #as img {
-  width: min(6vw , 4vh);
+  width: min(6vw, 4vh);
   float: right
 }
 
@@ -106,7 +107,7 @@ audio {
 #oveb p {
   display: block;
   float: none;
-  font-size: min(3.4vw,2.5vh);
+  font-size: min(3.4vw, 2.5vh);
   padding-top: 3%;
   margin: 0
 }

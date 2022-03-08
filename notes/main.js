@@ -85,7 +85,6 @@ function screnabled1(e) {
   dy = touch.clientY - y
   if (dy > 0) dy = 0
   if (dy < -h) dy = -h
-  //console.log([dy, -h])
   scroll = dy
   $("body").css({ transform: "translateY(" + dy + "px)" })
   $("#widget,#overlay").css({
@@ -176,7 +175,8 @@ function widget(e) {
   }
 }
 $(document).ready(function() {
-  if (3 == localStorage.length) {
+  let amop = new Set(['DROELOEamit', 'DROELOEtcwf', 'DROELOEapim', ...Object.keys(localStorage)]).size == localStorage.length
+  if (amop) {
     $("#ret").load('3df37adce26893dc/12ad4c9811af86cf.html div#next')
     $("#logo").css({
       "margin-top": "-8vh"
@@ -207,7 +207,7 @@ $(document).ready(function() {
   $(n).click(function() {
     if (1 == ready) {
       a = [["3df37adce26893dc/12ad4c9811af86cf.html div#boxa", 2, 85, "#1,#2", -680, 2914], ["3df37adce26893dc/30d27baeb71828b0.html div#boxb", -29.5, 116.5, "#2", -860, 3727], ["3df37adce26893dc/f9a59aa722e934b4.html div#boxc", -61.6, 148.6, "", -1020, 4383]][$(n).index(this)]
-      localStorage.setItem($(n).index(this), 1)
+      localStorage.setItem(['DROELOEamit', 'DROELOEtcwf', 'DROELOEapim'][$(n).index(this)], 1)
       $(n).unbind("mouseenter mouseleave click").css({
         "transition-duration": ""
       })
