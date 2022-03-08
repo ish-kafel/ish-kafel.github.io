@@ -25,7 +25,7 @@ body {
   width: calc(90vmin - 2vh);
   height: 65vh;
   float: left;
-  line-height: 4vh;
+  line-height: 5.5vmin;
   overflow: hidden
 }
 
@@ -45,7 +45,7 @@ body {
 p {
   margin: 0;
   font-family: a;
-  font-size: 2vmin
+  font-size: 2.5vmin
 }
 
 h1 {
