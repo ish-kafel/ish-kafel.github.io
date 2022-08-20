@@ -68,7 +68,7 @@
       geometry.index = circleGeometry.index;
       geometry.attributes = circleGeometry.attributes;
       let res
-      await fetch('./languages.json').then(r => r.json()).then(r => res = r)
+      await fetch('./languages-color.json').then(r => r.json()).then(r => res = r)
       const particleCount = Object.keys(res).length
       const translateArray = new Float32Array(particleCount * 3);
       let i3 = 0
