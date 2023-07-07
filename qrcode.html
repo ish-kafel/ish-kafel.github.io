@@ -2,8 +2,7 @@
 
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-  <meta name="viewport"
-    content="width=device-width, user-scalable=yes, initial-scale=0.7, maximum-scale=0.7, minimum-scale=0.6" />
+  <meta name="viewport" content="width=device-width, user-scalable=yes, initial-scale=0.7, maximum-scale=0.7, minimum-scale=0.6" />
   <script type="text/javascript" src="js/qrcode.js"></script>
   <style>
     @font-face {
@@ -47,9 +46,9 @@
       <option value='Q'>优</option>
       <option selected="selected" value="H">高</option>
     </select>
-    <input id="usesvg" type="checkbox" onclick="useSvg()" checked="checked" />使用SVG<input id="minisvg" type="checkbox"
-      onclick="mini()" checked="checked" />压缩SVG<input id="animesvg" type="checkbox" onclick="anime()" />SVG绘制动画
-    <button style="display:none" onclick="randomStr()">随机生成</button></div>
+    <input id="usesvg" type="checkbox" onclick="useSvg()" checked="checked" />使用SVG<input id="minisvg" type="checkbox" onclick="mini()" checked="checked" />压缩SVG<input id="animesvg" type="checkbox" onclick="anime()" />SVG描边动画（同步）<br /><input id="anime1svg" type="checkbox" onclick="anime1()" />SVG描边动画（顺序）
+    <button style="display:none" onclick="randomStr()">随机生成</button>
+  </div>
   <div id="qrcode" style="margin-top:15px;"></div>
 
   <script type="text/javascript">
@@ -91,26 +90,13 @@
         i++
       }
     }
-
-    if (qr.useSVG) {
-      $("#usesvg").checked = true
-    } else {
-      $("#usesvg").checked = false
-    }
-
-    if (qr.pathCombine) {
-      $("#minisvg").checked = true
-    } else {
-      $("#minisvg").checked = false
-    }
-
+    $("#usesvg").checked = qr.useSVG
+    $("#minisvg").checked = qr.pathCombine
     var qrcode = new QRCode($("#qrcode"), qr);
 
     function changeErrorLevel() {
       var tn = $("#qrcode")
-      while (tn.childNodes[0]) {
-        tn.removeChild(tn.childNodes[0])
-      }
+      tn.innerHTML = ''
       var x = $("#se").value;
       qr.correctLevel = QRCode.CorrectLevel[x]
       qrcode = new QRCode($("#qrcode"), qr);
@@ -120,18 +106,12 @@
     function useSvg() {
       let chkbx = $("#usesvg")
       let tn = $("#qrcode")
-      if (chkbx.checked) {
-        qr.useSVG = true
-        $("#minisvg").disabled = false
-        $("#animesvg").disabled = false
-      } else {
-        qr.useSVG = false
-        $("#minisvg").disabled = true
-        $("#animesvg").disabled = true
-      }
-      while (tn.childNodes[0]) {
-        tn.removeChild(tn.childNodes[0])
-      }
+      let bool = chkbx.checked
+      qr.useSVG = bool
+      $("#minisvg").disabled = !bool
+      $("#animesvg").disabled = !bool||!minisvg.checked
+      $("#anime1svg").disabled = !bool||!minisvg.checked
+      tn.innerHTML = ''
       qrcode = new QRCode($("#qrcode"), qr);
       qrcode.makeCode($("#text").value)
     }
@@ -139,16 +119,10 @@
     function mini() {
       let chkbx = $("#minisvg")
       let tn = $("#qrcode")
-      if (chkbx.checked) {
-        qr.pathCombine = true
-        $("#animesvg").disabled = false
-      } else {
-        qr.pathCombine = false
-        $("#animesvg").disabled = true
-      }
-      while (tn.childNodes[0]) {
-        tn.removeChild(tn.childNodes[0])
-      }
+      qr.pathCombine = chkbx.checked
+      $("#animesvg").disabled = !chkbx.checked
+      $("#anime1svg").disabled = !chkbx.checked
+      tn.innerHTML = ''
       qrcode = new QRCode($("#qrcode"), qr);
       qrcode.makeCode($("#text").value)
     }
@@ -156,14 +130,21 @@
     function anime() {
       let chkbx = $("#animesvg")
       let tn = $("#qrcode")
-      if (chkbx.checked) {
-        qr.animeSVG = true
-      } else {
-        qr.animeSVG = false
-      }
-      while (tn.childNodes[0]) {
-        tn.removeChild(tn.childNodes[0])
-      }
+      anime1svg.checked = false
+      qr.anime1SVG = false
+      qr.animeSVG = chkbx.checked
+      tn.innerHTML = ''
+      qrcode = new QRCode($("#qrcode"), qr);
+      qrcode.makeCode($("#text").value)
+    }
+
+    function anime1() {
+      let chkbx = $("#anime1svg")
+      let tn = $("#qrcode")
+      animesvg.checked = false
+      qr.animeSVG = false
+      qr.anime1SVG = chkbx.checked
+      tn.innerHTML = ''
       qrcode = new QRCode($("#qrcode"), qr);
       qrcode.makeCode($("#text").value)
     }
@@ -171,9 +152,7 @@
     function make() {
       //qrcode.clear()
       let tn = $("#qrcode")
-      while (tn.childNodes[0]) {
-        tn.removeChild(tn.childNodes[0])
-      }
+      tn.innerHTML = ''
       qrcode = new QRCode($("#qrcode"), qr);
       qrcode.makeCode($("#text").value)
     }

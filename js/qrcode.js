@@ -393,10 +393,10 @@ var lowMax = Infinity;
   }
 
   var QRErrorCorrectLevel = {
-    'L': 1,
-    'M': 0,
-    'Q': 3,
-    'H': 2
+    L: 1,
+    M: 0,
+    Q: 3,
+    H: 2
   }
 
   var QRMaskPattern = {
@@ -1068,18 +1068,18 @@ var lowMax = Infinity;
       }
 
       var svg = makeSVG('svg', {
-        'viewBox': `0 0 ${nCount} ${nCount}`,
-        'width': wid,
-        'height': hei,
-        'fill': _htOption.colorLight
+        viewBox: `0 0 ${nCount} ${nCount}`,
+        width: wid,
+        height: hei,
+        fill: _htOption.colorLight
       })
       svg.setAttributeNS('http://www.w3.org/2000/xmlns/', 'xmlns:xlink', 'http://www.w3.org/1999/xlink')
       _el.appendChild(svg)
 
       svg.appendChild(makeSVG('rect', {
-        'fill': _htOption.colorLight,
-        'width': '100%',
-        'height': '100%'
+        fill: _htOption.colorLight,
+        width: '100%',
+        height: '100%'
       }))
 
       if (_htOption.pathCombine) {
@@ -1175,62 +1175,62 @@ var lowMax = Infinity;
         //console.log(maxLen)
         if (_htOption.animeSVG) {
           let path = makeSVG('path', {
-            'style': `stroke:#000;fill-rule:evenodd;fill:#000;fill-opacity:0;`,
-            'stroke-width': 0.4,
+            style: `stroke:#000;fill-rule:evenodd;fill:#000;fill-opacity:0;`,
+            'stroke-width': 0.1,
             'stroke-dasharray': thisMax,
             'stroke-linejoin': 'round',
             'stroke-linecap': 'round',
-            'd': pathStr
+            d: pathStr
           })
           path.appendChild(makeSVG('animate', {
-            'id': 'dash',
-            'attributeName': 'stroke-dashoffset',
-            'attributeType': 'CSS',
-            'begin': '0s',
-            'dur': thisMax * 0.018 + 's',
-            'from': thisMax,
-            'to': 0,
-            'fill': 'freeze'
+            id: 'dash',
+            attributeName: 'stroke-dashoffset',
+            attributeType: 'CSS',
+            begin: '0s',
+            dur: thisMax * 0.018 + 's',
+            from: thisMax,
+            to: 0,
+            fill: 'freeze'
           }))
           path.appendChild(makeSVG('animate', {
-            'attributeName': 'fill-opacity',
-            'attributeType': 'CSS',
-            'begin': 'dash.end',
-            'dur': '2s',
-            'from': 0,
-            'to': 1,
-            'fill': 'freeze'
+            attributeName: 'fill-opacity',
+            attributeType: 'CSS',
+            begin: 'dash.end',
+            dur: '1s',
+            from: 0,
+            to: 1,
+            fill: 'freeze'
           }))
           path.appendChild(makeSVG('animate', {
-            'attributeName': 'stroke-width',
-            'attributeType': 'CSS',
-            'begin': 'dash.end',
-            'dur': '0.8s',
-            'to': 0,
-            'fill': 'freeze'
+            attributeName: 'stroke-width',
+            attributeType: 'CSS',
+            begin: 'dash.end',
+            dur: '1s',
+            to: 0,
+            fill: 'freeze'
           }))
           svg.appendChild(path)
         } else {
           svg.appendChild(makeSVG('path', {
-            'fill': _htOption.colorDark,
-            'style': 'fill-rule:evenodd',
-            'd': pathStr
+            fill: _htOption.colorDark,
+            style: 'fill-rule:evenodd',
+            d: pathStr
           }))
         }
       } else {
         svg.appendChild(makeSVG('rect', {
-          'fill': _htOption.colorDark,
-          'width': '1',
-          'height': '1',
-          'id': 'template'
+          fill: _htOption.colorDark,
+          width: '1',
+          height: '1',
+          id: 'template'
         }))
 
         for (var row = 0; row < nCount; row++) {
           for (var col = 0; col < nCount; col++) {
             if (oQRCode.isDark(row, col)) {
               var child = makeSVG('use', {
-                'x': String(col),
-                'y': String(row)
+                x: String(col),
+                y: String(row)
               })
               child.setAttributeNS('http://www.w3.org/1999/xlink', 'href', '#template')
               svg.appendChild(child)
