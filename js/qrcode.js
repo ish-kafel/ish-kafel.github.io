@@ -1322,7 +1322,6 @@ var lowMax = Infinity;
             const vt = Math.max(1, Math.floor(v.length / t))
             const vl = v.length
             const hl = h.length
-            let ml = Math.max(h.length, v.length)
             for (let i = 0, jv = 0, jh = 0; i < t; i++) {
               if (vl < t) {
                 if (i == Math.floor(jv * t / vl)) {
