@@ -1257,6 +1257,121 @@ var lowMax = Infinity;
             }))
             svg.appendChild(path[0])
           })
+        } else if (_htOption.spreadSVG || _htOption.spread1SVG) {
+          let pathStri = pathStr.split(/(?<=z)(?=M)/)
+          let parr = pathStri.map(d => makeSVG('path', { style: 'fill-rule:evenodd;fill:fff;mix-blend-mode:difference', d }))
+          let tmpdl = []
+          parr.forEach(e => {
+            tmpdl.push([e.getAttribute('d'), e.getTotalLength()])
+            e.setAttribute('d', '')
+          })
+          tmpdl.sort((a, b) => b[1] - a[1])
+          parr.forEach((e, ii) => {
+            let [endp, plen] = tmpdl[ii]
+            endp = endp.replace(/([hv]-?)(\d+)/g, function(sub, g1, g2) {
+              return (g1 + 1).repeat(g2)
+            })
+            let end = endp.split(/(?<=\d)(?=[vh])/g)
+            let h = [],
+              v = [],
+              hm = [],
+              vm = []
+            end.forEach((e, i) => {
+              if (e[0] == 'v') {
+                e[1] == '-' ? vm.push(i) : v.push(i)
+              } else if (e[0] == 'h') {
+                e[1] == '-' ? hm.push(i) : h.push(i)
+              }
+            })
+            let vre = []
+            let vmre = []
+            let hre = []
+            let hmre = []
+            for (let k = 2; k < end.length; k++) {
+              for (let i = 0, j = 0; i < v.length && j < vm.length;) {
+                if (Math.abs(v[i] - vm[j]) == k) {
+                  vre.push(v.splice(i, 1))
+                  vmre.push(vm.splice(j, 1))
+                } else if (v[i] < vm[j]) ++i
+                else ++j
+              }
+              if (v[v.length - 1] < vm[0]) {
+                vre.push(...v.reverse().splice(0))
+                vmre.push(...vm.splice(0))
+              }
+              for (let i = 0, j = 0; i < h.length && j < hm.length;) {
+                if (Math.abs(h[i] - hm[j]) == k) {
+                  hre.push(h.splice(i, 1))
+                  hmre.push(hm.splice(j, 1))
+                } else if (h[i] < hm[j]) ++i
+                else ++j
+              }
+              if (h[h.length - 1] < hm[0]) {
+                hre.push(...h.reverse().splice(0))
+                hmre.push(...hm.splice(0))
+              }
+            }
+            v = vre
+            vm = vmre
+            h = hre
+            hm = hmre
+            let res = [end.join('')]
+            let t = plen < 60 ? Math.ceil(plen / 6) : 60
+            const durr = Math.min(3, plen / 40)
+            const ht = Math.max(1, Math.floor(h.length / t))
+            const vt = Math.max(1, Math.floor(v.length / t))
+            const vl = v.length
+            const hl = h.length
+            let ml = Math.max(h.length, v.length)
+            for (let i = 0, jv = 0, jh = 0; i < t; i++) {
+              if (vl < t) {
+                if (i == Math.floor(jv * t / vl)) {
+                  end[v[0]] = end[vm[0]] = 'v0'
+                  v.shift()
+                  vm.shift()
+                  jv++
+                }
+              } else {
+                for (let j = 0; j < vt + (i < vl % t); j++) {
+                  end[v[0]] = end[vm[0]] = 'v0'
+                  v.shift()
+                  vm.shift()
+                }
+              }
+              if (hl < t) {
+                if (i == Math.floor(jh * t / hl)) {
+                  end[h[0]] = end[hm[0]] = 'h0'
+                  h.shift()
+                  hm.shift()
+                  jh++
+                }
+              } else {
+                for (let j = 0; j < ht + !!(i < hl % t); j++) {
+                  if (h.length) {
+                    end[h[0]] = end[hm[0]] = 'h0'
+                    h.shift()
+                    hm.shift()
+                  }
+                }
+              }
+              res.push(end.join(''))
+            }
+            let kt = Array(t + 1).fill(0).map((e, i) => i / t)
+            res.reverse()
+            let ani = makeSVG('animate', {
+              id: 'sp' + ii,
+              begin: _htOption.spreadSVG ? '0s' : (ii == 0) ? '0s' : 'sp' + (ii - 1) + '.end',
+              attributeName: 'd',
+              values: res.join(';'),
+              keyTimes: kt.join(';'),
+              dur: durr + 's'
+            })
+            ani.onbegin = function() {
+              parr[ii].setAttribute('d', tmpdl[ii][0])
+            }
+            e.appendChild(ani)
+            svg.appendChild(e)
+          })
         } else {
           svg.appendChild(makeSVG('path', {
             fill: _htOption.colorDark,
@@ -1271,7 +1386,6 @@ var lowMax = Infinity;
           height: '1',
           id: 'template'
         }))
-
         for (var row = 0; row < nCount; row++) {
           for (var col = 0; col < nCount; col++) {
             if (oQRCode.isDark(row, col)) {
