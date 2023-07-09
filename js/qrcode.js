@@ -1171,7 +1171,6 @@ var lowMax = Infinity;
             }
           }
         }
-        //console.log(maxLen)
         if (_htOption.animeSVG) {
           let path = makeSVG('path', {
             style: `stroke:#000;fill-rule:evenodd;fill:#000;fill-opacity:0;`,
@@ -1212,7 +1211,6 @@ var lowMax = Infinity;
         } else if (_htOption.anime1SVG) {
           let patharr = []
           let pathStri = pathStr.split(/(?<=z)(?=M)/)
-          console.log(patharr)
           let l = pathStri.length - 1
           for (let i = 0; i < pathStri.length; i++) {
             let path = makeSVG('path', {
@@ -1267,109 +1265,123 @@ var lowMax = Infinity;
           })
           tmpdl.sort((a, b) => b[1] - a[1])
           parr.forEach((e, ii) => {
-            let [endp, plen] = tmpdl[ii]
-            endp = endp.replace(/([hv]-?)(\d+)/g, function(sub, g1, g2) {
-              return (g1 + 1).repeat(g2)
-            })
-            let end = endp.split(/(?<=\d)(?=[vh])/g)
-            let h = [],
-              v = [],
-              hm = [],
-              vm = []
-            end.forEach((e, i) => {
-              if (e[0] == 'v') {
-                e[1] == '-' ? vm.push(i) : v.push(i)
-              } else if (e[0] == 'h') {
-                e[1] == '-' ? hm.push(i) : h.push(i)
-              }
-            })
-            let vre = []
-            let vmre = []
-            let hre = []
-            let hmre = []
-            for (let k = 2; k < end.length; k++) {
-              for (let i = 0, j = 0; i < v.length && j < vm.length;) {
-                if (Math.abs(v[i] - vm[j]) == k) {
-                  vre.push(v.splice(i, 1))
-                  vmre.push(vm.splice(j, 1))
-                } else if (v[i] < vm[j]) ++i
-                else ++j
-              }
-              if (v[v.length - 1] < vm[0]) {
-                vre.push(...v.reverse().splice(0))
-                vmre.push(...vm.splice(0))
-              }
-              for (let i = 0, j = 0; i < h.length && j < hm.length;) {
-                if (Math.abs(h[i] - hm[j]) == k) {
-                  hre.push(h.splice(i, 1))
-                  hmre.push(hm.splice(j, 1))
-                } else if (h[i] < hm[j]) ++i
-                else ++j
-              }
-              if (h[h.length - 1] < hm[0]) {
-                hre.push(...h.reverse().splice(0))
-                hmre.push(...hm.splice(0))
-              }
-            }
-            v = vre
-            vm = vmre
-            h = hre
-            hm = hmre
-            let res = [end.join('')]
-            let t = plen < 60 ? Math.ceil(plen / 6) : 60
-            const durr = Math.min(3, plen / 40)
-            const ht = Math.max(1, Math.floor(h.length / t))
-            const vt = Math.max(1, Math.floor(v.length / t))
-            const vl = v.length
-            const hl = h.length
-            for (let i = 0, jv = 0, jh = 0; i < t; i++) {
-              if (vl < t) {
-                if (i == Math.floor(jv * t / vl)) {
-                  end[v[0]] = end[vm[0]] = 'v0'
-                  v.shift()
-                  vm.shift()
-                  jv++
+            if (ii == ii) {
+              let [endp, plen] = tmpdl[ii]
+              endp = endp.replace(/([hv]-?)(\d+)/g, function(sub, g1, g2) {
+                return (g1 + 1).repeat(g2)
+              })
+              let end = endp.split(/(?<=\d)(?=[vhz])/g)
+              end.pop()
+              let h = [],
+                v = [],
+                hm = [],
+                vm = []
+              end.forEach((e, i) => {
+                if (e[0] == 'v') {
+                  e[1] == '-' ? vm.push(i) : v.push(i)
+                } else if (e[0] == 'h') {
+                  e[1] == '-' ? hm.push(i) : h.push(i)
                 }
-              } else {
-                for (let j = 0; j < vt + (i < vl % t); j++) {
-                  end[v[0]] = end[vm[0]] = 'v0'
-                  v.shift()
-                  vm.shift()
+              })
+              let vre = []
+              let vmre = []
+              let hre = []
+              let hmre = []
+              for (let k = 2; k < end.length; k++) {
+                for (let i = 0, j = 0; i < v.length && j < vm.length;) {
+                  if (Math.abs(v[i] - vm[j]) == k) {
+                    vre.push(v.splice(i, 1))
+                    vmre.push(vm.splice(j, 1))
+                  } else if (v[i] < vm[j]) ++i
+                  else ++j
+                }
+                if (v[v.length - 1] < vm[0]) {
+                  vre.push(...v.reverse().splice(0))
+                  vmre.push(...vm.splice(0))
+                }
+                for (let i = 0, j = 0; i < h.length && j < hm.length;) {
+                  if (Math.abs(h[i] - hm[j]) == k) {
+                    hre.push(h.splice(i, 1))
+                    hmre.push(hm.splice(j, 1))
+                  } else if (h[i] < hm[j]) ++i
+                  else ++j
+                }
+                if (h[h.length - 1] < hm[0]) {
+                  hre.push(...h.reverse().splice(0))
+                  hmre.push(...hm.splice(0))
                 }
               }
-              if (hl < t) {
-                if (i == Math.floor(jh * t / hl)) {
-                  end[h[0]] = end[hm[0]] = 'h0'
-                  h.shift()
-                  hm.shift()
-                  jh++
+              v = vre
+              vm = vmre
+              h = hre
+              hm = hmre
+              let res = [end.join('')]
+              let t = Math.ceil(plen / 6)
+              let durr = plen ** (1 / 4)
+              if (plen < 200) durr *= plen / 200
+              const ht = Math.max(1, Math.floor(h.length / t))
+              const vt = Math.max(1, Math.floor(v.length / t))
+              const vl = v.length
+              const hl = h.length
+              let ktcount = []
+              for (let i = 0, jv = 0, jh = 0; i < t; i++) {
+                let count = 0
+                if (vl < t) {
+                  if (i == Math.floor(jv * t / vl)) {
+                    end[v[0]] = end[vm[0]] = 'v0'
+                    v.shift()
+                    vm.shift()
+                    jv++
+                    count++
+                  }
+                } else {
+                  for (let j = 0; j < vt + (i < vl % t); j++) {
+                    end[v[0]] = end[vm[0]] = 'v0'
+                    v.shift()
+                    vm.shift()
+                    count++
+                  }
                 }
-              } else {
-                for (let j = 0; j < ht + !!(i < hl % t); j++) {
-                  if (h.length) {
+                if (hl < t) {
+                  if (i == Math.floor(jh * t / hl)) {
                     end[h[0]] = end[hm[0]] = 'h0'
                     h.shift()
                     hm.shift()
+                    jh++
+                    count++
+                  }
+                } else {
+                  for (let j = 0; j < ht + (i < hl % t); j++) {
+                    end[h[0]] = end[hm[0]] = 'h0'
+                    h.shift()
+                    hm.shift()
+                    count++
                   }
                 }
+                ktcount.push(count)
+                res.push(end.join(''))
               }
-              res.push(end.join(''))
+              let kt = [0]
+              let sum = ktcount.reverse().reduce((p, c) => {
+                kt.push(p + c)
+                return p + c
+              }, 0)
+              kt = kt.map(e => e / sum)
+              res.reverse()
+              let ani = makeSVG('animate', {
+                id: 'sp' + ii,
+                begin: _htOption.spreadSVG ? '0s' : (ii == 0) ? '0s' : 'sp' + (ii - 1) + '.end',
+                attributeName: 'd',
+                values: res.join(';'),
+                keyTimes: kt.join(';'),
+                dur: durr + 's'
+              })
+              ani.onbegin = function() {
+                e.setAttribute('d', tmpdl[ii][0])
+              }
+              e.appendChild(ani)
+              svg.appendChild(e)
             }
-            let kt = Array(t + 1).fill(0).map((e, i) => i / t)
-            res.reverse()
-            let ani = makeSVG('animate', {
-              id: 'sp' + ii,
-              begin: _htOption.spreadSVG ? '0s' : (ii == 0) ? '0s' : 'sp' + (ii - 1) + '.end',
-              attributeName: 'd',
-              values: res.join(';'),
-              keyTimes: kt.join(';'),
-              dur: durr + 's'
-            })
-            ani.onbegin = function() {
-              parr[ii].setAttribute('d', tmpdl[ii][0])
-            }
-            e.appendChild(ani)
-            svg.appendChild(e)
           })
         } else {
           svg.appendChild(makeSVG('path', {
