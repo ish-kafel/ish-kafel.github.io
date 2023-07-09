@@ -1265,7 +1265,6 @@ var lowMax = Infinity;
           })
           tmpdl.sort((a, b) => b[1] - a[1])
           parr.forEach((e, ii) => {
-            if (ii == ii) {
               let [endp, plen] = tmpdl[ii]
               endp = endp.replace(/([hv]-?)(\d+)/g, function(sub, g1, g2) {
                 return (g1 + 1).repeat(g2)
@@ -1381,7 +1380,6 @@ var lowMax = Infinity;
               }
               e.appendChild(ani)
               svg.appendChild(e)
-            }
           })
         } else {
           svg.appendChild(makeSVG('path', {
