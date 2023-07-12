@@ -1265,6 +1265,7 @@ var lowMax = Infinity;
           })
           tmpdl.sort((a, b) => b[1] - a[1])
           parr.forEach((e, ii) => {
+            if (ii == ii) {
               let [endp, plen] = tmpdl[ii]
               endp = endp.replace(/([hv]-?)(\d+)/g, function(sub, g1, g2) {
                 return (g1 + 1).repeat(g2)
@@ -1275,45 +1276,96 @@ var lowMax = Infinity;
                 v = [],
                 hm = [],
                 vm = []
+              let vd = [],
+                hd = [],
+                vv = [],
+                hh = []
               end.forEach((e, i) => {
                 if (e[0] == 'v') {
-                  e[1] == '-' ? vm.push(i) : v.push(i)
+                  e[1] == '-' ? vd.push('vm') : vd.push('v')
+                  vv.push(i)
                 } else if (e[0] == 'h') {
-                  e[1] == '-' ? hm.push(i) : h.push(i)
+                  e[1] == '-' ? hd.push('hm') : hd.push('h')
+                  hh.push(i)
                 }
               })
-              let vre = []
-              let vmre = []
-              let hre = []
-              let hmre = []
-              for (let k = 2; k < end.length; k++) {
-                for (let i = 0, j = 0; i < v.length && j < vm.length;) {
-                  if (Math.abs(v[i] - vm[j]) == k) {
-                    vre.push(v.splice(i, 1))
-                    vmre.push(vm.splice(j, 1))
-                  } else if (v[i] < vm[j]) ++i
-                  else ++j
+              let ind = Array(end.length - 1).fill(0).map((_, i) => i + 1)
+              let vmove = []
+              let hmove = []
+              for (let k = 2; vv.length || hh.length;) {
+                let change = false
+                let delcoll = []
+                for (let i = 0; i < vv.length; i++) {
+                  if (i == vv.length - 1) {
+                    if (vd[i] != vd[0]) {
+                      let va, vb
+                      va = ind.indexOf(vv[i])
+                      vb = ind.indexOf(vv[0])
+                      if (Math.abs(va - vb) == ind.length - k) {
+                        vmove.push(vd[0] == 'v' ? -1 : 1)
+                        v.push(vv.splice(i, 1))
+                        vm.push(vv.splice(0, 1))
+                        vd.splice(i, 1)
+                        vd.splice(0, 1)
+                        delcoll.push(va, vb)
+                        change = true
+                        i--
+                      }
+                    }
+                  } else {
+                    if (vd[i] != vd[i + 1]) {
+                      let va, vb
+                      va = ind.indexOf(vv[i])
+                      vb = ind.indexOf(vv[i + 1])
+                      if (Math.abs(va - vb) == k) {
+                        vmove.push(undefined)
+                        v.push(vv.splice(i, 1))
+                        vm.push(vv.splice(i, 1))
+                        vd.splice(i, 2)
+                        delcoll.push(va, vb)
+                        change = true
+                        i--
+                      }
+                    }
+                  }
                 }
-                if (v[v.length - 1] < vm[0]) {
-                  vre.push(...v.reverse().splice(0))
-                  vmre.push(...vm.splice(0))
+                for (let i = 0; i < hh.length; i++) {
+                  if (i == hh.length - 1) {
+                    if (hd[i] != hd[0]) {
+                      let ha, hb
+                      ha = ind.indexOf(hh[i])
+                      hb = ind.indexOf(hh[0])
+                      if (Math.abs(ha - hb) == ind.length - k) {
+                        hmove.push(hd[0] == 'h' ? -1 : 1)
+                        h.push(hh.splice(i, 1))
+                        hm.push(hh.splice(0, 1))
+                        hd.splice(i, 1)
+                        hd.splice(0, 1)
+                        delcoll.push(ha, hb)
+                        change = true
+                        i--
+                      }
+                    }
+                  } else {
+                    if (hd[i] != hd[i + 1]) {
+                      let ha, hb
+                      ha = ind.indexOf(hh[i])
+                      hb = ind.indexOf(hh[i + 1])
+                      if (Math.abs(ha - hb) == k) {
+                        hmove.push(undefined)
+                        h.push(hh.splice(i, 1))
+                        hm.push(hh.splice(i, 1))
+                        hd.splice(i, 2)
+                        delcoll.push(ha, hb)
+                        change = true
+                        i--
+                      }
+                    }
+                  }
                 }
-                for (let i = 0, j = 0; i < h.length && j < hm.length;) {
-                  if (Math.abs(h[i] - hm[j]) == k) {
-                    hre.push(h.splice(i, 1))
-                    hmre.push(hm.splice(j, 1))
-                  } else if (h[i] < hm[j]) ++i
-                  else ++j
-                }
-                if (h[h.length - 1] < hm[0]) {
-                  hre.push(...h.reverse().splice(0))
-                  hmre.push(...hm.splice(0))
-                }
+                delcoll.sort((a, b) => b - a).forEach(e => ind.splice(e, 1))
+                change ? (k = 1) : ++k
               }
-              v = vre
-              vm = vmre
-              h = hre
-              hm = hmre
               let res = [end.join('')]
               let t = Math.ceil(plen / 6)
               let durr = plen ** (1 / 4)
@@ -1323,41 +1375,51 @@ var lowMax = Infinity;
               const vl = v.length
               const hl = h.length
               let ktcount = []
+              let m0 = end[0].match(/M(\d+) (\d+)/).slice(1).map(e => +e)
               for (let i = 0, jv = 0, jh = 0; i < t; i++) {
                 let count = 0
                 if (vl < t) {
                   if (i == Math.floor(jv * t / vl)) {
                     end[v[0]] = end[vm[0]] = 'v0'
+                    m0[1] -= vmove[0] ?? 0
                     v.shift()
                     vm.shift()
+                    vmove.shift()
                     jv++
                     count++
                   }
                 } else {
                   for (let j = 0; j < vt + (i < vl % t); j++) {
                     end[v[0]] = end[vm[0]] = 'v0'
+                    m0[1] -= vmove[0] ?? 0
                     v.shift()
                     vm.shift()
+                    vmove.shift()
                     count++
                   }
                 }
                 if (hl < t) {
                   if (i == Math.floor(jh * t / hl)) {
                     end[h[0]] = end[hm[0]] = 'h0'
+                    m0[0] -= hmove[0] ?? 0
                     h.shift()
                     hm.shift()
+                    hmove.shift()
                     jh++
                     count++
                   }
                 } else {
                   for (let j = 0; j < ht + (i < hl % t); j++) {
                     end[h[0]] = end[hm[0]] = 'h0'
+                    m0[0] -= hmove[0] ?? 0
                     h.shift()
                     hm.shift()
+                    hmove.shift()
                     count++
                   }
                 }
                 ktcount.push(count)
+                end[0] = 'M' + m0.join(' ')
                 res.push(end.join(''))
               }
               let kt = [0]
@@ -1380,6 +1442,7 @@ var lowMax = Infinity;
               }
               e.appendChild(ani)
               svg.appendChild(e)
+            }
           })
         } else {
           svg.appendChild(makeSVG('path', {
