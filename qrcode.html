@@ -45,7 +45,7 @@
       <option value='M'>中</option>
       <option value='Q'>优</option>
       <option selected="selected" value="H">高</option>
-    </select>
+    </select><button id="down">下载SVG</button>
     <div id="chkbxs">
       <input id="usesvg" type="checkbox" /><label for="usesvg">使用SVG</label><input id="minisvg" type="checkbox" /><label for="minisvg">压缩SVG</label><br />
       <input id="stroke" type="checkbox" /><label for="stroke">SVG描边动画（同步）</label><input id="stroke1" type="checkbox" /><label for="stroke1">SVG描边动画（顺序）</label><br />
@@ -113,6 +113,12 @@
       let x = $("#se").value;
       qr.correctLevel = QRCode.CorrectLevel[x]
       make()
+    }
+    down.onclick = function() {
+      let a = document.createElement('a')
+      a.download = 'QRcode.svg'
+      a.href = URL.createObjectURL(new Blob([$('svg').outerHTML], { type: 'image/svg+xml' }))
+      a.dispatchEvent(new MouseEvent('click'))
     }
     chkbxs.onclick = function(e) {
       const tar = e.target
