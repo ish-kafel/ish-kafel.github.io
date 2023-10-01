@@ -243,6 +243,7 @@
           keyTimes: '0;1',
           keySplines: '0.5 0 0.5 1',
           begin: i == 1 ? 'btn.click' : 'tra' + (i - 1) + '.end',
+          dur: '1.3s',
         }))
         let sca = p.appendChild(makeSVG('animateTransform', {
           id: 'sca' + i,
