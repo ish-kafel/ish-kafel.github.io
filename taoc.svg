@@ -222,20 +222,24 @@
         id: 'tra' + i,
         attributeName: 'transform',
         type: 'translate',
-        from: '201.4 201.4',
-        to: [x, y],
+        values: '201.4,201.4;' + [x, y],
+        calcMode: 'spline',
+        keyTimes: '0;1',
+        keySplines: '0.5 0 0.5 1',
         begin: i == 1 ? 'btn.click' : 'tra' + (i - 1) + '.end',
-        dur: '1s',
+        dur: '1.3s',
       }))
       let sca = p.appendChild(makeSVG('animateTransform', {
         id: 'sca' + i,
         attributeName: 'transform',
         type: 'scale',
-        from: 0.65,
-        to: 0.173,
+        values: '0.65; 0.173',
+        calcMode: 'spline',
+        keyTimes: '0;1',
+        keySplines: '0.5 0 0.5 1',
         begin: i == 1 ? 'btn.click' : 'sca' + (i - 1) + '.end',
         additive: 'sum',
-        dur: '1s',
+        dur: '1.3s',
       }))
       $('#sca' + i).onbegin = function() {
         const p = this.parentElement
