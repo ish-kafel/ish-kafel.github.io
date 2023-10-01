@@ -34,7 +34,7 @@
     //*
     let logo = g.appendChild(makeSVG('image', {
       href: './gold.png',
-      opacity: 1,
+      opacity: 0,
       width: 402.8,
       transform: 'translate(70.5 70.5)scale(0.65)'
     }))
@@ -203,6 +203,17 @@
       fill: '#0000'
     }))
     let l = g.children.length
+    const p0 = g.children[0]
+    let show = p0.appendChild(makeSVG('animate', {
+      attributeName: 'opacity',
+      from: 0,
+      to: 1,
+      begin: 'sca15.end',
+      dur: '1s'
+    }))
+    show.onbegin = function() {
+      this.parentElement.setAttribute('opacity', 1)
+    }
     for (let i = 1; i < l; i++) {
       let p = g.children[i]
       let x = 201.4 + 166.77 * Math.sin((i - 1) / (l - 1) * 2 * Math.PI)
