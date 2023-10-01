@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" id="svg" width="100vmin" height="100vmin" viewBox="0 0 402.8 402.8">
+  <script>
+    <![CDATA[
+    //const log = console.log.bind(console)
+    const $ = s => document.querySelectorAll(s).length > 1 ? document.querySelectorAll(s) : document.querySelector(s)
+    Element.prototype.setAttributes = function(obj) {
+      for (const k in obj)
+        if (obj.hasOwnProperty(k)) {
+          this.setAttribute(k, obj[k])
+        } else {
+          throw new Error(this + ' does not have property of ' + k)
+        }
+      return this
+    }
+    Element.prototype.getA = Element.prototype.getAttribute
+
+    function makeSVG(tag, attrs) {
+      let el = document.createElementNS('http://www.w3.org/2000/svg', tag)
+      const m = new Map([['stda', 'stroke-dasharray'], ['stdo', 'stroke-dashoffset'], ['stlc', 'stroke-linecap'], ['stlj', 'stroke-linejoin'], ['stml', 'stroke-miterlimit'], ['sto', 'stroke-opacity'], ['stw', 'stroke-width'], ['stw1', 'stroke-width']])
+      for (const k in attrs)
+        if (attrs.hasOwnProperty(k)) {
+          el.setAttribute(m.get(k) ?? k, attrs[k])
+        }
+      return el
+    }
+    const svg = $('#svg')
+    svg.appendChild(makeSVG('path', {
+      d: 'M0 0h402.8v402.8h-402.8z',
+      stroke: 'none',
+      fill: '#000'
+    }))
+    let g = svg.appendChild(makeSVG('g'))
+    //*
+    let logo = g.appendChild(makeSVG('image', {
+      href: './gold.png',
+      opacity: 1,
+      width: 402.8,
+      transform: 'translate(70.5 70.5)scale(0.65)'
+    }))
+    let stroke = 'rgb(197,178,124)'
+    let stw = 2.85
+    let stw1 = 1
+    let style = ''
+    let opacity = 1
+    let fill = 'none'
+    let transform = 'translate(201.4 201.4)scale(0.65)'
+    g.appendChild(makeSVG('path', {
+      id: '02',
+      d: 'M0 0m-200 0a200 200 0 11 0 0.0001 m374.6 -56.7l-8.4 7c20.3 6.1 19.5 19.5 13.8 30c-4.5 13 -19 19.7 -35 19.7h-296a27.54 27.54 0 10 2.2 55m-16.2-55h14l-13.3 23.6h12.5',
+      stroke,
+      stw,
+      style,
+      fill,
+      opacity,
+      transform
+    }))
+    g.appendChild(makeSVG('path', {
+      id: '04',
+      d: 'M0 0m-200 0a200 200 0 11 0 0.0001 M0 0m-145.1 0h290.2',
+      stroke,
+      stw,
+      style,
+      fill,
+      opacity,
+      transform
+    }))
+    g.appendChild(makeSVG('path', {
+      id: '08',
+      d: 'M0 0m-200 0a200 200 0 11 0 0.0001 M0 0h-90.35m14.8 11.1l-14.8-11.1l14.8-11.1m-14.8 11.1h180.7m-14.8 11.1l14.8-11.1l-14.8-11.1m14.8 11.1h-90.35v-90.35m-11.1 14.8l11.1-14.8l11.1 14.8m-11.1-14.8v180.7m11.1-14.8l-11.1 14.8l-11.1-14.8m11.1 14.8',
+      stroke,
+      stw,
+      style,
+      fill,
+      opacity,
+      transform
+    }))
+    g.appendChild(makeSVG('path', {
+      id: '10',
+      d: 'M0 0m-200 0a200 200 0 11 0 0.0001 M0 0m45.2-104.7 c  11-16 24-16 36-10c28.6 14.3 15 52 10.1 61.1c-9.7 18-36 75.3-138.9 169.6m1.6-18l16.5 16.5m29.5-114.5m-45.2-104.7c-11-16-24-16-36-10c-28.6 14.3-15 52-10.1 61.1c 9.7 18 36 75.3 138.9 169.6m-1.6-18l-16.5 16.5',
+      stroke,
+      stw,
+      style,
+      fill,
+      opacity,
+      transform
+    }))
+    g.appendChild(makeSVG('path', {
+      id: '11',
+      d: 'M0 0m-200 0a200 200 0 11 0 0.0001 M0 0m-145.1 0a145.1 145.1 0 11 0 0.0001',
+      stroke,
+      stw,
+      style,
+      fill,
+      opacity,
+      transform
+    }))
+    g.appendChild(makeSVG('path', {
+      id: '12',
+      d: 'M0 0m-200 0a200 200 0 11 0 0.0001M0 0m148 113.94l-284.7 -218.25m-2.8 -0.25a2.8 2.8 0 11 0 0.0001m1.425-0.0001a1.425 1.425 0 11 0 0.0001m-15.3-7.6a7.4 7.4 0 11 0 0.0001m-0.45 16.95l-0.16 14.6m0.2 -8.05l76.25 1.25m-40.4-30.1l-9.4-8.1l-2.9 11.93m2.9-11.93l23.15 72.8',
+      stroke,
+      stw,
+      style,
+      fill,
+      opacity,
+      transform
+    }))
+    g.appendChild(makeSVG('path', {
+      id: '13',
+      d: 'M0 0m-200 0a200 200 0 11 0 0.0001 M0 0m-115.3 -87.9l263.5 202l-56.7 6.3l 44.5 -54.75',
+      stroke,
+      stw,
+      style,
+      fill,
+      opacity,
+      transform
+    }))
+    g.appendChild(makeSVG('path', {
+      id: '',
+      d: 'M0 0m-200 0a200 200 0 11 0 0.0001 M0 0v186v-10.5h8h-16.3h8.3v-361.5v19.5h38h-76h38v20.8l-22.8-38.9-14.2 50m37-11.1l22.8-38.9 14.2 50',
+      stroke,
+      stw,
+      style,
+      fill,
+      opacity,
+      transform
+    }))
+    g.appendChild(makeSVG('path', {
+      id: '',
+      d: 'M0 0m-200 0a200 200 0 11 0 0.0001 M0 0v-186v10.5h-8h16.3h-8.3v361.5v-19.5h-38h76h-38v-20.8l22.8 38.9 14.2-50m-37 11.1l-22.8 38.9-14.2-50',
+      stroke,
+      stw,
+      style,
+      fill,
+      opacity,
+      transform
+    }))
+    g.appendChild(makeSVG('path', {
+      id: '',
+      d: 'M0 0m-200 0a200 200 0 11 0 0.0001 M0 0m-81 146.2 a147.2 147.2 0 00-.6-292.4m163.2 0a147.2 147.2 0 00-.6 292.4',
+      stroke,
+      stw,
+      style,
+      fill,
+      opacity,
+      transform
+    }))
+    g.appendChild(makeSVG('path', {
+      id: '',
+      d: 'M0 0m-200 0a200 200 0 11 0 0.0001 M0 0m-164.2 23.8l53 -31a10.4 10.4 0 00-11.2-17.3l-42.5 24.55h329h-41.5l41.8 38.2',
+      stroke,
+      stw,
+      style,
+      fill,
+      opacity,
+      transform
+    }))
+    g.appendChild(makeSVG('path', {
+      id: '',
+      d: 'M0 0m-200 0a200 200 0 11 0 0.0001 M0 0h-165h329m-2.1-15.4l-46.2 42.3m0-53.7l47 43.2c4.5 3.6 12 7 20 2.4c12.2-6.9 14-29-18.4-68.7 M177.35 0m0 1.1a1.1 1.1 0 00 0-2.2 1.1 1.1 0 00 0 2.2',
+      stroke,
+      stw,
+      style,
+      fill,
+      opacity,
+      transform
+    }))
+    g.appendChild(makeSVG('path', {
+      id: '',
+      d: 'M0 0m-200 0a200 200 0 11 0 0.0001 M0 0m-126 -96.1m6 -7.2 l-12 14.4 l6-7.2 l263.5 202 m-40 -5.8l11.9 8.9m-5.4-4 l26.85 -33 m-6.4-4.5 l11.9 8.9',
+      stroke,
+      stw,
+      style,
+      fill,
+      opacity,
+      transform
+    }))
+    g.appendChild(makeSVG('path', {
+      id: '',
+      d: 'M0 0m-200 0a200 200 0 11 0 0.0001 M0 0m122.4 -103.06l-264.4 222.9m17.2-26.2c24.3 13.7 16.5 26.3 15.5 27 c-7 5.25 -18 -0.7 -33 -15.3c -20.3 -20.5 -20 -45.8 -16.5 -68',
+      stroke,
+      stw,
+      style,
+      fill,
+      opacity,
+      transform
+    }))
+    g.appendChild(makeSVG('path', {
+      id: '',
+      d: 'M0 0m-200 0a200 200 0 11 0 0.0001 M0 0m-96.8 61.4 l38.7 3.7m-50 7.7l38.6 3.7 m-58.3 31.36l250.2 -210.92c10 -8.3 25.1 -7.2 33.4 4c5.2 6.7 4.98 19.7 -5 26c-3 1.89 -11 4.3 -17.8 -2c -7.2 -6.3 -3.7 -20 7 -20c 7.3 0.5 11.9 9.5 5 14.5c-2 1.45 -7.8 1.6 -8.9 -4c-0.7 -3.56 4.3 -6.1 6.2 -4.3l-0.0019-0.0018 ',
+      stroke,
+      stw,
+      stlj: 'round',
+      style,
+      fill,
+      opacity,
+      transform
+    }))
+    svg.appendChild(makeSVG('path', {
+      id: 'btn',
+      d: 'M0 0h402.8v402.8h-402.8z',
+      stroke: 'none',
+      fill: '#0000'
+    }))
+    let l = g.children.length
+    for (let i = 1; i < l; i++) {
+      let p = g.children[i]
+      let x = 201.4 + 166.77 * Math.sin((i - 1) / (l - 1) * 2 * Math.PI)
+      let y = 201.4 - 166.77 * Math.cos((i - 1) / (l - 1) * 2 * Math.PI)
+      let tra = p.appendChild(makeSVG('animateTransform', {
+        id: 'tra' + i,
+        attributeName: 'transform',
+        type: 'translate',
+        from: '201.4 201.4',
+        to: [x, y],
+        begin: i == 1 ? 'btn.click' : 'tra' + (i - 1) + '.end',
+        dur: '1s',
+      }))
+      let sca = p.appendChild(makeSVG('animateTransform', {
+        id: 'sca' + i,
+        attributeName: 'transform',
+        type: 'scale',
+        from: 0.65,
+        to: 0.173,
+        begin: i == 1 ? 'btn.click' : 'sca' + (i - 1) + '.end',
+        additive: 'sum',
+        dur: '1s',
+      }))
+      $('#sca' + i).onbegin = function() {
+        const p = this.parentElement
+        p.setAttributes({
+          transform: 'translate(' + [x, y] + ')scale(0.173)'
+        })
+        if (i == 1) {
+          $('#tra' + i).setAttribute('begin', '')
+          $('#sca' + i).setAttribute('begin', '')
+        }
+      }
+    }
+    ]]>
+  </script>
+</svg>
