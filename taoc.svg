@@ -215,22 +215,22 @@
           begin: 'sca15.end',
           dur: '1s'
         }))
-        show.onbegin = function() {
+        show.addEventListener("beginEvent", function() {
           let pa = this.parentElement
           pa.setAttribute('opacity', +!split)
           if (split == true) {
             this.setAttribute('begin', '')
             this.setAttribute('id', 'show')
           }
-        }
-        show.onend = function() {
+        })
+        show.addEventListener("endEvent", function() {
           if (split == false) {
             split = true
             this.setAttribute('begin', 'btn.click')
             this.setAttribute('id', 'hide')
           }
           this.setAttribute('values', this.getAttribute('values').split(';').reverse().join(';'))
-        }
+        })
       } else {
         let x = 201.4 + 166.77 * Math.sin((i - 1) / (l - 1) * 2 * Math.PI)
         let y = 201.4 - 166.77 * Math.cos((i - 1) / (l - 1) * 2 * Math.PI)
@@ -257,7 +257,7 @@
           additive: 'sum',
           dur: '1.3s',
         }))
-        $('#sca' + i).onbegin = function() {
+        $('#sca' + i).addEventListener("beginEvent", function() {
           const p = this.parentElement
           if (split) {
             p.setAttributes({
@@ -272,8 +272,8 @@
             $('#tra1').setAttribute('begin', 'hide.end')
             $('#sca1').setAttribute('begin', 'hide.end')
           }
-        }
-        $('#sca' + i).onend = function() {
+        })
+        $('#sca' + i).addEventListener("endEvent", function() {
           this.setAttribute('values', this.getAttribute('values').split(';').reverse().join(';'))
           if (i == 15 && split) {
             split = false
@@ -281,10 +281,10 @@
             $('#sca1').setAttribute('begin', 'btn.click')
             $('#show').setAttribute('begin', 'sca15.end')
           }
-        }
-        $('#tra' + i).onend = function() {
+        })
+        $('#tra' + i).addEventListener("endEvent", function() {
           this.setAttribute('values', this.getAttribute('values').split(';').reverse().join(';'))
-        }
+        })
       }
     }
     ]]>
