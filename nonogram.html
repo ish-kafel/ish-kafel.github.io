@@ -270,8 +270,8 @@
       updatecross = '❎'
       mapp = { '0': unsettled, [correct]: correct, [cross]: cross, [updatecorrect]: updatecorrect, [updatecross]: updatecross }
       progstr = '<br>'
-      rows = rr.value != '' ?( rr.value.split('\n').map(e => e.split(spreg).map(e1 => +e1)) ): '2 3 2.2 2 1.2 5 1.5 2 2.2 2 5.5 2.2 2 2.2 3 2.2 2 2.2 5.5 2 2.2 2 5.1 5 2.1 2 2.2 3 2'.split('.').map(e => e.split(spreg).map(e1 => +e1))
-      cols = cc.value != '' ? (cc.value.split('\n').map(e => e.split(spreg).map(e1 => +e1)) ): '2 1 2.1 2 1 2.1 1 3 2.3 3 1 3.3 1 3 3.1 2 3 1.1 2 1 2.1 2 1 2 1.2 1 2 1.1 3 2 1.3 3 1 3.3 1 3 3.2 3 1 1.2 1 2 1.2 1 2'.split('.').map(e => e.split(spreg).map(e1 => +e1))
+      rows = rr.value != '' ? (rr.value.split('\n').map(e => e.split(spreg).map(e1 => +e1))) : '3 2.5 1.3 1.2.4.11.5 3.1 3 2.2 4.2 2.4 2.5 2.3 2 2.2 3.6 2'.split('.').map(e => e.split(spreg).map(e1 => +e1))
+      cols = cc.value != '' ? (cc.value.split('\n').map(e => e.split(spreg).map(e1 => +e1))) : '1 1.3 3.3 3.3 1 6.1 2 4.3 1.4 1.10.2 7.1 2 1.4 1.4.5 1.2 2 3.1 3'.split('.').map(e => e.split(spreg).map(e1 => +e1))
       s = rows.length
       rowsset = rows.map(e => gen(e, s))
       colsset = cols.map(e => gen(e, s))
