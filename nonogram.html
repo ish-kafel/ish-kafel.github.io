@@ -12,9 +12,15 @@
     }
 
     div {
+      font-family: Consolas, monospace;
       height: 260px;
       font-size: 12px;
+      white-space: pre;
       /*overflow: scroll;*/
+    }
+
+    span.block {
+      letter-spacing: -0.53px;
     }
 
     #rr {
@@ -31,36 +37,36 @@
 </head>
 
 <body>
-  <textarea name="" id="rr" placeholder="行数组" rows="15" cols="40">5
-1 5
-3 1
-2 2
-3 3
-5 4
-2 4 2
-1 1 2
-1 4 1
-4 7
-4 2 2
-2 2 2 1
-1 1 1 1
-1 1 1 1
-1 1 1</textarea>
-  <textarea name="" id="cc" placeholder="列数组" rows="15" cols="40">1 3
+  <textarea name="" id="rr" placeholder="行数组" rows="15" cols="40">2 3 2
 2 2 1
-1 5
-3 2
-1 4
-1 1 3 3
-1 1 1 1
+2 5 1
+5 2 2
+2 2 5
+5 2
+2 2 2
+2 3 2
+2 2 2
+2 5
+5 2 2
+2 2 5
+1 5 2
 1 2 2
-1 1 1 3
-1 1 1 3 1
-3 2 2
-5 1
-1 7
-2 4 2 1
-1 3</textarea><br><br>
+2 3 2</textarea>
+  <textarea name="" id="cc" placeholder="列数组" rows="15" cols="40">2 1 2
+1 2 1 2
+1 1 3 2
+3 3 1 3
+3 1 3 3
+1 2 3 1
+1 2 1 2
+1 2 1 2 1
+2 1 2 1
+1 3 2 1
+3 3 1 3
+3 1 3 3
+2 3 1 1
+2 1 2 1
+2 1 2</textarea><br><br>
   <button id="btn">求解</button><br><br>
   <div id="solution"></div>
   <script>
@@ -70,7 +76,7 @@
       progstr += msg + '<br><br>'
     }
     const spreg = / +/
-    let correct, cross, unsettled, updatecorrect, updatecross, progstr, s, rows, cols, rowsset, colsset, solverow, solvecol, solve, update, n, save, mapp
+    let correct, cross, unsettled, updatecorrect, updatecross, progstr, s, rows, cols, rowsset, colsset, solverow, solvecol, solve, update, n, save, mapp, maxcoll, maxrowl
 
     function check() {
       if (rows.length !== cols.length) return '行列数不一致'
@@ -126,7 +132,14 @@
       for (let u of update) {
         arr[u[0]][u[1]] = u[3] == correct ? updatecorrect : u[3] == cross ? updatecross : ''
       }
-      write(arr.map(e => e.join('')).join('<br>'))
+      let strarr = new Array(maxcoll).fill(' '.repeat(maxrowl * 2))
+      for (let col of cols) {
+        col = col.slice().reverse()
+        for (let i = 0; i < maxcoll; i++) {
+          strarr[maxcoll - 1 - i] += col[i] ? (col[i] + '').padStart(2, ' ') : ' '.repeat(2)
+        }
+      }
+      write(strarr.join('<br>') + '<br>' + arr.map((e, i) => rows[i].map(e => (e + '').padStart(2, ' ')).join('').padStart(maxrowl * 2, ' ') + '<span class="block">' + e.join('') + '</span>').join('<br>'))
     }
 
     function clone() {
@@ -134,7 +147,7 @@
         rowsset: rowsset.map(e => e.map(e1 => e1.slice())),
         colsset: colsset.map(e => e.map(e1 => e1.slice())),
         n,
-        solve: solve.map(e => e.slice()),
+        solve: solve.map(e => e.slice())
       }
     }
 
@@ -169,7 +182,10 @@
                 }
               } else {
                 if (r !== c) return [i, j] //Error
-                solve[i][j] = r
+                if (solve[i][j] != r) {
+                  update.push([i, j, , r])
+                  solve[i][j] = r
+                }
               }
             } else if (c) {
               if (solve[i][j] != c) {
@@ -205,7 +221,7 @@
     }
 
     function assume(x, y) {
-      write('n=' + n + ' 假设 ' + [x, y])
+      write('n=' + n + '，假设' + (x + 1) + '行' + (y + 1) + '列')
       solve[x][y] = correct
       let u = [x, y, , correct]
       update.push(u)
@@ -245,7 +261,6 @@
           i = Math.floor(Math.random() * collectij.length)
           write('无法确定，更换下一个')
         } else {
-          //write('无解，在' + re)
           if (re[0] + 1) x = re[0]
           if (re[1] + 1) y = re[1]
           i = collectij.findIndex(e => e[0] == x && e[1] == y)
@@ -253,13 +268,12 @@
             i = Math.floor(Math.random() * collectij.length)
             write('无解，更换下一个')
           } else {
-            write('无解，在' + re)
+            write('无解，在' + (re[0] + 1 ? re[0] + 1 + '行' : '') + (re[1] + 1 ? re[1] + 1 + '列' : ''))
           }
         }
         load()
       }
       write('本题无解')
-      //document.body += progstr
       return
     }
     btn.onclick = function() {
@@ -272,6 +286,8 @@
       progstr = '<br>'
       rows = rr.value != '' ? (rr.value.split('\n').map(e => e.split(spreg).map(e1 => +e1))) : '3 2.5 1.3 1.2.4.11.5 3.1 3 2.2 4.2 2.4 2.5 2.3 2 2.2 3.6 2'.split('.').map(e => e.split(spreg).map(e1 => +e1))
       cols = cc.value != '' ? (cc.value.split('\n').map(e => e.split(spreg).map(e1 => +e1))) : '1 1.3 3.3 3.3 1 6.1 2 4.3 1.4 1.10.2 7.1 2 1.4 1.4.5 1.2 2 3.1 3'.split('.').map(e => e.split(spreg).map(e1 => +e1))
+      maxcoll = Math.max(...cols.map(e => e.length))
+      maxrowl = Math.max(...rows.map(e => e.length))
       s = rows.length
       rowsset = rows.map(e => gen(e, s))
       colsset = cols.map(e => gen(e, s))
