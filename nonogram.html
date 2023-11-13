@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=yes">
   <title>Nonogram Solver</title>
   <style>
     body {
@@ -11,7 +11,12 @@
       /*line-height: 9.1px;*/
     }
 
-    div {
+    div#ta {
+      display: flex;
+      align-items: flex-start;
+    }
+
+    div#solution {
       font-family: Consolas, monospace;
       height: 260px;
       font-size: 12px;
@@ -37,7 +42,8 @@
 </head>
 
 <body>
-  <textarea name="" id="rr" placeholder="行数组" rows="15" cols="40">2 3 2
+  <div id="ta">
+    <textarea id="rr" placeholder="行数组" rows="15" cols="40">2 3 2
 2 2 1
 2 5 1
 5 2 2
@@ -52,7 +58,7 @@
 1 5 2
 1 2 2
 2 3 2</textarea>
-  <textarea name="" id="cc" placeholder="列数组" rows="15" cols="40">2 1 2
+    <textarea id="cc" placeholder="列数组" rows="15" cols="40">2 1 2
 1 2 1 2
 1 1 3 2
 3 3 1 3
@@ -66,8 +72,9 @@
 3 1 3 3
 2 3 1 1
 2 1 2 1
-2 1 2</textarea><br><br>
-  <button id="btn">求解</button><br><br>
+2 1 2</textarea>
+  </div><br>
+  <button id="btn">求解</button> <button id="last">上一步</button> <button id="next">下一步</button><br><br><button id="show">展示全部</button><br>
   <div id="solution"></div>
   <script>
     const log = console.log.bind(console)
@@ -76,7 +83,7 @@
       progstr += msg + '<br><br>'
     }
     const spreg = / +/
-    let correct, cross, unsettled, updatecorrect, updatecross, progstr, s, rows, cols, rowsset, colsset, solverow, solvecol, solve, update, n, save, mapp, maxcoll, maxrowl
+    let correct, cross, unsettled, updatecorrect, updatecross, progstr, s, rows, cols, rowsset, colsset, solverow, solvecol, solve, update, n, save, mapp, maxcoll, maxrowl, solutionarr, solutioni, solutionl
 
     function check() {
       if (rows.length !== cols.length) return '行列数不一致'
@@ -96,14 +103,14 @@
 
     function gen(arr, t) {
       arr = arr.slice()
-      let res = [new Array(t).fill(cross)]
+      let res = [new Array(t).fill(2)]
       let tmp = []
       let len = arr.length
       while (arr[0]) {
         while (res[0]) {
-          let start = res[0].lastIndexOf(correct) + 1 + (arr.length !== len)
+          let start = res[0].lastIndexOf(1) + 1 + (arr.length !== len)
           for (let i = start; i <= t - arr[0]; i++) {
-            tmp.push(res[0].toSpliced(i, arr[0], ...new Array(arr[0]).fill(correct)))
+            tmp.push(res[0].toSpliced(i, arr[0], ...new Array(arr[0]).fill(1)))
           }
           res.shift()
         }
@@ -128,10 +135,11 @@
     }
 
     function writesolve() {
-      let arr = solve.map(e => e.map(e => mapp[e]))
+      let arr = solve.map(e => e.slice())
       for (let u of update) {
-        arr[u[0]][u[1]] = u[3] == correct ? updatecorrect : u[3] == cross ? updatecross : ''
+        arr[u[0]][u[1]] = solve[u[0]][u[1]] + 2
       }
+      arr = arr.map(e => e.map(e => mapp[e]))
       let strarr = new Array(maxcoll).fill(' '.repeat(maxrowl * 2))
       for (let col of cols) {
         col = col.slice().reverse()
@@ -144,6 +152,8 @@
 
     function clone() {
       save = {
+        solverow: solverow.map(e => e.slice()),
+        solvecol: solvecol.map(e => e.slice()),
         rowsset: rowsset.map(e => e.map(e1 => e1.slice())),
         colsset: colsset.map(e => e.map(e1 => e1.slice())),
         n,
@@ -152,6 +162,8 @@
     }
 
     function load() {
+      solverow = save.solverow.map(e => e.slice())
+      solvecol = save.solvecol.map(e => e.slice())
       rowsset = save.rowsset.map(e => e.map(e1 => e1.slice()))
       colsset = save.colsset.map(e => e.map(e1 => e1.slice()))
       n = save.n
@@ -160,50 +172,63 @@
 
     function ans() {
       while (update.length) {
-        write('n=' + n)
+        for (let u of update) {
+          if (u[2] === 0) {
+            solverow[u[0]] = merge(rowsset[u[0]])
+          } else if (u[2] === 1) {
+            solvecol[u[1]] = merge(colsset[u[1]])
+          }
+        }
         update = []
-        solverow = []
-        solvecol = []
-        for (let i = 0; i < s; i++) {
-          solverow.push(merge(rowsset[i]))
-        }
-        for (let i = 0; i < s; i++) {
-          solvecol.push(merge(colsset[i]))
-        }
         for (let i = 0; i < s; i++) {
           for (let j = 0; j < s; j++) {
             let r = solverow[i][j]
             let c = solvecol[j][i]
-            if (r) {
-              if (!c) {
-                if (solve[i][j] != r) {
-                  update.push([i, j, 1, r])
-                  solve[i][j] = r
-                }
-              } else {
-                if (r !== c) return [i, j] //Error
-                if (solve[i][j] != r) {
-                  update.push([i, j, , r])
-                  solve[i][j] = r
-                }
+            if (r && c) {
+              if (r !== c) {
+                solve[i][j] = 5
+                write('n=' + n + '\u3000')
+                writesolve()
+                return [i, j]
+              } //Error
+              if (solve[i][j] != r) {
+                update.push([i, j, ])
+                solve[i][j] = r
               }
-            } else if (c) {
-              if (solve[i][j] != c) {
-                update.push([i, j, 0, c])
-                solve[i][j] = c
+            } else if (r || c) {
+              if (solve[i][j] != Math.max(r, c)) {
+                update.push([i, j, +(Math.max(r, c) === r)])
+                solve[i][j] = Math.max(r, c)
               }
             }
           }
         }
         for (let u of update) {
           if (u[2] === 0) {
-            rowsset[u[0]] = rowsset[u[0]].filter(e => e[u[1]] === u[3])
-            if (rowsset[u[0]].length === 0) return [u[0], -1] //Error
+            rowsset[u[0]] = rowsset[u[0]].filter(e => e[u[1]] === solve[u[0]][u[1]])
+            if (rowsset[u[0]].length === 0) {
+              for (let j = 0; j < s; j++) {
+                if (!solve[u[0]][j])
+                  solve[u[0]][j] = 5
+              }
+              write('n=' + n + '\u3000')
+              writesolve()
+              return [u[0], -1] //Error
+            }
           } else if (u[2] === 1) {
-            colsset[u[1]] = colsset[u[1]].filter(e => e[u[0]] === u[3])
-            if (colsset[u[1]].length === 0) return [-1, u[1]] //Error
+            colsset[u[1]] = colsset[u[1]].filter(e => e[u[0]] === solve[u[0]][u[1]])
+            if (colsset[u[1]].length === 0) {
+              for (let i = 0; i < s; i++) {
+                if (!solve[i][u[1]])
+                  solve[i][u[1]] = 5
+              }
+              write('n=' + n + '\u3000')
+              writesolve()
+              return [-1, u[1]] //Error
+            }
           }
         }
+        write('n=' + n + '\u3000')
         writesolve()
         n++
       }
@@ -222,13 +247,22 @@
 
     function assume(x, y) {
       write('n=' + n + '，假设' + (x + 1) + '行' + (y + 1) + '列')
-      solve[x][y] = correct
-      let u = [x, y, , correct]
-      update.push(u)
-      rowsset[x] = rowsset[x].filter(e => e[y] === correct)
-      colsset[y] = colsset[y].filter(e => e[x] === correct)
+      solve[x][y] = 1
+      update.push([x, y, 0, 1])
+      update.push([x, y, 1, 1])
+      rowsset[x] = rowsset[x].filter(e => e[y] === 1)
+      colsset[y] = colsset[y].filter(e => e[x] === 1)
       writesolve()
       n++
+    }
+
+    function reject(x, y) {
+      write('n=' + n + '，拒绝假设' + (x + 1) + '行' + (y + 1) + '列')
+      solve[x][y] = 2
+      update = [[x, y, 0, 2], [x, y, 1, 2]]
+      rowsset[x] = rowsset[x].filter(e => e[y] === 2)
+      colsset[y] = colsset[y].filter(e => e[x] === 2)
+      writesolve()
     }
 
     function queue() {
@@ -237,55 +271,66 @@
         write(prep + ',请检查')
         return
       }
-      let collectij = ans()
-      if (collectij.length === 0) {
-        write('已解决')
-        return
-      }
-      if (!Array.isArray(collectij[0])) {
-        write('题目出错，否则无解')
-      }
-      let i = Math.floor(Math.random() * collectij.length)
-      let x, y, re
-      clone();
+      let rej = 0
+      let nexttry = 0
+      let collectij = [0]
+      let i = -1
       while (collectij.length) {
-        ;
-        [x, y] = collectij.splice(i, 1)[0]
-        assume(x, y)
-        re = ans()
-        if (re.length == 0) {
+        if (rej) {
+          load()
+          reject(...rej)
+          rej = 0
+        }
+        collectij = ans()
+        if (collectij.length === 0) {
           write('已解决')
           return
         }
-        if (Array.isArray(re[0])) {
-          i = Math.floor(Math.random() * collectij.length)
-          write('无法确定，更换下一个')
-        } else {
-          if (re[0] + 1) x = re[0]
-          if (re[1] + 1) y = re[1]
-          i = collectij.findIndex(e => e[0] == x && e[1] == y)
-          if (i === -1) {
-            i = Math.floor(Math.random() * collectij.length)
-            write('无解，更换下一个')
-          } else {
-            write('无解，在' + (re[0] + 1 ? re[0] + 1 + '行' : '') + (re[1] + 1 ? re[1] + 1 + '列' : ''))
-          }
+        if (!Array.isArray(collectij[0])) {
+          write('题目出错，否则无解')
         }
-        load()
+        if (nexttry) {
+          i = collectij.findIndex(e => e[0] == nexttry[0] && e[1] == nexttry[1])
+          nexttry = 0
+        }
+        if (i == -1) i = Math.floor(Math.random() * collectij.length)
+        let x, y, re
+        clone();
+        while (collectij.length) {
+          ;
+        [x, y] = collectij.splice(i, 1)[0]
+          assume(x, y)
+          re = ans()
+          if (re.length == 0) {
+            write('已解决')
+            return
+          }
+          if (Array.isArray(re[0])) {
+            i = Math.floor(Math.random() * collectij.length)
+            write('无法确定，更换下一个')
+          } else {
+            rej = [x, y]
+            nexttry = [re[0] + 1 ? re[0] : x, re[1] + 1 ? re[1] : y]
+            write('无解，在' + (re[0] + 1 ? re[0] + 1 + '行' : '') + (re[1] + 1 ? re[1] + 1 + '列' : ''))
+            break
+          }
+          load()
+        }
       }
-      write('本题无解')
+      write('本题无解或无唯一解')
       return
     }
     btn.onclick = function() {
+      unsettled = '⬛'
       correct = '🟩'
       cross = '❌'
-      unsettled = '⬛'
       updatecorrect = '✅'
       updatecross = '❎'
-      mapp = { '0': unsettled, [correct]: correct, [cross]: cross, [updatecorrect]: updatecorrect, [updatecross]: updatecross }
+      error = '❓'
+      mapp = [unsettled, correct, cross, updatecorrect, updatecross, error]
       progstr = '<br>'
-      rows = rr.value != '' ? (rr.value.split('\n').map(e => e.split(spreg).map(e1 => +e1))) : '3 2.5 1.3 1.2.4.11.5 3.1 3 2.2 4.2 2.4 2.5 2.3 2 2.2 3.6 2'.split('.').map(e => e.split(spreg).map(e1 => +e1))
-      cols = cc.value != '' ? (cc.value.split('\n').map(e => e.split(spreg).map(e1 => +e1))) : '1 1.3 3.3 3.3 1 6.1 2 4.3 1.4 1.10.2 7.1 2 1.4 1.4.5 1.2 2 3.1 3'.split('.').map(e => e.split(spreg).map(e1 => +e1))
+      rows = (rr.value != '' ? rr.value : '3 2\n5 1\n3 1\n2\n4\n11\n5 3\n1 3 2\n2 4\n2 2\n4 2\n5 2\n3 2 2\n2 3\n6 2').replace(/[^0-9\n ]/g, ' ').split('\n').map(e => e.trim().split(spreg).map(e1 => +e1))
+      cols = (cc.value != '' ? cc.value : '1 1\n3 3\n3 3\n3 1 6\n1 2 4\n3 1\n4 1\n10\n2 7\n1 2 1\n4 1\n4\n5 1\n2 2 3\n1 3').replace(/[^0-9\n ]/g, ' ').split('\n').map(e => e.trim().split(spreg).map(e1 => +e1))
       maxcoll = Math.max(...cols.map(e => e.length))
       maxrowl = Math.max(...rows.map(e => e.length))
       s = rows.length
@@ -294,11 +339,28 @@
       solverow = []
       solvecol = []
       solve = new Array(s).fill(0).map(e => new Array(s).fill(0))
-      update = [0]
+      update = new Array(s).fill(0).flatMap((_, i) => [[i, i, 0], [i, i, 1]])
       n = 1
       save = {}
+      solverow = []
+      solvecol = []
       queue()
-      solution.innerHTML = progstr
+      solutionarr = progstr.split(/(?=<br>n=)/g)
+      solutioni = 0
+      solutionl = solutionarr.length
+      solution.innerHTML = solutionarr[solutioni]
+    }
+    last.onclick = function() {
+      if (solutionl) solution.innerHTML = solutionarr[solutioni = Math.max(0, solutioni - 1)]
+    }
+    next.onclick = function() {
+      if (solutionl) solution.innerHTML = solutionarr[solutioni = Math.min(solutionl - 1, solutioni + 1)]
+    }
+    show.onclick = function() {
+      if (solutionl) solution.innerHTML = solutionarr.join('')
+    }
+    ta.oninput = function(e) {
+      if (e.target.tagName == 'TEXTAREA') e.target.setAttribute('rows', e.target.value.split('\n').length)
     }
   </script>
 </body>
