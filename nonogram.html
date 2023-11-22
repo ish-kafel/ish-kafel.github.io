@@ -77,6 +77,7 @@
   <button id="btn">求解</button> <button id="last">上一步</button> <button id="next">下一步</button><br><br><button id="show">展示全部</button><br>
   <div id="solution"></div>
   <script>
+    try{
     const log = console.log.bind(console)
     const write = function(msg) {
       //document.write
@@ -362,6 +363,9 @@
     }
     ta.oninput = function(e) {
       if (e.target.tagName == 'TEXTAREA') e.target.setAttribute('rows', e.target.value.split('\n').length)
+    }
+    }catch(e){
+      alert(e)
     }
   </script>
 </body>
