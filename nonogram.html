@@ -77,7 +77,6 @@
   <button id="btn">求解</button> <button id="last">上一步</button> <button id="next">下一步</button><br><br><button id="show">展示全部</button><br>
   <div id="solution"></div>
   <script>
-    try{
     const log = console.log.bind(console)
     const write = function(msg) {
       //document.write
@@ -321,7 +320,7 @@
       write('本题无解或无唯一解')
       return
     }
-    btn.onclick = function() {
+    btn.addEventListener('click', function() {
       unsettled = '⬛'
       correct = '🟩'
       cross = '❌'
@@ -347,26 +346,23 @@
       solverow = []
       solvecol = []
       queue()
-      solutionarr = progstr.split(/(?=<br>n=)/g).map(e=>e+'<br><br>\u3000')
+      solutionarr = progstr.split(/(?=<br>n=)/g).map(e => e + '<br><br>\u3000')
       solutioni = 0
       solutionl = solutionarr.length
       solution.innerHTML = solutionarr[solutioni]
-    }
-    last.onclick = function() {
+    })
+    last.addEventListener('click', function() {
       if (solutionl) solution.innerHTML = solutionarr[solutioni = Math.max(0, solutioni - 1)]
-    }
-    next.onclick = function() {
+    })
+    next.addEventListener('click', function() {
       if (solutionl) solution.innerHTML = solutionarr[solutioni = Math.min(solutionl - 1, solutioni + 1)]
-    }
-    show.onclick = function() {
+    })
+    show.addEventListener('click', function() {
       if (solutionl) solution.innerHTML = solutionarr.join('')
-    }
-    ta.oninput = function(e) {
+    })
+    ta.addEventListener('input', function(e) {
       if (e.target.tagName == 'TEXTAREA') e.target.setAttribute('rows', e.target.value.split('\n').length)
-    }
-    }catch(e){
-      alert(e)
-    }
+    })
   </script>
 </body>
 
