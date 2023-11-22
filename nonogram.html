@@ -78,6 +78,11 @@
   <div id="solution"></div>
   <script>
     const log = console.log.bind(console)
+    const $ = s => {
+      let n = document.querySelectorAll(s)
+      if (n.length === 1) return n[0]
+      return n
+    }
     const write = function(msg) {
       //document.write
       progstr += msg + '<br><br>'
@@ -320,7 +325,7 @@
       write('本题无解或无唯一解')
       return
     }
-    btn.addEventListener('click', function() {
+    $('#btn').addEventListener('click', function() {
       unsettled = '⬛'
       correct = '🟩'
       cross = '❌'
@@ -351,16 +356,16 @@
       solutionl = solutionarr.length
       solution.innerHTML = solutionarr[solutioni]
     })
-    last.addEventListener('click', function() {
+    $('#last').addEventListener('click', function() {
       if (solutionl) solution.innerHTML = solutionarr[solutioni = Math.max(0, solutioni - 1)]
     })
-    next.addEventListener('click', function() {
+    $('#next').addEventListener('click', function() {
       if (solutionl) solution.innerHTML = solutionarr[solutioni = Math.min(solutionl - 1, solutioni + 1)]
     })
-    show.addEventListener('click', function() {
+    $('#show').addEventListener('click', function() {
       if (solutionl) solution.innerHTML = solutionarr.join('')
     })
-    ta.addEventListener('input', function(e) {
+    $('#ta').addEventListener('input', function(e) {
       if (e.target.tagName == 'TEXTAREA') e.target.setAttribute('rows', e.target.value.split('\n').length)
     })
   </script>
