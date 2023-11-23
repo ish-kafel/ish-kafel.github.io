@@ -42,7 +42,7 @@
 
 <body>
   <div id="ta"></div><br>
-  <button id="btn">求解</button> <button id="last">上一步</button> <button id="next">下一步</button><br><br><button id="show">展示全部</button><br>
+  <button id="btn">求解</button> <button id="last">上一步</button> <button id="next">下一步</button><br><br><button id="show">展示全部</button> <button id="share">分享题目</button><br>
   <div id="solution"></div>
   <script>
     const log = console.log.bind(console)
@@ -333,15 +333,21 @@
     $('#show').addEventListener('click', function() {
       if (solutionl) solution.innerHTML = solutionarr.join('')
     })
+    $('#share').addEventListener('click', function() {
+      let path = document.location + '?' + new URLSearchParams({ r: rr.value.split('\n').join(','), c: cc.value.split('\n').join(',') }).toString().replaceAll('%2C', ',')
+      navigator.permissions.query({ name: "clipboard-write" }).then(result => navigator.clipboard.writeText(path).then(
+        _ => alert('已复制到剪贴板'),
+        _ => alert('未复制到剪贴板')))
+    })
     $('#ta').addEventListener('input', function(e) {
       if (e.target.tagName == 'TEXTAREA') e.target.setAttribute('rows', e.target.value.split('\n').length)
     })
     window.addEventListener('load', function() {
+      const params = new URL(document.location).searchParams
       let rr = document.createElement('textarea')
       rr.setAttribute('id', 'rr')
       rr.setAttribute('placeholder', '行数组')
       rr.setAttribute('cols', '40')
-      const params = new URL(document.location).searchParams
       let pr = (params.get('r') ?? '232,221,251,522,225,52,222,232,222,25,522,225,152,122,232').split(',')
       rr.value = pr.join('\n')
       rr.setAttribute('rows', pr.length)
