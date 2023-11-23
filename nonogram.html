@@ -239,11 +239,6 @@
     }
 
     function queue() {
-      let prep = check()
-      if (prep) {
-        write(prep + ',请检查')
-        return
-      }
       let rej = 0
       let nexttry = 0
       let collectij = [0]
@@ -260,7 +255,8 @@
           return
         }
         if (!Array.isArray(collectij[0])) {
-          write('题目出错，否则无解')
+          progstr = '<br>题目出错，否则无解'
+          return
         }
         if (nexttry) {
           i = collectij.findIndex(e => e[0] == nexttry[0] && e[1] == nexttry[1])
@@ -293,7 +289,8 @@
       write('本题无解或无唯一解')
       return
     }
-    $('#btn').addEventListener('click', function() {
+
+    function init() {
       unsettled = '⬛'
       correct = '🟩'
       cross = '❌'
@@ -304,21 +301,29 @@
       progstr = '<br>'
       rows = rr.value.replace(/[^0-9\n ]/g, ' ').split('\n').map(e => e.trim().split(spreg).map(e1 => +e1.replace(' ', '')))
       cols = cc.value.replace(/[^0-9\n ]/g, ' ').split('\n').map(e => e.trim().split(spreg).map(e1 => +e1.replace(' ', '')))
-      maxcoll = Math.max(...cols.map(e => e.length))
-      maxrowl = Math.max(...rows.map(e => e.length))
-      sr = rows.length
-      sc = cols.length
-      rowsset = rows.map(e => gen(e, sc))
-      colsset = cols.map(e => gen(e, sr))
-      solverow = []
-      solvecol = []
-      solve = new Array(sr).fill(0).map(e => new Array(sc).fill(0))
-      update = new Array(sc).fill(0).map((_, i) => [0, i, 1]).concat(new Array(sr).fill(0).map((_, i) => [i, 0, 0]))
-      n = 1
-      save = {}
-      solverow = []
-      solvecol = []
-      queue()
+    }
+    $('#btn').addEventListener('click', function() {
+      init()
+      let prep = check()
+      if (prep) {
+        write(prep + ',请检查')
+      } else {
+        maxcoll = Math.max(...cols.map(e => e.length))
+        maxrowl = Math.max(...rows.map(e => e.length))
+        sr = rows.length
+        sc = cols.length
+        rowsset = rows.map(e => gen(e, sc))
+        colsset = cols.map(e => gen(e, sr))
+        solverow = []
+        solvecol = []
+        solve = new Array(sr).fill(0).map(e => new Array(sc).fill(0))
+        update = new Array(sc).fill(0).map((_, i) => [0, i, 1]).concat(new Array(sr).fill(0).map((_, i) => [i, 0, 0]))
+        n = 1
+        save = {}
+        solverow = []
+        solvecol = []
+        queue()
+      }
       solutionarr = progstr.split(/(?=<br>n=)/g).map(e => e + '<br><br>\u3000')
       solutioni = 0
       solutionl = solutionarr.length
@@ -334,6 +339,12 @@
       if (solutionl) solution.innerHTML = solutionarr.join('')
     })
     $('#share').addEventListener('click', function() {
+      init()
+      let chk = check()
+      if (chk) {
+        alert(chk + '，请修改后再分享')
+        return
+      }
       let path = document.location + '?' + new URLSearchParams({ r: rr.value.split('\n').join(','), c: cc.value.split('\n').join(',') }).toString().replaceAll('%2C', ',')
       navigator.permissions.query({ name: "clipboard-write" }).then(result => navigator.clipboard.writeText(path).then(
         _ => alert('已复制到剪贴板'),
