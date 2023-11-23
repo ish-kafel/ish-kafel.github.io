@@ -28,12 +28,11 @@
       letter-spacing: -0.53px;
     }
 
-    #rr {
+    textarea {
       width: 100px;
     }
 
     #cc {
-      width: 100px;
       -moz-writing-mode: vertical-lr;
       -webkit-writing-mode: vertical-lr;
       writing-mode: vertical-lr;
@@ -42,38 +41,7 @@
 </head>
 
 <body>
-  <div id="ta">
-    <textarea id="rr" placeholder="行数组" rows="15" cols="40">232
-221
-251
-522
-225
-52
-222
-232
-222
-25
-522
-225
-152
-122
-232</textarea>
-    <textarea id="cc" placeholder="列数组" rows="15" cols="40">212
-1212
-1132
-3313
-3133
-1231
-1212
-12121
-2121
-1321
-3313
-3133
-2311
-2121
-212</textarea>
-  </div><br>
+  <div id="ta"></div><br>
   <button id="btn">求解</button> <button id="last">上一步</button> <button id="next">下一步</button><br><br><button id="show">展示全部</button><br>
   <div id="solution"></div>
   <script>
@@ -334,8 +302,8 @@
       error = '❓'
       mapp = [unsettled, correct, cross, updatecorrect, updatecross, error]
       progstr = '<br>'
-      rows = (rr.value != '' ? rr.value : '32\n51\n31\n2\n4\n1 1\n53\n132\n24\n22\n42\n52\n322\n23\n62').replace(/[^0-9\n ]/g, ' ').split('\n').map(e => e.trim().split(spreg).map(e1 => +e1.replace(' ', '')))
-      cols = (cc.value != '' ? cc.value : '11\n33\n33\n316\n124\n31\n41\n1 0\n27\n121\n41\n4\n51\n223\n13').replace(/[^0-9\n ]/g, ' ').split('\n').map(e => e.trim().split(spreg).map(e1 => +e1.replace(' ', '')))
+      rows = rr.value.replace(/[^0-9\n ]/g, ' ').split('\n').map(e => e.trim().split(spreg).map(e1 => +e1.replace(' ', '')))
+      cols = cc.value.replace(/[^0-9\n ]/g, ' ').split('\n').map(e => e.trim().split(spreg).map(e1 => +e1.replace(' ', '')))
       maxcoll = Math.max(...cols.map(e => e.length))
       maxrowl = Math.max(...rows.map(e => e.length))
       sr = rows.length
@@ -367,6 +335,25 @@
     })
     $('#ta').addEventListener('input', function(e) {
       if (e.target.tagName == 'TEXTAREA') e.target.setAttribute('rows', e.target.value.split('\n').length)
+    })
+    window.addEventListener('load', function() {
+      let rr = document.createElement('textarea')
+      rr.setAttribute('id', 'rr')
+      rr.setAttribute('placeholder', '行数组')
+      rr.setAttribute('cols', '40')
+      const params = new URL(document.location).searchParams
+      let pr = (params.get('r') ?? '232,221,251,522,225,52,222,232,222,25,522,225,152,122,232').split(',')
+      rr.value = pr.join('\n')
+      rr.setAttribute('rows', pr.length)
+      ta.appendChild(rr)
+      let cc = document.createElement('textarea')
+      cc.setAttribute('id', 'cc')
+      cc.setAttribute('placeholder', '列数组')
+      cc.setAttribute('cols', '40')
+      let pc = (params.get('c') ?? '212,1212,1132,3313,3133,1231,1212,12121,2121,1321,3313,3133,2311,2121,212').split(',')
+      cc.value = pc.join('\n')
+      cc.setAttribute('rows', pc.length)
+      ta.appendChild(cc)
     })
   </script>
 </body>
