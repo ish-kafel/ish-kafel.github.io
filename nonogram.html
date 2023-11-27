@@ -375,7 +375,7 @@
     $('#ta').addEventListener('input', function(e) {
       if (e.target.tagName == 'TEXTAREA') e.target.setAttribute('rows', e.target.value.split('\n').length)
     })
-    window.addEventListener('load', function() {
+    window.addEventListener('DOMContentLoaded', function() {
       const params = new URL(document.location).searchParams
       let rr = $('#rr')
       let pr = (params.get('r') ?? '232,221,251,522,225,52,222,232,222,25,522,225,152,122,232').split(',')
