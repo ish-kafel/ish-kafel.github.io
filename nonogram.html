@@ -51,6 +51,11 @@
       if (n.length === 1) return n[0]
       return n
     }
+    if (!Array.prototype.toSpliced) {
+      Array.prototype.toSpliced = function(...args) {
+        return Array.from(this).splice(...args);
+      };
+    }
     const write = function(msg) {
       //document.write
       progstr += msg + '<br><br>'
@@ -346,9 +351,24 @@
         return
       }
       let path = document.location + '?' + new URLSearchParams({ r: rr.value.split('\n').join(','), c: cc.value.split('\n').join(',') }).toString().replaceAll('%2C', ',')
-      navigator.permissions.query({ name: "clipboard-write" }).then(result => navigator.clipboard.writeText(path).then(
-        _ => alert('已复制到剪贴板'),
-        _ => alert('未复制到剪贴板')))
+      if (navigator.clipboard && navigator.permissions) {
+        navigator.permissions.query({ name: "clipboard-write" }).then(result => navigator.clipboard.writeText(path).then(
+          _ => alert('已复制到剪贴板'),
+          _ => alert('未复制到剪贴板')))
+      } else {
+        const textArea = document.createElement('textArea')
+        textArea.value = path
+        textArea.style.width = 0
+        textArea.style.position = 'fixed'
+        textArea.style.left = '-999px'
+        textArea.style.top = '10px'
+        textArea.setAttribute('readonly', 'readonly')
+        document.body.appendChild(textArea)
+        textArea.select()
+        let res = document.execCommand('copy')
+        document.body.removeChild(textArea)
+        alert(res ? '已复制到剪贴板' : '未复制到剪贴板')
+      }
     })
     $('#ta').addEventListener('input', function(e) {
       if (e.target.tagName == 'TEXTAREA') e.target.setAttribute('rows', e.target.value.split('\n').length)
@@ -372,6 +392,7 @@
       cc.setAttribute('rows', pc.length)
       ta.appendChild(cc)
     })
+    window.addEventListener('error', e => alert(e.message))
   </script>
 </body>
 
