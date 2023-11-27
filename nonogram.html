@@ -41,7 +41,9 @@
 </head>
 
 <body>
-  <div id="ta"></div><br>
+  <div id="ta">
+    <textarea id="rr" cols="40" placeholder="行数组" rows="1"></textarea><textarea id="cc" cols="40" placeholder="列数组" rows="1"></textarea>
+  </div><br>
   <button id="btn">求解</button> <button id="last">上一步</button> <button id="next">下一步</button><br><br><button id="show">展示全部</button> <button id="share">分享题目</button><br>
   <div id="solution"></div>
   <script>
@@ -375,22 +377,14 @@
     })
     window.addEventListener('load', function() {
       const params = new URL(document.location).searchParams
-      let rr = document.createElement('textarea')
-      rr.setAttribute('id', 'rr')
-      rr.setAttribute('placeholder', '行数组')
-      rr.setAttribute('cols', '40')
+      let rr = $('#rr')
       let pr = (params.get('r') ?? '232,221,251,522,225,52,222,232,222,25,522,225,152,122,232').split(',')
       rr.value = pr.join('\n')
       rr.setAttribute('rows', pr.length)
-      ta.appendChild(rr)
-      let cc = document.createElement('textarea')
-      cc.setAttribute('id', 'cc')
-      cc.setAttribute('placeholder', '列数组')
-      cc.setAttribute('cols', '40')
+      let cc = $('#cc')
       let pc = (params.get('c') ?? '212,1212,1132,3313,3133,1231,1212,12121,2121,1321,3313,3133,2311,2121,212').split(',')
       cc.value = pc.join('\n')
       cc.setAttribute('rows', pc.length)
-      ta.appendChild(cc)
     })
     window.addEventListener('error', e => alert(e.message))
   </script>
