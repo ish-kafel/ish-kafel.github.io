@@ -64,6 +64,17 @@
     }
     const spreg = /(?<=\d)(?=\d)/
     let correct, cross, unsettled, updatecorrect, updatecross, progstr, sr, sc, rows, cols, rowsset, colsset, solverow, solvecol, solve, update, n, save, mapp, maxcoll, maxrowl, solutionarr, solutioni, solutionl
+    //window.addEventListener('DOMContentLoaded', function() {
+    const params = new URL(document.location).searchParams
+    let rr = $('#rr')
+    let pr = (params.get('r') ?? '232,221,251,522,225,52,222,232,222,25,522,225,152,122,232').split(',')
+    rr.value = pr.join('\n')
+    rr.setAttribute('rows', pr.length)
+    let cc = $('#cc')
+    let pc = (params.get('c') ?? '212,1212,1132,3313,3133,1231,1212,12121,2121,1321,3313,3133,2311,2121,212').split(',')
+    cc.value = pc.join('\n')
+    cc.setAttribute('rows', pc.length)
+    //})
 
     function check() {
       //if (rows.length !== cols.length) return '行列数不一致'
@@ -375,17 +386,7 @@
     $('#ta').addEventListener('input', function(e) {
       if (e.target.tagName == 'TEXTAREA') e.target.setAttribute('rows', e.target.value.split('\n').length)
     })
-    window.addEventListener('DOMContentLoaded', function() {
-      const params = new URL(document.location).searchParams
-      let rr = $('#rr')
-      let pr = (params.get('r') ?? '232,221,251,522,225,52,222,232,222,25,522,225,152,122,232').split(',')
-      rr.value = pr.join('\n')
-      rr.setAttribute('rows', pr.length)
-      let cc = $('#cc')
-      let pc = (params.get('c') ?? '212,1212,1132,3313,3133,1231,1212,12121,2121,1321,3313,3133,2311,2121,212').split(',')
-      cc.value = pc.join('\n')
-      cc.setAttribute('rows', pc.length)
-    })
+
     window.addEventListener('error', e => alert(e.message))
   </script>
 </body>
