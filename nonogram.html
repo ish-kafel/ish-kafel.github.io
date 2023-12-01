@@ -363,7 +363,8 @@
         alert(chk + '，请修改后再分享')
         return
       }
-      let path = document.location + '?' + new URLSearchParams({ r: rr.value.split('\n').join(','), c: cc.value.split('\n').join(',') }).toString().replaceAll('%2C', ',')
+      let loc = document.location
+      let path = loc.origin + loc.pathname + '?' + new URLSearchParams({ r: rr.value.split('\n').join(','), c: cc.value.split('\n').join(',') }).toString().replaceAll('%2C', ',')
       if (navigator.clipboard && navigator.permissions) {
         navigator.permissions.query({ name: "clipboard-write" }).then(result => navigator.clipboard.writeText(path).then(
           _ => alert('已复制到剪贴板'),
