@@ -555,17 +555,19 @@ var lowMax = Infinity;
       }
     },
     getLostPoint: function(qrCode) {
-      var moduleCount = qrCode.getModuleCount()
-      var lostPoint = 0
-      for (var row = 0; row < moduleCount; row++) {
-        for (var col = 0; col < moduleCount; col++) {
-          var sameCount = 0
-          var dark = qrCode.isDark(row, col)
-          for (var r = -1; r <= 1; r++) {
+      let moduleCount = qrCode.getModuleCount()
+      let lostPoint = 0
+      let darkCount = 0
+      for (let row = 0; row < moduleCount; row++) {
+        for (let col = 0; col < moduleCount; col++) {
+          //sameCount
+          let sameCount = 0
+          let dark = qrCode.isDark(row, col)
+          for (let r = -1; r <= 1; r++) {
             if (row + r < 0 || moduleCount <= row + r) {
               continue
             }
-            for (var c = -1; c <= 1; c++) {
+            for (let c = -1; c <= 1; c++) {
               if (col + c < 0 || moduleCount <= col + c) {
                 continue
               }
@@ -578,58 +580,50 @@ var lowMax = Infinity;
             }
           }
           if (sameCount > 5) {
-            lostPoint += (3 + sameCount - 5)
+            lostPoint += sameCount - 2
           }
-        }
-      }
-      for (row = 0; row < moduleCount - 1; row++) {
-        for (col = 0; col < moduleCount - 1; col++) {
-          var count = 0
-          if (qrCode.isDark(row, col)) count++
-          if (qrCode.isDark(row + 1, col)) count++
-          if (qrCode.isDark(row, col + 1)) count++
-          if (qrCode.isDark(row + 1, col + 1)) count++
-          if (count == 0 || count == 4) {
-            lostPoint += 3
+          //2x2 count
+          if (row < moduleCount - 1 && col < moduleCount - 1) {
+            let count = 0
+            if (qrCode.isDark(row, col)) count++
+            if (qrCode.isDark(row + 1, col)) count++
+            if (qrCode.isDark(row, col + 1)) count++
+            if (qrCode.isDark(row + 1, col + 1)) count++
+            if (count == 0 || count == 4) {
+              lostPoint += 3
+            }
           }
-        }
-      }
-      for (row = 0; row < moduleCount; row++) {
-        for (col = 0; col < moduleCount - 6; col++) {
-          if (qrCode.isDark(row, col) &&
-            !qrCode.isDark(row, col + 1) &&
-            qrCode.isDark(row, col + 2) &&
-            qrCode.isDark(row, col + 3) &&
-            qrCode.isDark(row, col + 4) &&
-            !qrCode.isDark(row, col + 5) &&
-            qrCode.isDark(row, col + 6)) {
-            lostPoint += 40
+          //row pattern count
+          if (col < moduleCount - 6) {
+            if (qrCode.isDark(row, col) &&
+              !qrCode.isDark(row, col + 1) &&
+              qrCode.isDark(row, col + 2) &&
+              qrCode.isDark(row, col + 3) &&
+              qrCode.isDark(row, col + 4) &&
+              !qrCode.isDark(row, col + 5) &&
+              qrCode.isDark(row, col + 6)) {
+              lostPoint += 40
+            }
           }
-        }
-      }
-      for (col = 0; col < moduleCount; col++) {
-        for (row = 0; row < moduleCount - 6; row++) {
-          if (qrCode.isDark(row, col) &&
-            !qrCode.isDark(row + 1, col) &&
-            qrCode.isDark(row + 2, col) &&
-            qrCode.isDark(row + 3, col) &&
-            qrCode.isDark(row + 4, col) &&
-            !qrCode.isDark(row + 5, col) &&
-            qrCode.isDark(row + 6, col)) {
-            lostPoint += 40
+          //col pattern count
+          if (row < moduleCount - 6) {
+            if (qrCode.isDark(row, col) &&
+              !qrCode.isDark(row + 1, col) &&
+              qrCode.isDark(row + 2, col) &&
+              qrCode.isDark(row + 3, col) &&
+              qrCode.isDark(row + 4, col) &&
+              !qrCode.isDark(row + 5, col) &&
+              qrCode.isDark(row + 6, col)) {
+              lostPoint += 40
+            }
           }
-        }
-      }
-      var darkCount = 0
-      for (col = 0; col < moduleCount; col++) {
-        for (row = 0; row < moduleCount; row++) {
-          if (qrCode.isDark(row, col)) {
+          //dark count
+          if (dark) {
             darkCount++
           }
         }
       }
-      var ratio = Math.abs(100 * darkCount / moduleCount / moduleCount - 50) / 5
-      lostPoint += ratio * 10
+      lostPoint += Math.abs(100 * darkCount / moduleCount / moduleCount - 50) * 2
       return lostPoint
     }
   }
