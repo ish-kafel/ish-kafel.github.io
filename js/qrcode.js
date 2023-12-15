@@ -559,35 +559,35 @@ var lowMax = Infinity;
       let lostPoint = 0
       let darkCount = 0
       for (let row = 0; row < moduleCount; row++) {
+        let rowhead = qrCode.isDark(row, 0)
+        let colhead = qrCode.isDark(0, row)
+        let rowcount = 0
+        let colcount = 0
         for (let col = 0; col < moduleCount; col++) {
           //sameCount
-          let sameCount = 0
           let dark = qrCode.isDark(row, col)
-          for (let r = -1; r <= 1; r++) {
-            if (row + r < 0 || moduleCount <= row + r) {
-              continue
-            }
-            for (let c = -1; c <= 1; c++) {
-              if (col + c < 0 || moduleCount <= col + c) {
-                continue
-              }
-              if (r == 0 && c == 0) {
-                continue
-              }
-              if (dark == qrCode.isDark(row + r, col + c)) {
-                sameCount++
-              }
-            }
+          let dark01 = qrCode.isDark(row, col + 1)
+          let dark10 = qrCode.isDark(row + 1, col)
+          if (dark == rowhead) {
+            rowcount++
+          } else {
+            rowcount = 1
+            rowhead = dark
           }
-          if (sameCount > 5) {
-            lostPoint += sameCount - 2
+          if (rowcount >= 5) lostPoint += rowcount === 5 ? 3 : 1
+          if (qrCode.isDark(col, row) == colhead) {
+            colcount++
+          } else {
+            colcount = 1
+            colhead = qrCode.isDark(col, row)
           }
+          if (colcount >= 5) lostPoint += colcount === 5 ? 3 : 1
           //2x2 count
           if (row < moduleCount - 1 && col < moduleCount - 1) {
             let count = 0
-            if (qrCode.isDark(row, col)) count++
-            if (qrCode.isDark(row + 1, col)) count++
-            if (qrCode.isDark(row, col + 1)) count++
+            if (dark) count++
+            if (dark01) count++
+            if (dark10) count++
             if (qrCode.isDark(row + 1, col + 1)) count++
             if (count == 0 || count == 4) {
               lostPoint += 3
@@ -595,8 +595,8 @@ var lowMax = Infinity;
           }
           //row pattern count
           if (col < moduleCount - 6) {
-            if (qrCode.isDark(row, col) &&
-              !qrCode.isDark(row, col + 1) &&
+            if (dark &&
+              !dark01 &&
               qrCode.isDark(row, col + 2) &&
               qrCode.isDark(row, col + 3) &&
               qrCode.isDark(row, col + 4) &&
@@ -607,8 +607,8 @@ var lowMax = Infinity;
           }
           //col pattern count
           if (row < moduleCount - 6) {
-            if (qrCode.isDark(row, col) &&
-              !qrCode.isDark(row + 1, col) &&
+            if (dark &&
+              !dark10 &&
               qrCode.isDark(row + 2, col) &&
               qrCode.isDark(row + 3, col) &&
               qrCode.isDark(row + 4, col) &&
