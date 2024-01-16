@@ -100,7 +100,10 @@
           res.shift()
         }
         arr.shift()
-        res.push(...tmp)
+        //res.push(...tmp)
+        for (let tm of tmp) {
+          res.push(tm)
+        }
         tmp = []
       }
       return res
