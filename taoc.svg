@@ -123,7 +123,8 @@
       id: 'btn',
       d: 'M0 0m-200 0a200 200 0 11 400 0 200 200 0 11-400 0z',
       stroke: 'none',
-      fill: '#0000'
+      fill: '#0000',
+      transform
     }))
     let split = false
     let l = g.children.length
