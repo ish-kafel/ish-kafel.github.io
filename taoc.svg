@@ -121,7 +121,7 @@
     }))
     svg.appendChild(makeSVG('path', {
       id: 'btn',
-      d: 'M0 0h402.8v402.8h-402.8z',
+      d: 'M0 0m-200 0a200 200 0 11 400 0 200 200 0 11-400 0z',
       stroke: 'none',
       fill: '#0000'
     }))
