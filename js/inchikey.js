@@ -1,93 +1,86 @@
 //translate from Github mnowotka/chembl_ikey
 
-var t26 = []
-var a = "ABCDEFGHIJKLMNOPQRSTUVWXYZ" //ascii_uppercase
-for (var i = 0; i <= 25; i++) {
-  if (a[i] == "E") continue
-  for (var j = 0; j <= 25; j++) {
-    for (var k = 0; k <= 25; k++) {
-      var d = "" + a[i] + a[j] + a[k]
-      if (d >= 'TAA' && d <= 'TTV') continue
-      t26.push(d)
+import sha256 from './sha256.js'
+const c26 = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+let t26 = [],
+  d26 = []
+for (let i of c26) {
+  for (let j of c26) {
+    if (i != 'E') {
+      for (let k of c26) {
+        let d = i + j + k
+        if (d >= 'TAA' && d <= 'TTV') continue
+        t26.push(d)
+      }
     }
+    d26.push(i + j)
   }
 }
 
-var d26 = []
-for (var i = 0; i <= 25; i++) {
-  for (var j = 0; j <= 25; j++) {
-    var d = "" + a[i] + a[j]
-    d26.push(d)
-  }
-}
-
-function base26Triplet1(a) {
-  var b0 = a[0]
-  var b1 = a[1] & 0x3f
-  var h = b0 | b1 << 8
+const base26Triplet1 = a => {
+  let b0 = a[0]
+  let b1 = a[1] & 0x3f
+  let h = b0 | b1 << 8
   return t26[h]
 }
 
-function base26Triplet2(a) {
-  var b0 = a[1] & 0xc0
-  var b1 = a[2]
-  var b2 = a[3] & 0x0f
-  var h = (b0 | b1 << 8 | b2 << 16) >> 6
+const base26Triplet2 = a => {
+  let b0 = a[1] & 0xc0
+  let b1 = a[2]
+  let b2 = a[3] & 0x0f
+  let h = (b0 | b1 << 8 | b2 << 16) >> 6
   return t26[h]
 }
 
-function base26Triplet3(a) {
-  var b0 = a[3] & 0xf0
-  var b1 = a[4]
-  var b2 = a[5] & 0x03
-  var h = (b0 | b1 << 8 | b2 << 16) >> 4
+const base26Triplet3 = a => {
+  let b0 = a[3] & 0xf0
+  let b1 = a[4]
+  let b2 = a[5] & 0x03
+  let h = (b0 | b1 << 8 | b2 << 16) >> 4
   return t26[h]
 }
 
-function base26Triplet4(a) {
-  var b0 = a[5] & 0xfc
-  var b1 = a[6]
-  var h = (b0 | b1 << 8) >> 2
+const base26Triplet4 = a => {
+  let b0 = a[5] & 0xfc
+  let b1 = a[6]
+  let h = (b0 | b1 << 8) >> 2
   return t26[h]
 }
 
-function base26DubletForBits28To36(a) {
-  var b0 = a[3] & 0xf0
-  var b1 = a[4] & 0x1f
-  var h = (b0 | b1 << 8) >> 4
+const base26DubletForBits28To36 = a => {
+  let b0 = a[3] & 0xf0
+  let b1 = a[4] & 0x1f
+  let h = (b0 | b1 << 8) >> 4
   return d26[h]
 }
 
-function base26DubletForBits56To64(a) {
-  var b0 = a[7]
-  var b1 = a[8] & 0x01
-  var h = b0 | b1 << 8
+const base26DubletForBits56To64 = a => {
+  let b0 = a[7]
+  let b1 = a[8] & 0x01
+  let h = b0 | b1 << 8
   return d26[h]
 }
 
-var INCHI_STRING_PREFIX = "InChI="
-var LEN_INCHI_STRING_PREFIX = INCHI_STRING_PREFIX.length
+const INCHI_STRING_PREFIX = "InChI="
+const LEN_INCHI_STRING_PREFIX = INCHI_STRING_PREFIX.length
 
-function inchiToInchiKey(szINCHISource) {
+export default szINCHISource => {
+  let flagstd = 'S'
+  let flagnonstd = 'N'
+  let flagver = 'A'
+  let flagproto = 'N'
+  let pplus = "OPQRSTUVWXYZ"
+  let pminus = "MLKJIHGFEDCB"
 
-  var flagstd = 'S'
-  var flagnonstd = 'N'
-  var flagver = 'A'
-  var flagproto = 'N'
-  var pplus = "OPQRSTUVWXYZ"
-  var pminus = "MLKJIHGFEDCB"
+  if (!szINCHISource) return new Error('There are no InChI string')
 
-  if (!szINCHISource) return null
-
-  var slen = szINCHISource.length
+  let slen = szINCHISource.length
   if (slen < LEN_INCHI_STRING_PREFIX + 3) return null
-
-  if (!szINCHISource.startsWith(INCHI_STRING_PREFIX)) return null
-
+  if (!szINCHISource.startsWith(INCHI_STRING_PREFIX)) return new Error('InChI string must starts with "InChI="')
   if (szINCHISource[LEN_INCHI_STRING_PREFIX] != '1') return null
 
-  var bStdFormat = null
-  var pos_slash1 = LEN_INCHI_STRING_PREFIX + 1
+  let bStdFormat = null
+  let pos_slash1 = LEN_INCHI_STRING_PREFIX + 1
 
   if (szINCHISource[pos_slash1] == 'S') {
     bStdFormat = 1
@@ -98,17 +91,16 @@ function inchiToInchiKey(szINCHISource) {
 
   if (szINCHISource[pos_slash1 + 1].match(/[^a-zA-Z0-9\/]/g)) return null
 
-  var string = szINCHISource.substr(LEN_INCHI_STRING_PREFIX)
+  let string = szINCHISource.substr(LEN_INCHI_STRING_PREFIX)
 
   if (!string) return null
 
-  var aux = string.substr((pos_slash1 - LEN_INCHI_STRING_PREFIX) + 1)
-  var slen = aux.length
-  var proto = false
-  var end = 0
-  var idx = 0
-  for (; idx < slen; idx++) {
-    var cn
+  let aux = string.substr(pos_slash1 - LEN_INCHI_STRING_PREFIX + 1)
+  slen = aux.length
+  let proto = false
+  let end = 0
+  for (let idx = 0; idx < slen; idx++) {
+    let cn
     if (aux[idx] == '/') {
       cn = aux[idx + 1]
       if (cn == 'c' || cn == 'h' || cn == 'q') continue
@@ -121,16 +113,15 @@ function inchiToInchiKey(szINCHISource) {
       break
     }
   }
-  if (end == (slen - 1)) end++
+  if (end == 0) end = slen
 
-  var smajor
+  let smajor
   if (!proto) {
     smajor = aux.substr(0, end)
   } else {
     smajor = aux.substr(0, proto)
   }
-
-  var nprotons
+  let nprotons
   if (proto) {
     nprotons = Number(aux.substring(proto + 2, end))
     if (nprotons > 0) {
@@ -148,22 +139,21 @@ function inchiToInchiKey(szINCHISource) {
         flagproto = pminus[-nprotons - 1]
       }
     }
-    else return null
+    else {
+      return null
+    }
   }
-  var sminor = ''
+  let sminor = ''
   if (end != slen) {
     sminor = aux.substr(end)
   }
   if (sminor.length < 255) {
     sminor += sminor
   }
-  var flag = bStdFormat ? flagstd : flagnonstd
-
-  var majorHash = sha256.update(smajor)
-  var minorHash = sha256.update(sminor)
-  var digestMajor = majorHash.array()
-  var digestMinor = minorHash.array()
-  var major = base26Triplet1(digestMajor) + base26Triplet2(digestMajor) + base26Triplet3(digestMajor) + base26Triplet4(digestMajor) + base26DubletForBits56To64(digestMajor)
-  var minor = base26Triplet1(digestMinor) + base26Triplet2(digestMinor) + base26DubletForBits28To36(digestMinor)
+  let flag = bStdFormat ? flagstd : flagnonstd
+  let digestMajor = sha256(smajor)
+  let digestMinor = sha256(sminor)
+  let major = base26Triplet1(digestMajor) + base26Triplet2(digestMajor) + base26Triplet3(digestMajor) + base26Triplet4(digestMajor) + base26DubletForBits56To64(digestMajor)
+  let minor = base26Triplet1(digestMinor) + base26Triplet2(digestMinor) + base26DubletForBits28To36(digestMinor)
   return `${major}-${minor}${flag}${flagver}-${flagproto}`
 }
